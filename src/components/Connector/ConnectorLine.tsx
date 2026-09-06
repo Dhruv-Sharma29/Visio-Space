@@ -112,7 +112,7 @@ export const ConnectorLine: React.FC<ConnectorLineProps> = ({
   const badgeHeight = fontSize + badgePadY * 2 + 2;
 
   return (
-    <Group>
+    <Group id={connector.id}>
       {/* Invisible wider line for easy selection / hover / click */}
       <Line
         points={points}

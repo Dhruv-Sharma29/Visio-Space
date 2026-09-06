@@ -200,6 +200,7 @@ export const StickyCard: React.FC<StickyCardProps> = ({
   return (
     <Group
       ref={groupRef}
+      id={card.id}
       x={card.x}
       y={card.y}
       rotation={card.rotation}
