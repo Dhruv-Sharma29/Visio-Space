@@ -237,14 +237,6 @@ function App() {
 
   return (
     <div className={`app app-toolbar-${toolbarDock}`}>
-      {/* Watermark / title */}
-      <div className="app-watermark">
-        <div className="app-watermark-logo">
-          <img src="/visiospace-mark.svg" alt="VisioSpace logo" />
-        </div>
-        <span className="app-watermark-title">VisioSpace</span>
-      </div>
-
       {/* Hint bar (contextual) */}
       <div className="app-hint-bar">
         {activeTool === 'select' && !selectedIds.length && (

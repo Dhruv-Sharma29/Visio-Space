@@ -6,55 +6,6 @@
   overflow: hidden;
 }
 
-/* ─── Watermark ──────────────────────────────────────────────────── */
-.app-watermark {
-  position: fixed;
-  top: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 200;
-
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 16px 7px 10px;
-
-  background: rgba(30, 24, 20, 0.82);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 9px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-
-  animation: fadeDown 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-@keyframes fadeDown {
-  from { opacity: 0; transform: translateX(-50%) translateY(-6px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
-.app-watermark-logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  background: #f8fafc;
-  box-shadow: 0 2px 6px rgba(19, 37, 61, 0.35);
-  overflow: hidden;
-}
-
-.app-watermark-logo img { width: 100%; height: 100%; display: block; }
-
-.app-watermark-title {
-  font-family: 'Inter', -apple-system, sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: #f4ecd8;
-  letter-spacing: -0.01em;
-}
 
 /* ─── Hint Bar ───────────────────────────────────────────────────── */
 .app-hint-bar {
