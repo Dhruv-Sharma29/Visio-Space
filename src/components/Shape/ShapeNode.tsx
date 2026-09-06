@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useCallback } from 'react';
-import { Group, Rect, Text, Transformer } from 'react-konva';
+import { Group, Text, Transformer } from 'react-konva';
 import Konva from 'konva';
 import type { Shape } from '../../types/board';
 import { SHAPE_COLORS } from '../../types/board';
@@ -139,7 +139,7 @@ export const ShapeNode: React.FC<ShapeNodeProps> = ({
   shape,
   isSelected,
   isEditing,
-  isConnecting,
+  isConnecting: _isConnecting,
   isConnectingSource,
   onSelect,
   onDragStart,
@@ -148,7 +148,6 @@ export const ShapeNode: React.FC<ShapeNodeProps> = ({
   onDoubleClick,
 }) => {
   const groupRef = useRef<Konva.Group>(null);
-  const shadowRectRef = useRef<Konva.Rect>(null);
   const trRef = useRef<Konva.Transformer>(null);
   const lastDragPos = useRef({ x: shape.x, y: shape.y });
 
@@ -176,17 +175,6 @@ export const ShapeNode: React.FC<ShapeNodeProps> = ({
         onUpdate: () => layer?.batchDraw(),
       });
     }
-    if (shadowRectRef.current) {
-      shadowRectRef.current.to({
-        shadowBlur: 14,
-        shadowOffsetX: 4,
-        shadowOffsetY: 8,
-        shadowOpacity: 0.4,
-        duration: 0.15,
-        easing: (Konva.Easings as any).EaseOut,
-        onUpdate: () => layer?.batchDraw(),
-      });
-    }
   }, [isSelected, isEditing]);
 
   const handleMouseLeave = useCallback(() => {
@@ -195,17 +183,6 @@ export const ShapeNode: React.FC<ShapeNodeProps> = ({
       groupRef.current.to({
         scaleX: 1,
         scaleY: 1,
-        duration: 0.15,
-        easing: (Konva.Easings as any).EaseOut,
-        onUpdate: () => layer?.batchDraw(),
-      });
-    }
-    if (shadowRectRef.current) {
-      shadowRectRef.current.to({
-        shadowBlur: 8,
-        shadowOffsetX: 2,
-        shadowOffsetY: 4,
-        shadowOpacity: 0.25,
         duration: 0.15,
         easing: (Konva.Easings as any).EaseOut,
         onUpdate: () => layer?.batchDraw(),
@@ -293,75 +270,15 @@ export const ShapeNode: React.FC<ShapeNodeProps> = ({
         onDragEnd={handleDragEnd}
         onTransformEnd={handleTransformEnd}
       >
-        {/* Soft Drop Shadow */}
-        <Rect
-          ref={shadowRectRef}
-          x={2}
-          y={4}
-          width={shape.width}
-          height={shape.height}
-          fill="rgba(20, 10, 5, 0.12)"
-          shadowColor="rgba(20, 10, 5, 0.35)"
-          shadowBlur={8}
-          shadowOffsetX={2}
-          shadowOffsetY={4}
-          shadowOpacity={0.25}
-          cornerRadius={shape.type === 'rectangle' ? 4 : undefined}
-          listening={false}
-        />
-
         {/* Custom Konva Shape Geometry */}
         {def.renderKonvaShape({
           shape,
           fill: colors.bg,
-          stroke: isSelected ? '#c0392b' : colors.border,
-          strokeWidth: isSelected ? 2 : 1.5,
+          stroke: isSelected ? '#c0392b' : isConnectingSource ? '#2f4a63' : colors.border,
+          strokeWidth: isSelected ? 2 : isConnectingSource ? 2.5 : 1.5,
           width: shape.width,
           height: shape.height,
         })}
-
-        {/* Selection indicator box (subtle dashed frame) */}
-        {isSelected && (
-          <Rect
-            x={-3}
-            y={-3}
-            width={shape.width + 6}
-            height={shape.height + 6}
-            stroke="#c0392b"
-            strokeWidth={1.5}
-            dash={[5, 3]}
-            cornerRadius={4}
-            listening={false}
-          />
-        )}
-
-        {/* Connecting Source Indicator */}
-        {isConnectingSource && (
-          <Rect
-            x={-4}
-            y={-4}
-            width={shape.width + 8}
-            height={shape.height + 8}
-            cornerRadius={5}
-            stroke="#2f4a63"
-            strokeWidth={2}
-            dash={[8, 4]}
-            listening={false}
-          />
-        )}
-
-        {/* Connector Mode Target Hover Hint */}
-        {isConnecting && !isConnectingSource && (
-          <Rect
-            x={-2}
-            y={-2}
-            width={shape.width + 4}
-            height={shape.height + 4}
-            cornerRadius={3}
-            fill="rgba(47, 74, 99, 0.08)"
-            listening={false}
-          />
-        )}
 
         {/* Text inside shape - precisely constrained to innerBounds with wrap='char' and ellipsis */}
         {displayText ? (
@@ -416,9 +333,7 @@ export const ShapeNode: React.FC<ShapeNodeProps> = ({
           anchorFill="#ffffff"
           anchorStroke="#c0392b"
           anchorStrokeWidth={1.5}
-          borderStroke="#c0392b"
-          borderStrokeWidth={1.5}
-          borderDash={[4, 3]}
+          borderEnabled={false}
           rotateAnchorOffset={20}
           keepRatio={false}
         />

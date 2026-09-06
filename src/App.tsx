@@ -237,7 +237,6 @@ function App() {
 
   return (
     <div className={`app app-toolbar-${toolbarDock}`}>
-
       {/* Hint bar (contextual) */}
       <div className="app-hint-bar">
         {activeTool === 'select' && !selectedIds.length && (
