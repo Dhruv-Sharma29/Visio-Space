@@ -4,6 +4,10 @@
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  /* Prevent browser scroll / pinch-zoom / pull-to-refresh on mobile */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 

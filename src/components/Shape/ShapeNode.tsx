@@ -130,6 +130,11 @@ function computeOptimalFontSize(text: string, innerW: number, innerH: number): n
   return Math.min(16, Math.max(8, size));
 }
 
+// Detect touch/coarse pointer once at module level
+const IS_TOUCH_DEVICE =
+  typeof window !== 'undefined' &&
+  window.matchMedia('(pointer: coarse)').matches;
+
 export const ShapeNode: React.FC<ShapeNodeProps> = ({
   shape,
   isSelected,
@@ -237,6 +242,7 @@ export const ShapeNode: React.FC<ShapeNodeProps> = ({
     <>
       <Group
         ref={groupRef}
+        id={shape.id}
         x={shape.x}
         y={shape.y}
         rotation={shape.rotation}
@@ -322,7 +328,7 @@ export const ShapeNode: React.FC<ShapeNodeProps> = ({
             }
             return newBox;
           }}
-          anchorSize={8}
+          anchorSize={IS_TOUCH_DEVICE ? 14 : 8}
           anchorCornerRadius={2}
           anchorFill="#ffffff"
           anchorStroke="#c0392b"

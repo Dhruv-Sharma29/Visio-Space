@@ -3,6 +3,7 @@ import { Stage, Layer, Rect, Circle, Group, Text } from 'react-konva';
 import type Konva from 'konva';
 import { useBoardStore } from '../../store/boardStore';
 import { setGlobalStageRef } from '../../utils/stageRef';
+import { useTouchCanvas } from './useTouchCanvas';
 import { StickyCard } from '../Card/StickyCard';
 import { ShapeNode } from '../Shape/ShapeNode';
 import { getShapeDefinition } from '../Shape/shapeRegistry';
@@ -66,6 +67,9 @@ export const InfiniteCanvas: React.FC = () => {
     }
     return () => setGlobalStageRef(null);
   }, []);
+
+  // Mobile touch interactions (pinch-zoom, two-finger pan, long-press, bg-tap)
+  useTouchCanvas(stageRef);
 
   useEffect(() => {
     const handleResize = () => {
@@ -653,7 +657,7 @@ export const InfiniteCanvas: React.FC = () => {
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
-      style={{ cursor }}
+      style={{ cursor, touchAction: 'none' }}
     >
       {/* Background layer */}
       <Layer>

@@ -80,18 +80,28 @@ export const ContextMenu: React.FC = () => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') close();
     };
+    // Close immediately on touch-outside (avoids the ~300ms ghost-click delay on mobile)
+    const handleTouchOutside = (e: TouchEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.context-menu')) {
+        close();
+      }
+    };
 
     window.addEventListener('canvas-context-menu', handleContextMenu);
     window.addEventListener('click', handleClick);
     window.addEventListener('keydown', handleEsc);
     window.addEventListener('contextmenu', handleNativeContext);
+    window.addEventListener('touchstart', handleTouchOutside, { passive: true });
 
     return () => {
       window.removeEventListener('canvas-context-menu', handleContextMenu);
       window.removeEventListener('click', handleClick);
       window.removeEventListener('keydown', handleEsc);
       window.removeEventListener('contextmenu', handleNativeContext);
+      window.removeEventListener('touchstart', handleTouchOutside);
     };
+
   }, [close, setSelectedIds]);
 
   if (!isOpen || !targetId) return null;

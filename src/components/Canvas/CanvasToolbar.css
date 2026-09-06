@@ -227,6 +227,49 @@
   .toolbar-btn { width: 30px; height: 30px; }
 }
 
+/* ─── Touch / Coarse-Pointer Targets ────────────────────────────── */
+/* Ensure all interactive targets meet the 44×44px minimum recommended
+   by Apple HIG and Material Design for comfortable touch use.          */
+@media (pointer: coarse) {
+  .toolbar-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+  }
+
+  .toolbar-drag-handle {
+    width: 28px;
+    height: 40px;
+    gap: 4px;
+  }
+  .canvas-toolbar--top .toolbar-drag-handle,
+  .canvas-toolbar--bottom .toolbar-drag-handle {
+    width: 40px;
+    height: 28px;
+  }
+
+  .toolbar-flyout-item {
+    padding: 10px 12px;
+    min-height: 44px;
+  }
+
+  .toolbar-zoom-display {
+    width: 48px;
+  }
+
+  /* Disable hover-only tooltips on touch — they never trigger correctly */
+  .toolbar-tooltip {
+    display: none;
+  }
+
+  /* Shape flyout items: larger tap targets in a single column on mobile */
+  .toolbar-flyout-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
+
+
 @keyframes flyoutSlideIn {
   from {
     opacity: 0;
