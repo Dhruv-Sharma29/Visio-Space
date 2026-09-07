@@ -17,6 +17,9 @@ import { Minimap } from './components/Minimap/Minimap';
 import { TextEditor } from './components/Text/TextEditor';
 import { ImportModal } from './components/Import/ImportModal';
 import { ImageFormatBar } from './components/Image/ImageFormatBar';
+import { GuestBadge } from './components/Auth/GuestBadge';
+import { AuthScreen } from './auth/AuthScreen';
+import { useAuth } from './auth/AuthContext';
 import { useBoardStore } from './store/boardStore';
 import type { Tool } from './types/board';
 import './App.css';
@@ -59,6 +62,8 @@ function App() {
   const [exportOpen, setExportOpen] = useState(false);
   const [templatesOpen, setTemplatesOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const { user } = useAuth();
 
   // ─── Keyboard shortcuts ────────────────────────────────────────
   const handleKeyDown = useCallback(
@@ -74,8 +79,12 @@ function App() {
         confirmDeleteCluster?.isOpen ||
         exportOpen ||
         templatesOpen ||
-        importOpen
+        importOpen ||
+        authModalOpen
       ) {
+        if (e.key === 'Escape' && authModalOpen) {
+          setAuthModalOpen(false);
+        }
         return;
       }
 
@@ -212,6 +221,7 @@ function App() {
       exportOpen,
       templatesOpen,
       importOpen,
+      authModalOpen,
     ]
   );
 
@@ -235,8 +245,38 @@ function App() {
     };
   }, [handleKeyDown, handleKeyUp]);
 
+  // ─── Guest mode unsaved session warning on leave / refresh ──────────
+  useEffect(() => {
+    if (user) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      const state = useBoardStore.getState();
+      const hasContent =
+        state.cards.length > 0 ||
+        state.shapes.length > 0 ||
+        state.connectors.length > 0 ||
+        state.clusters.length > 0 ||
+        state.textItems.length > 0 ||
+        state.voteDots.length > 0 ||
+        state.images.length > 0;
+
+      if (hasContent) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [user]);
+
   return (
     <div className={`app app-toolbar-${toolbarDock}`}>
+      {/* Guest Mode indicator */}
+      {!user && <GuestBadge onSignIn={() => setAuthModalOpen(true)} />}
+
       {/* Hint bar (contextual) */}
       <div className="app-hint-bar">
         {activeTool === 'select' && !selectedIds.length && (
@@ -322,6 +362,11 @@ function App() {
       {/* Sensemaking Templates Modal */}
       <TemplateModal isOpen={templatesOpen} onClose={() => setTemplatesOpen(false)} />
       <ImportModal isOpen={importOpen} onClose={() => setImportOpen(false)} />
+
+      {/* In-canvas Auth Modal for Guest sign-in/up */}
+      {authModalOpen && (
+        <AuthScreen isModal onClose={() => setAuthModalOpen(false)} />
+      )}
     </div>
   );
 }
