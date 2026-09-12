@@ -15,3 +15,63 @@
 .auth-warning, .auth-message { padding: 10px 12px; border-radius: 7px; font-size: 12px; line-height: 1.45; }
 .auth-warning { background: rgba(214,168,95,.12); color: #f0c77d; }
 .auth-message { background: rgba(117,180,126,.12); color: #a9d9ac; }
+.auth-guest-btn { width: 100%; margin-top: 10px; padding: 11px; border: 1px solid rgba(244,236,216,.2); border-radius: 8px; background: transparent; color: #f4ecd8; font-weight: 600; cursor: pointer; transition: background .15s ease, border-color .15s ease; font-size: 14px; }
+.auth-guest-btn:hover { background: rgba(244,236,216,.08); border-color: rgba(244,236,216,.35); }
+
+/* Modal overlay styling when invoked from inside the workspace */
+.auth-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(15, 10, 8, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: authModalFade 0.2s ease-out;
+}
+
+@keyframes authModalFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.auth-modal-card {
+  position: relative;
+  background: rgba(45, 35, 28, 0.96);
+  border: 1px solid rgba(214, 168, 95, 0.35);
+  box-shadow: 0 32px 100px rgba(0, 0, 0, 0.65);
+  animation: authModalPop 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+@keyframes authModalPop {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.auth-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(244, 236, 216, 0.15);
+  border-radius: 50%;
+  background: rgba(244, 236, 216, 0.08);
+  color: #f4ecd8;
+  font-size: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.auth-close-btn:hover {
+  background: rgba(244, 236, 216, 0.2);
+  border-color: rgba(244, 236, 216, 0.3);
+  transform: scale(1.06);
+}
+
