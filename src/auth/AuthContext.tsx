@@ -9,6 +9,8 @@ interface AuthContextValue {
   user: User | null;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signUp: (email: string, password: string) => Promise<{ error: string | null; confirmationRequired: boolean }>;
+  signInWithGoogle: () => Promise<{ error: string | null }>;
+  resetPassword: (email: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<{ error: string | null }>;
 }
 
@@ -57,6 +59,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!supabase) return { error: 'Supabase is not configured. Add VITE_SUPABASE_ANON_KEY to .env.', confirmationRequired: false };
       const { data, error } = await supabase.auth.signUp({ email, password });
       return { error: error?.message ?? null, confirmationRequired: Boolean(data.user && !data.session) };
+    },
+    signInWithGoogle: async () => {
+      if (!supabase) return { error: 'Supabase is not configured.' };
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+        },
+      });
+      return { error: error?.message ?? null };
+    },
+    resetPassword: async (email) => {
+      if (!supabase) return { error: 'Supabase is not configured.' };
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin,
+      });
+      return { error: error?.message ?? null };
     },
     signOut: async () => {
       if (!supabase) return { error: null };
