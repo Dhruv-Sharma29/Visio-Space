@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { InfiniteCanvas } from './components/Canvas/InfiniteCanvas';
 import { CanvasToolbar } from './components/Canvas/CanvasToolbar';
 import { CardEditor } from './components/Card/CardEditor';
@@ -21,6 +21,7 @@ import { GuestBadge } from './components/Auth/GuestBadge';
 import { AuthScreen } from './auth/AuthScreen';
 import { useAuth } from './auth/AuthContext';
 import { useBoardStore } from './store/boardStore';
+import { boardService } from './services/boardService';
 import type { Tool } from './types/board';
 import './App.css';
 
@@ -36,7 +37,12 @@ const TOOL_SHORTCUTS: Record<string, Tool> = {
   d: 'vote',
 };
 
-function App() {
+interface AppProps {
+  boardId?: string | null;
+  onBackToDashboard?: () => void;
+}
+
+function App({ boardId, onBackToDashboard }: AppProps = {}) {
   const {
     setActiveTool,
     deleteSelected,
@@ -57,13 +63,71 @@ function App() {
     connectingFromId,
     setConnectingFromId,
     toolbarDock,
+    cards,
+    shapes,
+    connectors,
+    textItems,
+    voteDots,
+    images,
   } = useBoardStore();
 
   const [exportOpen, setExportOpen] = useState(false);
   const [templatesOpen, setTemplatesOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [boardTitle, setBoardTitle] = useState('Untitled Board');
+  const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'local'>('saved');
   const { user } = useAuth();
+  const isInitialLoad = useRef(true);
+
+  // Load board if boardId is passed
+  useEffect(() => {
+    if (!boardId) return;
+    let active = true;
+    isInitialLoad.current = true;
+    boardService.getBoard(boardId).then(({ summary, state }) => {
+      if (!active) return;
+      setBoardTitle(summary.title);
+      useBoardStore.getState().importFromJSON(state);
+      setSaveStatus(user ? 'saved' : 'local');
+    });
+    return () => {
+      active = false;
+    };
+  }, [boardId, user]);
+
+  // Debounced auto-save
+  useEffect(() => {
+    if (!boardId) return;
+    if (isInitialLoad.current) {
+      isInitialLoad.current = false;
+      return;
+    }
+
+    setSaveStatus('saving');
+    const timer = setTimeout(async () => {
+      const currentState = {
+        cards,
+        shapes,
+        connectors,
+        clusters,
+        textItems,
+        voteDots,
+        images,
+      };
+      await boardService.saveBoardState(boardId, currentState);
+      setSaveStatus(user ? 'saved' : 'local');
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, [cards, shapes, connectors, clusters, textItems, voteDots, images, boardId, user]);
+
+  const handleTitleChange = async (newTitle: string) => {
+    setBoardTitle(newTitle);
+    if (boardId) {
+      await boardService.renameBoard(boardId, newTitle);
+    }
+  };
 
   // ─── Keyboard shortcuts ────────────────────────────────────────
   const handleKeyDown = useCallback(
@@ -274,8 +338,37 @@ function App() {
 
   return (
     <div className={`app app-toolbar-${toolbarDock}`}>
-      {/* Guest Mode indicator */}
-      {!user && <GuestBadge onSignIn={() => setAuthModalOpen(true)} />}
+      {/* Top canvas bar with navigation and board title */}
+      <header className="canvas-top-bar">
+        <div className="canvas-top-left">
+          {onBackToDashboard && (
+            <button
+              type="button"
+              className="canvas-back-btn"
+              onClick={onBackToDashboard}
+              title="Return to My Boards"
+            >
+              ← All Boards
+            </button>
+          )}
+          <input
+            type="text"
+            className="canvas-title-input"
+            value={boardTitle}
+            onChange={e => handleTitleChange(e.target.value)}
+            title="Click to rename board"
+          />
+        </div>
+
+        <div className="canvas-top-right">
+          <span className={`canvas-save-status ${saveStatus}`}>
+            {saveStatus === 'saving' && 'Saving…'}
+            {saveStatus === 'saved' && 'Saved ✓'}
+            {saveStatus === 'local' && 'Local saved ✓'}
+          </span>
+          {!user && <GuestBadge onSignIn={() => setAuthModalOpen(true)} />}
+        </div>
+      </header>
 
       {/* Hint bar (contextual) */}
       <div className="app-hint-bar">

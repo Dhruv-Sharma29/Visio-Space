@@ -10,6 +10,120 @@
   -webkit-user-select: none;
 }
 
+/* ─── Canvas Top Bar ─────────────────────────────────────────────── */
+.canvas-top-bar {
+  position: fixed;
+  top: 14px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.canvas-top-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.canvas-top-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+  flex-shrink: 0;
+}
+
+.canvas-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(36, 28, 23, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(244, 236, 216, 0.2);
+  border-radius: 8px;
+  color: #f4ecd8;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.canvas-back-btn:hover {
+  background: rgba(50, 38, 30, 0.95);
+  border-color: #d6a85f;
+  color: #fff;
+  transform: translateX(-1px);
+}
+
+.canvas-title-input {
+  background: rgba(36, 28, 23, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(244, 236, 216, 0.15);
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #fdfbf7;
+  font: 700 14.5px Georgia, serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  outline: none;
+  width: 220px;
+  min-width: 120px;
+  max-width: 280px;
+  transition: all 0.15s ease;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.canvas-title-input:hover, .canvas-title-input:focus {
+  background: rgba(36, 28, 23, 0.9);
+  border-color: #d6a85f;
+  width: 280px;
+}
+
+.canvas-save-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(36, 28, 23, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: rgba(244, 236, 216, 0.7);
+  border: 1px solid rgba(244, 236, 216, 0.1);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.canvas-save-status.saved {
+  color: #a9d9ac;
+  border-color: rgba(117, 180, 126, 0.3);
+}
+
+.canvas-save-status.saving {
+  color: #f0c77d;
+  border-color: rgba(214, 168, 95, 0.3);
+}
+
+.canvas-save-status.local {
+  color: #b8c7d9;
+}
 
 /* ─── Hint Bar ───────────────────────────────────────────────────── */
 .app-hint-bar {
@@ -55,3 +169,41 @@
 /* Keep the contextual hint above a horizontal toolbar instead of underneath it. */
 .app-toolbar-bottom .app-hint-bar { bottom: 72px; }
 .app-toolbar-top .app-hint-bar { top: 72px; bottom: auto; }
+
+/* ─── Responsive Canvas Top Bar ──────────────────────────────────── */
+@media (max-width: 768px) {
+  .canvas-top-bar {
+    left: 12px;
+    right: 12px;
+    top: 10px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .canvas-top-left {
+    gap: 8px;
+  }
+
+  .canvas-title-input {
+    width: 140px;
+    min-width: 90px;
+    font-size: 13px;
+  }
+
+  .canvas-top-right {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .canvas-back-btn {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  .canvas-title-input {
+    width: 110px;
+    min-width: 80px;
+  }
+}
