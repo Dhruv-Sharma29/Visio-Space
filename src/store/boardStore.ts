@@ -9,6 +9,7 @@ import { getShapeDefinition } from '../components/Shape/shapeRegistry';
 import { SoundEffects } from '../utils/soundEffects';
 import { normalizeBoardState } from '../utils/boardValidation';
 import { getImportLayout } from '../utils/importLayout';
+import { combineBoardsForImport } from '../utils/multiBoardLayout';
 
 // ─── Constants ──────────────────────────────────────────────────────
 const MAX_HISTORY = 50;
@@ -173,6 +174,7 @@ interface BoardStore {
   // Serialization
   exportToJSON: () => BoardState;
   importFromJSON: (state: BoardState) => void;
+  importMultipleBoards: (boards: BoardState[], gap?: number) => void;
   loadTemplate: (state: BoardState, mode?: 'append' | 'replace') => void;
   clearBoard: () => void;
 }
@@ -1333,6 +1335,60 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       textItems: safeState.textItems || [],
       voteDots: safeState.voteDots || [],
       images: safeState.images || [],
+      selectedIds: [],
+      editingCardId: null,
+      editingTextId: null,
+      editingShapeId: null,
+      editingClusterId: null,
+      confirmDeleteCluster: null,
+    });
+  },
+
+  importMultipleBoards: (boards, gap) => {
+    if (!boards.length) return;
+    if (boards.length === 1) {
+      get().importFromJSON(boards[0]);
+      return;
+    }
+    get().pushHistory();
+    const combinedState = combineBoardsForImport(boards, { gap });
+    const rawClusters = combinedState.clusters || [];
+    const rawCards = combinedState.cards || [];
+    const rawShapes = combinedState.shapes || [];
+
+    const cardsWithClusterId = rawCards.map(card => {
+      if (card.clusterId) return card;
+      const containing = rawClusters.find(
+        cl => card.x >= cl.x - 20 && card.x + card.width <= cl.x + cl.width + 20 &&
+              card.y >= cl.y - 20 && card.y + card.height <= cl.y + cl.height + 20
+      );
+      return containing ? { ...card, clusterId: containing.id } : card;
+    });
+
+    const shapesWithClusterId = rawShapes.map(shape => {
+      if (shape.clusterId) return shape;
+      const containing = rawClusters.find(
+        cl => shape.x >= cl.x - 20 && shape.x + shape.width <= cl.x + cl.width + 20 &&
+              shape.y >= cl.y - 20 && shape.y + shape.height <= cl.y + cl.height + 20
+      );
+      return containing ? { ...shape, clusterId: containing.id } : shape;
+    });
+
+    const adjustedClusters = recalculateClusters(rawClusters, cardsWithClusterId, shapesWithClusterId);
+    const validItemIds = new Set([...cardsWithClusterId, ...shapesWithClusterId].map(item => item.id));
+
+    if (get().soundEnabled) {
+      SoundEffects.paperPlace();
+    }
+
+    set({
+      cards: cardsWithClusterId,
+      shapes: shapesWithClusterId,
+      connectors: combinedState.connectors.filter(connector => validItemIds.has(connector.fromCardId) && validItemIds.has(connector.toCardId)),
+      clusters: adjustedClusters,
+      textItems: combinedState.textItems || [],
+      voteDots: combinedState.voteDots || [],
+      images: combinedState.images || [],
       selectedIds: [],
       editingCardId: null,
       editingTextId: null,

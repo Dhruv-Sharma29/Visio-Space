@@ -1,0 +1,63 @@
+{
+  "cards": [
+    {
+      "id": "b2-c1",
+      "x": 120,
+      "y": 100,
+      "width": 220,
+      "height": 140,
+      "color": "pink",
+      "title": "Board 2 - Card Alpha",
+      "body": "First item of board 2",
+      "eyebrow": "Concept",
+      "zIndex": 1,
+      "rotation": 0,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "b2-c2",
+      "x": 400,
+      "y": 140,
+      "width": 220,
+      "height": 140,
+      "color": "green",
+      "title": "Board 2 - Card Beta",
+      "body": "Second item of board 2",
+      "eyebrow": "Milestone",
+      "zIndex": 2,
+      "rotation": 0,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "shapes": [
+    {
+      "id": "b2-s1",
+      "type": "circle",
+      "x": 220,
+      "y": 300,
+      "width": 160,
+      "height": 160,
+      "color": "yellow",
+      "rotation": 0,
+      "zIndex": 3,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "b2-conn1",
+      "fromCardId": "b2-c1",
+      "toCardId": "b2-c2",
+      "color": "blue",
+      "style": "dashed",
+      "label": "triggers"
+    }
+  ],
+  "clusters": [],
+  "textItems": [],
+  "voteDots": [],
+  "images": []
+}

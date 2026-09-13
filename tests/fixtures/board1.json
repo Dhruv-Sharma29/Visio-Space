@@ -1,0 +1,63 @@
+{
+  "cards": [
+    {
+      "id": "b1-c1",
+      "x": 100,
+      "y": 100,
+      "width": 220,
+      "height": 140,
+      "color": "yellow",
+      "title": "Board 1 - Card A",
+      "body": "First item of board 1",
+      "eyebrow": "Idea",
+      "zIndex": 1,
+      "rotation": 0,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "b1-c2",
+      "x": 380,
+      "y": 120,
+      "width": 220,
+      "height": 140,
+      "color": "cream",
+      "title": "Board 1 - Card B",
+      "body": "Second item of board 1",
+      "eyebrow": "Research",
+      "zIndex": 2,
+      "rotation": 0,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "shapes": [
+    {
+      "id": "b1-s1",
+      "type": "rectangle",
+      "x": 200,
+      "y": 280,
+      "width": 180,
+      "height": 120,
+      "color": "blue",
+      "rotation": 0,
+      "zIndex": 3,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "b1-conn1",
+      "fromCardId": "b1-c1",
+      "toCardId": "b1-c2",
+      "color": "red",
+      "style": "solid",
+      "label": "connects"
+    }
+  ],
+  "clusters": [],
+  "textItems": [],
+  "voteDots": [],
+  "images": []
+}

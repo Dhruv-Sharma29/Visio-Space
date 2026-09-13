@@ -1,0 +1,39 @@
+{
+  "cards": [
+    {
+      "id": "b3-c1",
+      "x": 100,
+      "y": 100,
+      "width": 220,
+      "height": 140,
+      "color": "purple",
+      "title": "Board 3 - Final Phase",
+      "body": "Final item in board 3",
+      "eyebrow": "Outcome",
+      "zIndex": 1,
+      "rotation": 0,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "shapes": [
+    {
+      "id": "b3-s1",
+      "type": "diamond",
+      "x": 380,
+      "y": 100,
+      "width": 140,
+      "height": 140,
+      "color": "orange",
+      "rotation": 0,
+      "zIndex": 2,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "connectors": [],
+  "clusters": [],
+  "textItems": [],
+  "voteDots": [],
+  "images": []
+}
