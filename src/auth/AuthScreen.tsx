@@ -1,5 +1,7 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { useAuth } from './AuthContext';
+import { profileService } from '../services/profileService';
+import { cleanUsername, validateUsernameFormat, validateFullName } from '../utils/profileValidation';
 import './AuthScreen.css';
 
 interface AuthScreenProps {
@@ -8,14 +10,59 @@ interface AuthScreenProps {
   isModal?: boolean;
 }
 
+type UsernameStatus = 'idle' | 'checking' | 'available' | 'invalid' | 'taken';
+
 export function AuthScreen({ onContinueGuest, onClose, isModal = false }: AuthScreenProps = {}) {
-  const { configured, signIn, signUp, signInWithGoogle, resetPassword } = useAuth();
+  const { configured, signIn, signUpWithProfile, signInWithGoogle, resetPassword } = useAuth();
   const [mode, setMode] = useState<'sign-in' | 'sign-up' | 'forgot-password'>('sign-in');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [username, setUsername] = useState('');
+  const [usernameStatus, setUsernameStatus] = useState<UsernameStatus>('idle');
+  const [usernameError, setUsernameError] = useState('');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'info' | 'error'>('info');
   const [submitting, setSubmitting] = useState(false);
+
+  // Debounced username availability validation on sign-up
+  useEffect(() => {
+    if (mode !== 'sign-up') {
+      setUsernameStatus('idle');
+      setUsernameError('');
+      return;
+    }
+
+    const trimmed = username.trim();
+    if (!trimmed) {
+      setUsernameStatus('idle');
+      setUsernameError('');
+      return;
+    }
+
+    const cleaned = cleanUsername(trimmed);
+    const format = validateUsernameFormat(cleaned);
+    if (!format.valid) {
+      setUsernameStatus('invalid');
+      setUsernameError(format.error || 'Invalid username');
+      return;
+    }
+
+    setUsernameStatus('checking');
+    setUsernameError('');
+    const timer = setTimeout(async () => {
+      const res = await profileService.checkUsernameAvailability(cleaned);
+      if (res.available) {
+        setUsernameStatus('available');
+        setUsernameError('');
+      } else {
+        setUsernameStatus('taken');
+        setUsernameError(res.error || 'Username is already taken');
+      }
+    }, 320);
+
+    return () => clearTimeout(timer);
+  }, [username, mode]);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -35,21 +82,59 @@ export function AuthScreen({ onContinueGuest, onClose, isModal = false }: AuthSc
       return;
     }
 
-    const result = mode === 'sign-in'
-      ? await signIn(email, password)
-      : await signUp(email, password);
+    if (mode === 'sign-up') {
+      const nameCheck = validateFullName(fullName);
+      if (!nameCheck.valid) {
+        setSubmitting(false);
+        setMessage(nameCheck.error || 'Please enter your full name.');
+        setMessageType('error');
+        return;
+      }
+
+      const cleanedUsername = cleanUsername(username);
+      const userCheck = validateUsernameFormat(cleanedUsername);
+      if (!userCheck.valid) {
+        setSubmitting(false);
+        setMessage(userCheck.error || 'Invalid username format.');
+        setMessageType('error');
+        return;
+      }
+
+      const avail = await profileService.checkUsernameAvailability(cleanedUsername);
+      if (!avail.available) {
+        setSubmitting(false);
+        setMessage(avail.error || 'This username is already taken.');
+        setMessageType('error');
+        return;
+      }
+
+      const result = await signUpWithProfile(email, password, cleanedUsername, fullName.trim());
+      setSubmitting(false);
+      if (result.error) {
+        setMessage(result.error);
+        setMessageType('error');
+      } else {
+        setMessageType('info');
+        setMessage(result.confirmationRequired
+          ? 'Check your email to confirm your account.'
+          : 'Account ready.');
+        if (!result.confirmationRequired) {
+          onClose?.();
+        }
+      }
+      return;
+    }
+
+    // sign-in mode
+    const result = await signIn(email, password);
     setSubmitting(false);
     if (result.error) {
       setMessage(result.error);
       setMessageType('error');
     } else {
       setMessageType('info');
-      setMessage(mode === 'sign-up' && 'confirmationRequired' in result && result.confirmationRequired
-        ? 'Check your email to confirm your account.'
-        : 'Account ready.');
-      if (mode === 'sign-in' || (mode === 'sign-up' && (!('confirmationRequired' in result) || !result.confirmationRequired))) {
-        onClose?.();
-      }
+      setMessage('Welcome back.');
+      onClose?.();
     }
   }
 
@@ -115,6 +200,61 @@ export function AuthScreen({ onContinueGuest, onClose, isModal = false }: AuthSc
       )}
 
       <form onSubmit={submit}>
+        {mode === 'sign-up' && (
+          <>
+            <label>
+              Full name
+              <input
+                type="text"
+                placeholder="Ada Lovelace"
+                value={fullName}
+                onChange={e => setFullName(e.target.value)}
+                required
+                autoComplete="name"
+              />
+            </label>
+
+            <label>
+              <div className="auth-label-row">
+                <span>Username</span>
+                {usernameStatus === 'checking' && (
+                  <span className="auth-username-status checking">Checking…</span>
+                )}
+                {usernameStatus === 'available' && (
+                  <span className="auth-username-status available">✓ Available</span>
+                )}
+                {usernameStatus === 'taken' && (
+                  <span className="auth-username-status taken">✕ Taken</span>
+                )}
+                {usernameStatus === 'invalid' && (
+                  <span className="auth-username-status invalid">✕ Invalid</span>
+                )}
+              </div>
+              <div className="auth-username-field">
+                <span className="auth-username-at">@</span>
+                <input
+                  type="text"
+                  placeholder="username"
+                  value={username}
+                  onChange={e => setUsername(e.target.value.toLowerCase())}
+                  required
+                  autoComplete="username"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  className={`auth-username-input ${
+                    usernameStatus === 'taken' || usernameStatus === 'invalid'
+                      ? 'input-error'
+                      : usernameStatus === 'available'
+                      ? 'input-success'
+                      : ''
+                  }`}
+                />
+              </div>
+              {usernameError && <span className="auth-field-error">{usernameError}</span>}
+            </label>
+          </>
+        )}
+
         <label>
           Email
           <input

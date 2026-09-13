@@ -5,9 +5,10 @@ import App from './App';
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { AuthScreen } from './auth/AuthScreen';
 import { Dashboard } from './components/Dashboard/Dashboard';
+import { ProfileOnboardingScreen } from './auth/ProfileOnboardingScreen';
 
 function Root() {
-  const { loading, user } = useAuth();
+  const { loading, user, needsProfileOnboarding, profileLoading } = useAuth();
   const [guestAccess, setGuestAccess] = useState(() => {
     return typeof window !== 'undefined' && sessionStorage.getItem('visiospace_guest_mode') === 'true';
   });
@@ -37,6 +38,16 @@ function Root() {
   }, []);
 
   if (loading) return <div className="auth-loading">Loading VisioSpace…</div>;
+
+  // Authenticated user still loading their profile
+  if (user && profileLoading) {
+    return <div className="auth-loading">Setting up your workspace…</div>;
+  }
+
+  // Authenticated user needs to complete profile onboarding (first Google sign-in)
+  if (user && needsProfileOnboarding) {
+    return <ProfileOnboardingScreen />;
+  }
 
   if (user || guestAccess) {
     if (activeBoardId) {
@@ -95,3 +106,4 @@ createRoot(document.getElementById('root')!).render(
     </AuthProvider>
   </StrictMode>,
 );
+

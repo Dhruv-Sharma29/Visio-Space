@@ -1,0 +1,232 @@
+.onboarding-screen {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 3vh, 32px) 16px;
+  box-sizing: border-box;
+  background:
+    radial-gradient(circle at 50% 25%, rgba(214, 168, 95, 0.08), transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(163, 49, 43, 0.06), transparent 45%),
+    #17110d;
+  color: #f4ecd8;
+  font-family: 'Inter', -apple-system, sans-serif;
+  overflow-y: auto;
+}
+
+.onboarding-card {
+  box-sizing: border-box;
+  width: min(100%, 420px);
+  max-height: min(94dvh, 680px);
+  padding: clamp(20px, 3.5vh, 28px) clamp(18px, 4vw, 28px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  border: 1px solid rgba(214, 168, 95, 0.22);
+  background: #211914;
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.5),
+    0 2px 8px rgba(0, 0, 0, 0.25);
+  animation: onboardingFade 0.25s ease-out;
+  overflow-y: auto;
+}
+
+@keyframes onboardingFade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.onboarding-logo {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 8px;
+}
+
+.onboarding-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #d6a85f;
+  margin: 0;
+}
+
+.onboarding-title {
+  font-family: Georgia, serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 4px 0 0;
+  color: #fdfbf7;
+  letter-spacing: -0.02em;
+}
+
+.onboarding-subtitle {
+  color: rgba(244, 236, 216, 0.7);
+  line-height: 1.45;
+  font-size: 12.5px;
+  margin: 6px 0 0;
+}
+
+.onboarding-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.onboarding-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+  color: rgba(244, 236, 216, 0.85);
+  font-weight: 500;
+}
+
+.onboarding-form input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid rgba(244, 236, 216, 0.2);
+  border-radius: 7px;
+  background: #261d18;
+  color: #fff8ea;
+  font: inherit;
+  font-size: 13px;
+  transition: border-color 0.15s ease;
+}
+
+.onboarding-form input:focus {
+  border-color: #d6a85f;
+  outline: none;
+}
+
+.onboarding-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.onboarding-status {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.onboarding-status.checking {
+  color: rgba(244, 236, 216, 0.5);
+}
+
+.onboarding-status.available {
+  color: #a9d9ac;
+}
+
+.onboarding-status.taken,
+.onboarding-status.invalid {
+  color: #f87171;
+}
+
+.onboarding-username-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.onboarding-username-at {
+  position: absolute;
+  left: 12px;
+  color: rgba(244, 236, 216, 0.45);
+  font-weight: 600;
+  font-size: 13.5px;
+  pointer-events: none;
+}
+
+.onboarding-username-input {
+  padding-left: 28px !important;
+}
+
+.onboarding-username-input.input-success {
+  border-color: rgba(117, 180, 126, 0.6);
+}
+
+.onboarding-username-input.input-error {
+  border-color: rgba(224, 82, 82, 0.6);
+}
+
+.onboarding-field-error {
+  font-size: 11px;
+  color: #f87171;
+  margin-top: 2px;
+}
+
+.onboarding-hint {
+  font-size: 11px;
+  color: rgba(244, 236, 216, 0.45);
+  line-height: 1.35;
+}
+
+.onboarding-error-message {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  line-height: 1.4;
+  background: rgba(224, 82, 82, 0.14);
+  color: #f87171;
+  border: 1px solid rgba(224, 82, 82, 0.3);
+  margin: 2px 0 0;
+}
+
+.onboarding-submit-btn {
+  margin-top: 6px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 7px;
+  background: #d6a85f;
+  color: #211914;
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.onboarding-submit-btn:hover:not(:disabled) {
+  opacity: 0.94;
+  transform: translateY(-1px);
+}
+
+.onboarding-submit-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.onboarding-footer {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.onboarding-account-info {
+  font-size: 11px;
+  color: rgba(244, 236, 216, 0.4);
+}
+
+.onboarding-switch-btn {
+  border: 0;
+  background: none;
+  color: #d6a85f;
+  font-size: 11.5px;
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+.onboarding-switch-btn:hover {
+  text-decoration: underline;
+}
