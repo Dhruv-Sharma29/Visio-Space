@@ -1,0 +1,318 @@
+/* ─── Comment Popover Container ──────────────────────────────────── */
+.comment-popover-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 150;
+  pointer-events: auto;
+  animation: popoverFadeIn 0.18s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+@keyframes popoverFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ─── Card Body ──────────────────────────────────────────────────── */
+.comment-popover-card {
+  width: min(90vw, 340px);
+  background: #241c17;
+  border: 1px solid rgba(214, 168, 95, 0.35);
+  border-radius: 12px;
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.65),
+    0 4px 12px rgba(0, 0, 0, 0.35);
+  color: #f4ecd8;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────── */
+.comment-popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(28, 21, 16, 0.9);
+  border-bottom: 1px solid rgba(244, 236, 216, 0.08);
+}
+
+.comment-popover-author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.comment-author-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #3a2c22;
+  color: #d6a85f;
+  border: 1px solid rgba(214, 168, 95, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.comment-author-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.comment-author-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.comment-author-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fdfbf7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.comment-timestamp {
+  font-size: 10px;
+  color: rgba(244, 236, 216, 0.5);
+}
+
+.comment-popover-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.comment-action-btn {
+  background: transparent;
+  border: none;
+  color: rgba(244, 236, 216, 0.6);
+  padding: 4px 6px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  font-size: 12px;
+}
+
+.comment-action-btn:hover {
+  background: rgba(244, 236, 216, 0.1);
+  color: #fdfbf7;
+}
+
+.comment-action-btn.resolve {
+  color: #4ade80;
+}
+
+.comment-action-btn.resolve.resolved {
+  background: rgba(74, 222, 128, 0.18);
+  color: #86efac;
+}
+
+.comment-action-btn.delete:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* ─── Thread Body ────────────────────────────────────────────────── */
+.comment-popover-content {
+  padding: 12px 14px;
+  max-height: 260px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comment-root-body {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #f4ecd8;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.comment-mention-tag {
+  color: #60a5fa;
+  font-weight: 600;
+  background: rgba(96, 165, 250, 0.12);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+/* ─── Replies List ───────────────────────────────────────────────── */
+.comment-replies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(244, 236, 216, 0.08);
+}
+
+.comment-reply-item {
+  display: flex;
+  gap: 8px;
+}
+
+.comment-reply-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.comment-reply-header {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.comment-reply-author {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #fdfbf7;
+}
+
+.comment-reply-body {
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: rgba(244, 236, 216, 0.9);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ─── Input & Form ───────────────────────────────────────────────── */
+.comment-input-form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px;
+  background: rgba(20, 15, 12, 0.6);
+  border-top: 1px solid rgba(244, 236, 216, 0.08);
+  gap: 8px;
+}
+
+.comment-textarea-wrapper {
+  position: relative;
+}
+
+.comment-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(36, 28, 23, 0.7);
+  border: 1px solid rgba(244, 236, 216, 0.15);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: #fdfbf7;
+  font-size: 12.5px;
+  font-family: inherit;
+  line-height: 1.4;
+  resize: none;
+  outline: none;
+  min-height: 42px;
+  max-height: 100px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.comment-textarea:focus {
+  border-color: #d6a85f;
+  background: rgba(36, 28, 23, 0.9);
+}
+
+.comment-input-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.comment-mention-hint {
+  font-size: 11px;
+  color: rgba(244, 236, 216, 0.45);
+}
+
+.comment-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background: #d6a85f;
+  color: #1a1410;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.comment-submit-btn:hover:not(:disabled) {
+  background: #e2b975;
+}
+
+.comment-submit-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ─── Autocomplete Mentions Dropdown ──────────────────────────────── */
+.comment-mentions-dropdown {
+  position: absolute;
+  bottom: 100%;
+  left: 14px;
+  right: 14px;
+  background: #1e1713;
+  border: 1px solid rgba(214, 168, 95, 0.35);
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-mention-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.comment-mention-item:hover,
+.comment-mention-item.selected {
+  background: rgba(214, 168, 95, 0.18);
+}
+
+.comment-mention-item-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fdfbf7;
+}
+
+.comment-mention-item-user {
+  font-size: 11px;
+  color: #d6a85f;
+}

@@ -10,6 +10,7 @@ export interface BoardSummary {
   created_at: string;
   updated_at: string;
   thumbnail_url?: string | null;
+  projectId?: string | null;
   cardCount: number;
   shapeCount: number;
   connectorCount: number;
@@ -64,6 +65,7 @@ export const boardService = {
           created_at: String(b.created_at),
           updated_at: String(b.updated_at),
           thumbnail_url: b.thumbnail_url ? String(b.thumbnail_url) : null,
+          projectId: (b.project_id || b.projectId) ? String(b.project_id || b.projectId) : null,
           cardCount: state?.cards?.length || 0,
           shapeCount: state?.shapes?.length || 0,
           connectorCount: state?.connectors?.length || 0,

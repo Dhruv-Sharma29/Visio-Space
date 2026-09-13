@@ -13,6 +13,8 @@ import { ClusterLabel } from '../Cluster/ClusterLabel';
 import { TextNode } from '../Text/TextNode';
 import { VoteDotNode } from '../Vote/VoteDotNode';
 import { ImageNode } from '../Image/ImageNode';
+import { realtimeService } from '../../services/realtimeService';
+import { RemoteCursorsOverlay } from './RemoteCursorsOverlay';
 
 const MIN_SCALE = 0.1;
 const MAX_SCALE = 4;
@@ -23,7 +25,11 @@ const DOT_SPACING = 30;
 const DOT_RADIUS = 1.2;
 const DOT_COLOR = 'rgba(0,0,0,0.08)';
 
-export const InfiniteCanvas: React.FC = () => {
+interface InfiniteCanvasProps {
+  onOpenDraftComment?: (coords: { x: number; y: number; cardId?: string | null }) => void;
+}
+
+export const InfiniteCanvas: React.FC<InfiniteCanvasProps> = ({ onOpenDraftComment }) => {
   const stageRef = useRef<Konva.Stage>(null);
   const [stageSize, setStageSize] = useState({ width: window.innerWidth, height: window.innerHeight });
   const isPanning = useRef(false);
@@ -58,6 +64,7 @@ export const InfiniteCanvas: React.FC = () => {
     setActiveTool,
     addTextItem, addVoteDot, moveTextItem, moveVoteDot,
     moveImage, bringImageToFront,
+    followingUserId, setFollowingUserId,
   } = useBoardStore();
 
   // Register stage ref globally for export
@@ -79,10 +86,36 @@ export const InfiniteCanvas: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Follow mode effect: smoothly follow selected user's viewport or cursor
+  useEffect(() => {
+    if (!followingUserId) return;
+
+    return realtimeService.onCursor((msg) => {
+      if (msg.userId !== followingUserId) return;
+
+      if (msg.viewport) {
+        setViewport({
+          x: msg.viewport.x,
+          y: msg.viewport.y,
+          scale: msg.viewport.scale,
+        });
+      } else if (msg.cursor) {
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        setViewport({
+          x: centerX - msg.cursor.x * viewport.scale,
+          y: centerY - msg.cursor.y * viewport.scale,
+          scale: viewport.scale,
+        });
+      }
+    });
+  }, [followingUserId, viewport.scale, setViewport]);
+
   // ─── Wheel zoom ──────────────────────────────────────────────────
   const handleWheel = useCallback(
     (e: Konva.KonvaEventObject<WheelEvent>) => {
       e.evt.preventDefault();
+      if (followingUserId) setFollowingUserId(null);
       const stage = stageRef.current;
       if (!stage) return;
 
@@ -129,6 +162,12 @@ export const InfiniteCanvas: React.FC = () => {
       // World coordinates
       const worldX = (pointer.x - viewport.x) / viewport.scale;
       const worldY = (pointer.y - viewport.y) / viewport.scale;
+
+      if (activeTool === 'comment') {
+        onOpenDraftComment?.({ x: worldX, y: worldY });
+        setActiveTool('select');
+        return;
+      }
 
       if (activeTool === 'card') {
         addCard(worldX - 110, worldY - 70);
@@ -179,7 +218,7 @@ export const InfiniteCanvas: React.FC = () => {
         }
       }
     },
-    [activeTool, viewport, addCard, addTextItem, addVoteDot, clearSelection, connectingFromId, setConnectingFromId, setActiveTool, setEditingTextId]
+    [activeTool, viewport, addCard, addTextItem, addVoteDot, clearSelection, connectingFromId, setConnectingFromId, setActiveTool, setEditingTextId, onOpenDraftComment]
   );
 
   // ─── Stage double click (instant card creation on canvas or inside cluster) ────
@@ -212,6 +251,7 @@ export const InfiniteCanvas: React.FC = () => {
   const handleMouseMove = useCallback(
     (e: Konva.KonvaEventObject<MouseEvent>) => {
       if (isPanning.current) {
+        if (followingUserId) setFollowingUserId(null);
         const dx = e.evt.clientX - lastPointerPos.current.x;
         const dy = e.evt.clientY - lastPointerPos.current.y;
         lastPointerPos.current = { x: e.evt.clientX, y: e.evt.clientY };
@@ -220,6 +260,17 @@ export const InfiniteCanvas: React.FC = () => {
           y: viewport.y + dy,
         });
         return;
+      }
+
+      // Broadcast cursor to peers
+      const stage = stageRef.current;
+      if (stage) {
+        const pointer = stage.getPointerPosition();
+        if (pointer) {
+          const worldX = (pointer.x - viewport.x) / viewport.scale;
+          const worldY = (pointer.y - viewport.y) / viewport.scale;
+          realtimeService.broadcastCursor({ x: worldX, y: worldY }, viewport);
+        }
       }
 
       // If drawing a cluster, update current drag point
@@ -257,8 +308,13 @@ export const InfiniteCanvas: React.FC = () => {
         setMarqueeCurrent({ x: worldX, y: worldY });
       }
     },
-    [viewport, setViewport, drawingClusterStart, drawingShapeStart, marqueeStart]
+    [viewport, setViewport, drawingClusterStart, drawingShapeStart, marqueeStart, followingUserId, setFollowingUserId]
   );
+
+  const handleMouseLeave = useCallback(() => {
+    isPanning.current = false;
+    realtimeService.broadcastCursor(null);
+  }, []);
 
   const handleMouseUp = useCallback(() => {
     isPanning.current = false;
@@ -391,6 +447,15 @@ export const InfiniteCanvas: React.FC = () => {
   // ─── Card interaction handlers ───────────────────────────────────
   const handleCardSelect = useCallback(
     (id: string, e: Konva.KonvaEventObject<MouseEvent>) => {
+      if (activeTool === 'comment') {
+        const stage = stageRef.current;
+        const pointer = stage?.getPointerPosition();
+        const worldX = pointer ? (pointer.x - viewport.x) / viewport.scale : 0;
+        const worldY = pointer ? (pointer.y - viewport.y) / viewport.scale : 0;
+        onOpenDraftComment?.({ x: worldX, y: worldY, cardId: id });
+        setActiveTool('select');
+        return;
+      }
       if (activeTool === 'connector') {
         if (!connectingFromId) {
           setConnectingFromId(id);
@@ -408,7 +473,7 @@ export const InfiniteCanvas: React.FC = () => {
       }
       bringToFront(id);
     },
-    [activeTool, connectingFromId, setConnectingFromId, addConnector, setSelectedIds, bringToFront]
+    [activeTool, connectingFromId, setConnectingFromId, addConnector, setSelectedIds, bringToFront, onOpenDraftComment, setActiveTool, viewport]
   );
 
   const handleCardDragStart = useCallback(
@@ -464,6 +529,15 @@ export const InfiniteCanvas: React.FC = () => {
   // ─── Shape interaction handlers ──────────────────────────────────
   const handleShapeSelect = useCallback(
     (id: string, e: Konva.KonvaEventObject<MouseEvent>) => {
+      if (activeTool === 'comment') {
+        const stage = stageRef.current;
+        const pointer = stage?.getPointerPosition();
+        const worldX = pointer ? (pointer.x - viewport.x) / viewport.scale : 0;
+        const worldY = pointer ? (pointer.y - viewport.y) / viewport.scale : 0;
+        onOpenDraftComment?.({ x: worldX, y: worldY });
+        setActiveTool('select');
+        return;
+      }
       if (activeTool === 'connector') {
         if (!connectingFromId) {
           setConnectingFromId(id);
@@ -481,7 +555,7 @@ export const InfiniteCanvas: React.FC = () => {
       }
       bringShapeToFront(id);
     },
-    [activeTool, connectingFromId, setConnectingFromId, addConnector, setSelectedIds, bringShapeToFront]
+    [activeTool, connectingFromId, setConnectingFromId, addConnector, setSelectedIds, bringShapeToFront, onOpenDraftComment, setActiveTool, viewport]
   );
 
   const handleShapeDragStart = useCallback(
@@ -609,7 +683,7 @@ export const InfiniteCanvas: React.FC = () => {
   if (activeTool === 'shape') cursor = 'crosshair';
   if (activeTool === 'connector') cursor = 'crosshair';
   if (activeTool === 'cluster') cursor = 'crosshair';
-  if (activeTool === 'text' || activeTool === 'vote') cursor = 'crosshair';
+  if (activeTool === 'text' || activeTool === 'vote' || activeTool === 'comment') cursor = 'crosshair';
 
   // Drag-to-draw shape ghost calculation
   let ghostBox: { x: number; y: number; width: number; height: number } | null = null;
@@ -642,23 +716,24 @@ export const InfiniteCanvas: React.FC = () => {
   }
 
   return (
-    <Stage
-      ref={stageRef}
-      width={stageSize.width}
-      height={stageSize.height}
-      scaleX={viewport.scale}
-      scaleY={viewport.scale}
-      x={viewport.x}
-      y={viewport.y}
-      onWheel={handleWheel}
-      onMouseDown={handleMouseDown}
-      onDblClick={handleStageDblClick}
-      onDblTap={handleStageDblClick}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-      style={{ cursor, touchAction: 'none' }}
-    >
+    <div className="infinite-canvas-container" style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
+      <Stage
+        ref={stageRef}
+        width={stageSize.width}
+        height={stageSize.height}
+        scaleX={viewport.scale}
+        scaleY={viewport.scale}
+        x={viewport.x}
+        y={viewport.y}
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onDblClick={handleStageDblClick}
+        onDblTap={handleStageDblClick}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+        style={{ cursor, touchAction: 'none' }}
+      >
       {/* Background layer */}
       <Layer>
         <Rect
@@ -840,5 +915,7 @@ export const InfiniteCanvas: React.FC = () => {
         )}
       </Layer>
     </Stage>
+    <RemoteCursorsOverlay viewport={viewport} />
+  </div>
   );
 };

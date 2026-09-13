@@ -88,7 +88,8 @@
   white-space: nowrap;
 }
 
-.canvas-title-input:hover, .canvas-title-input:focus {
+.canvas-title-input:hover,
+.canvas-title-input:focus {
   background: rgba(36, 28, 23, 0.9);
   border-color: #d6a85f;
   width: 280px;
@@ -149,6 +150,56 @@
   transform: translateY(-1px);
 }
 
+.canvas-notif-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 7px;
+  background: rgba(36, 28, 23, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(244, 236, 216, 0.2);
+  border-radius: 8px;
+  color: #f4ecd8;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.canvas-notif-btn:hover {
+  background: rgba(50, 38, 30, 0.95);
+  border-color: #d6a85f;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.canvas-notif-btn .notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #c0392b;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #241c17;
+  box-shadow: 0 2px 5px rgba(192, 57, 43, 0.5);
+  animation: pulseBadge 2s infinite ease-in-out;
+}
+
+@keyframes pulseBadge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
 /* ─── Hint Bar ───────────────────────────────────────────────────── */
 .app-hint-bar {
   position: fixed;
@@ -174,8 +225,15 @@
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateX(-50%) translateY(6px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 .app-hint-bar kbd {
@@ -191,8 +249,14 @@
 }
 
 /* Keep the contextual hint above a horizontal toolbar instead of underneath it. */
-.app-toolbar-bottom .app-hint-bar { bottom: 72px; }
-.app-toolbar-top .app-hint-bar { top: 72px; bottom: auto; }
+.app-toolbar-bottom .app-hint-bar {
+  bottom: 72px;
+}
+
+.app-toolbar-top .app-hint-bar {
+  top: 72px;
+  bottom: auto;
+}
 
 /* ─── Responsive Canvas Top Bar ──────────────────────────────────── */
 @media (max-width: 768px) {

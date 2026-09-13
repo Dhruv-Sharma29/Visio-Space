@@ -842,3 +842,87 @@
   color: #7a6b5a;
   font-size: 14px;
 }
+
+/* ─── Projects & Folders Bar ────────────────────────────────────────── */
+.dashboard-projects-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.dashboard-project-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(138, 120, 102, 0.25);
+  color: #554436;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.dashboard-project-pill:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #d6a85f;
+  color: #211914;
+}
+
+.dashboard-project-pill.active {
+  background: #241c17;
+  color: #f4ecd8;
+  border-color: #d6a85f;
+  box-shadow: 0 2px 8px rgba(36, 28, 23, 0.25);
+}
+
+.dashboard-project-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dashboard-add-project-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: transparent;
+  border: 1px dashed rgba(138, 120, 102, 0.4);
+  color: #7a6b5a;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.dashboard-add-project-btn:hover {
+  border-color: #d6a85f;
+  color: #241c17;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.board-card-project-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #5a4b3d;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-top: 4px;
+  align-self: flex-start;
+  border: 1px solid rgba(138, 120, 102, 0.15);
+}
+

@@ -1,0 +1,116 @@
+/* ─── Comment Pins Overlay ───────────────────────────────────────── */
+.comment-pins-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  overflow: hidden;
+}
+
+/* ─── Comment Pin ────────────────────────────────────────────────── */
+.comment-pin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  transform-origin: center center;
+  transition: transform 0.15s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.15s ease;
+  will-change: transform;
+}
+
+.comment-pin:hover {
+  transform: scale(1.15) !important;
+  z-index: 60;
+}
+
+.comment-pin.active {
+  transform: scale(1.2) !important;
+  z-index: 70;
+}
+
+.comment-pin-bubble {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50% 50% 50% 4px;
+  background: #2a2018;
+  border: 2px solid #d6a85f;
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.45),
+    0 2px 6px rgba(0, 0, 0, 0.3);
+  color: #fdfbf7;
+  font-size: 12px;
+  font-weight: 700;
+  user-select: none;
+  overflow: visible;
+  transition: all 0.15s ease;
+}
+
+.comment-pin:hover .comment-pin-bubble,
+.comment-pin.active .comment-pin-bubble {
+  background: #d6a85f;
+  color: #1a1410;
+  border-color: #fff;
+  box-shadow:
+    0 6px 20px rgba(214, 168, 95, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.comment-pin.resolved .comment-pin-bubble {
+  background: rgba(36, 28, 23, 0.85);
+  border-color: #4ade80;
+  opacity: 0.75;
+}
+
+.comment-pin.resolved:hover .comment-pin-bubble {
+  opacity: 1;
+  border-color: #86efac;
+}
+
+.comment-pin-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.comment-pin-initial {
+  text-transform: uppercase;
+  font-family: Georgia, serif;
+  line-height: 1;
+}
+
+/* ─── Reply Count Badge ─────────────────────────────────────────── */
+.comment-pin-badge {
+  position: absolute;
+  top: -5px;
+  right: -6px;
+  background: #c0392b;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 10px;
+  border: 1.5px solid #211914;
+  line-height: 1.2;
+}
+
+.comment-pin-resolved-icon {
+  position: absolute;
+  bottom: -4px;
+  right: -5px;
+  background: #166534;
+  color: #4ade80;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #211914;
+  font-size: 9px;
+}

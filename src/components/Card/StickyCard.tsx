@@ -48,7 +48,7 @@ export const StickyCard: React.FC<StickyCardProps> = ({
   const shadowRectRef = useRef<Konva.Rect>(null);
   const lastDragPos = useRef({ x: card.x, y: card.y });
   const colors = CARD_COLORS[card.color];
-  
+
   const displayTitle = card.title || 'Double-click to edit';
   const displayBody = card.body || '';
   const displayEyebrow = card.eyebrow || '';
