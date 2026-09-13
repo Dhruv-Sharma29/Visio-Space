@@ -9,7 +9,7 @@ import {
   IconTemplate,
   IconSoundOn, IconSoundOff,
   IconText, IconVoteDot,
-  IconImage,
+  IconImage, IconComment,
 } from '../Icons/Icons';
 import { getAllShapeDefinitions, getShapeDefinition } from '../Shape/shapeRegistry';
 import './CanvasToolbar.css';
@@ -137,6 +137,8 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({ onOpenExport, onOp
   const canUndo = historyIndex >= 0;
   const canRedo = historyIndex < history.length - 1;
 
+  const canEdit = useBoardStore(s => s.canEdit());
+
   const currentShapeDef = getShapeDefinition(activeShapeType);
   const CurrentShapeIcon = currentShapeDef.icon;
   const allShapes = getAllShapeDefinitions();
@@ -149,6 +151,7 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({ onOpenExport, onOp
     { id: 'cluster', icon: <IconGroup />, label: 'Group', shortcut: 'G' },
     { id: 'text', icon: <IconText />, label: 'Text', shortcut: 'T' },
     { id: 'vote', icon: <IconVoteDot />, label: 'Vote dot', shortcut: 'D' },
+    { id: 'comment', icon: <IconComment />, label: 'Comment', shortcut: 'M' },
     { id: 'hand', icon: <IconHand />, label: 'Pan', shortcut: 'H' },
   ];
 
@@ -191,12 +194,16 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({ onOpenExport, onOp
       <div className="toolbar-section">
         {TOOLS.map((tool) => {
           const isShapeTool = tool.id === 'shape';
+          const isEditTool = tool.id !== 'select' && tool.id !== 'hand' && tool.id !== 'comment';
+          const isDisabled = isEditTool && !canEdit;
+
           return (
             <div key={tool.id} className="toolbar-btn-wrapper">
               <button
-                className={`toolbar-btn ${activeTool === tool.id ? 'active' : ''}`}
-                onClick={() => handleToolClick(tool.id)}
-                title={`${tool.label} (${tool.shortcut})`}
+                className={`toolbar-btn ${activeTool === tool.id ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`}
+                onClick={() => !isDisabled && handleToolClick(tool.id)}
+                disabled={isDisabled}
+                title={isDisabled ? `${tool.label} (View-only)` : `${tool.label} (${tool.shortcut})`}
               >
                 {tool.icon}
                 <span className="toolbar-tooltip">

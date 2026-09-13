@@ -149,7 +149,7 @@ export interface ImageItem {
 }
 
 // ─── Tool ───────────────────────────────────────────────────────────
-export type Tool = 'select' | 'card' | 'shape' | 'connector' | 'cluster' | 'text' | 'vote' | 'hand';
+export type Tool = 'select' | 'card' | 'shape' | 'connector' | 'cluster' | 'text' | 'vote' | 'comment' | 'hand';
 export type ToolbarDock = 'left' | 'right' | 'top' | 'bottom';
 
 // ─── Viewport ───────────────────────────────────────────────────────
@@ -190,3 +190,128 @@ export interface BoardTemplate {
   icon: string;
   state: BoardState;
 }
+
+// ─── Permissions & Sharing ──────────────────────────────────────────
+export type BoardRole = 'owner' | 'editor' | 'viewer';
+export type PublicAccessLevel = 'private' | 'viewer' | 'editor';
+
+export interface BoardCollaborator {
+  userId: string;
+  username: string;
+  fullName: string;
+  avatarUrl?: string | null;
+  role: BoardRole;
+  joinedAt?: string;
+}
+
+export interface BoardShareSettings {
+  boardId: string;
+  publicAccess: PublicAccessLevel;
+  shareToken: string;
+  shareUrl: string;
+}
+
+// ─── Comments & Notifications ───────────────────────────────────────
+export interface CommentItem {
+  id: string;
+  boardId: string;
+  cardId?: string | null;
+  x: number;
+  y: number;
+  authorId?: string | null;
+  authorName: string;
+  authorAvatar?: string | null;
+  body: string;
+  parentCommentId?: string | null;
+  resolved: boolean;
+  resolvedBy?: string | null;
+  resolvedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  replies?: CommentItem[];
+}
+
+export interface InAppNotification {
+  id: string;
+  userId: string;
+  type: 'mention' | 'reply' | 'comment_resolve';
+  title: string;
+  body: string;
+  boardId: string;
+  commentId?: string | null;
+  cardId?: string | null;
+  x?: number;
+  y?: number;
+  read: boolean;
+  createdAt: string;
+}
+
+// ─── Version History & Snapshots ─────────────────────────────────────
+export interface BoardSnapshot {
+  id: string;
+  boardId: string;
+  name: string;
+  description?: string;
+  state: BoardState;
+  createdBy?: string | null;
+  createdByName: string;
+  createdAt: string;
+  itemCount: {
+    cards: number;
+    shapes: number;
+    clusters: number;
+  };
+}
+
+// ─── Activity Log ───────────────────────────────────────────────────
+export type ActivityActionType =
+  | 'card_add'
+  | 'card_delete'
+  | 'card_edit'
+  | 'shape_add'
+  | 'cluster_create'
+  | 'comment_add'
+  | 'comment_resolve'
+  | 'version_restore'
+  | 'version_create'
+  | 'board_share_update';
+
+export interface ActivityLogItem {
+  id: string;
+  boardId: string;
+  userId?: string | null;
+  userName: string;
+  userAvatar?: string | null;
+  action: ActivityActionType;
+  description: string;
+  metadata?: Record<string, unknown>;
+  createdAt: string;
+}
+
+// ─── In-Board Search ────────────────────────────────────────────────
+export type SearchMatchCategory = 'card' | 'shape' | 'text' | 'cluster' | 'comment';
+
+export interface SearchMatch {
+  id: string;
+  category: SearchMatchCategory;
+  title: string;
+  snippet: string;
+  x: number;
+  y: number;
+  width?: number;
+  height?: number;
+  color?: string;
+  commentId?: string;
+}
+
+// ─── Projects / Folders ─────────────────────────────────────────────
+export interface BoardProject {
+  id: string;
+  workspaceId: string;
+  name: string;
+  color: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+

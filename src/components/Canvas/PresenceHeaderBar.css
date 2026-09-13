@@ -1,0 +1,94 @@
+.presence-header-bar {
+  display: flex;
+  align-items: center;
+  margin-right: 4px;
+}
+
+.presence-avatar-stack {
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+}
+
+.presence-avatar-btn {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #3B7FD8;
+  background: #251e18;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -7px;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, z-index 0.15s ease;
+  user-select: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.presence-avatar-btn:hover {
+  transform: scale(1.15) translateY(-2px);
+  z-index: 10;
+}
+
+.presence-avatar-btn.following {
+  transform: scale(1.15);
+  z-index: 9;
+  animation: presencePulse 1.8s infinite ease-in-out;
+}
+
+@keyframes presencePulse {
+  0%, 100% {
+    box-shadow: 0 0 0 2px #d6a85f, 0 0 10px rgba(214, 168, 95, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 0 3px #d6a85f, 0 0 16px rgba(214, 168, 95, 0.9);
+  }
+}
+
+.presence-avatar-initial {
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.presence-avatar-emoji {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.presence-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.presence-following-dot {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid #1B1410;
+}
+
+.presence-overflow-badge {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(45, 36, 29, 0.9);
+  border: 1px solid rgba(244, 236, 216, 0.3);
+  color: #f4ecd8;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}

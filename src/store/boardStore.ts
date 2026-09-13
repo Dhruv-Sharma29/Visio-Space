@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import type {
   Card, Shape, Connector, Cluster, Tool, Viewport,
   CardColor, ShapeType, ShapeColor, ConnectorColor, ConnectorStyle, ClusterColor, TextItem, VoteDot, VoteColor,
-  BoardState, HistoryEntry, ToolbarDock, ImageItem,
+  BoardState, HistoryEntry, ToolbarDock, ImageItem, BoardRole,
 } from '../types/board';
 import { getShapeDefinition } from '../components/Shape/shapeRegistry';
 import { SoundEffects } from '../utils/soundEffects';
@@ -81,6 +81,11 @@ interface BoardStore {
   soundEnabled: boolean;
   toolbarDock: ToolbarDock;
   toolbarOffset: number;
+
+  // Permissions & Role
+  currentRole: BoardRole;
+  setCurrentRole: (role: BoardRole) => void;
+  canEdit: () => boolean;
 
   // History
   history: HistoryEntry[];
@@ -172,6 +177,13 @@ interface BoardStore {
   redo: () => void;
   pushHistory: () => void;
 
+  // Follow / Presence Mode
+  followingUserId: string | null;
+  setFollowingUserId: (userId: string | null) => void;
+
+  // Realtime Sync
+  applyRemoteBoardUpdate: (state: BoardState) => void;
+
   // Serialization
   exportToJSON: () => BoardState;
   importFromJSON: (state: BoardState) => void;
@@ -241,6 +253,14 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
   editingClusterId: null,
   confirmDeleteCluster: null,
   connectingFromId: null,
+  followingUserId: null,
+  setFollowingUserId: (userId: string | null) => set({ followingUserId: userId }),
+  currentRole: 'owner',
+  setCurrentRole: (role: BoardRole) => set({ currentRole: role }),
+  canEdit: () => {
+    const role = get().currentRole;
+    return role === 'owner' || role === 'editor';
+  },
   soundEnabled: typeof window !== 'undefined' ? (localStorage.getItem('visiospace_sound') ?? localStorage.getItem('affinity_sound')) !== 'false' : true,
   toolbarDock: initialToolbarPosition.dock,
   toolbarOffset: initialToolbarPosition.offset,
@@ -279,7 +299,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     if (!assignedClusterId) {
       const containing = clusters.find(
         cl => x >= cl.x - 10 && x + DEFAULT_CARD_WIDTH <= cl.x + cl.width + 10 &&
-              y >= cl.y - 10 && y + DEFAULT_CARD_HEIGHT <= cl.y + cl.height + 10
+          y >= cl.y - 10 && y + DEFAULT_CARD_HEIGHT <= cl.y + cl.height + 10
       );
       if (containing) {
         assignedClusterId = containing.id;
@@ -464,7 +484,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       let updatedClusterId = targetCard.clusterId;
       const currentContainingCluster = state.clusters.find(
         cl => x >= cl.x - 20 && x + targetCard.width <= cl.x + cl.width + 20 &&
-              y >= cl.y - 20 && y + targetCard.height <= cl.y + cl.height + 20
+          y >= cl.y - 20 && y + targetCard.height <= cl.y + cl.height + 20
       );
 
       if (currentContainingCluster) {
@@ -530,7 +550,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
 
     const containing = get().clusters.find(
       cl => x >= cl.x - 10 && x + shapeWidth <= cl.x + cl.width + 10 &&
-            y >= cl.y - 10 && y + shapeHeight <= cl.y + cl.height + 10
+        y >= cl.y - 10 && y + shapeHeight <= cl.y + cl.height + 10
     );
 
     const newShape: Shape = {
@@ -607,7 +627,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       let updatedClusterId = targetShape.clusterId;
       const currentContainingCluster = state.clusters.find(
         cl => x >= cl.x - 20 && x + targetShape.width <= cl.x + cl.width + 20 &&
-              y >= cl.y - 20 && y + targetShape.height <= cl.y + cl.height + 20
+          y >= cl.y - 20 && y + targetShape.height <= cl.y + cl.height + 20
       );
       if (currentContainingCluster) {
         updatedClusterId = currentContainingCluster.id;
@@ -630,14 +650,14 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       const nextShapes = state.shapes.map(s =>
         s.id === id
           ? {
-              ...s,
-              width: Math.max(20, width),
-              height: Math.max(20, height),
-              ...(x !== undefined ? { x } : {}),
-              ...(y !== undefined ? { y } : {}),
-              ...(rotation !== undefined ? { rotation } : {}),
-              updatedAt: new Date().toISOString(),
-            }
+            ...s,
+            width: Math.max(20, width),
+            height: Math.max(20, height),
+            ...(x !== undefined ? { x } : {}),
+            ...(y !== undefined ? { y } : {}),
+            ...(rotation !== undefined ? { rotation } : {}),
+            updatedAt: new Date().toISOString(),
+          }
           : s
       );
       const nextClusters = recalculateClusters(state.clusters, state.cards, nextShapes);
@@ -729,11 +749,11 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
 
     const adoptedCards = get().cards.filter(
       c => c.x >= x - 10 && c.x + c.width <= x + width + 10 &&
-           c.y >= y - 10 && c.y + c.height <= y + height + 10
+        c.y >= y - 10 && c.y + c.height <= y + height + 10
     );
     const adoptedShapes = get().shapes.filter(
       s => s.x >= x - 10 && s.x + s.width <= x + width + 10 &&
-           s.y >= y - 10 && s.y + s.height <= y + height + 10
+        s.y >= y - 10 && s.y + s.height <= y + height + 10
     );
 
     const adoptedCardIds = new Set(adoptedCards.map(c => c.id));
@@ -871,12 +891,12 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       clusters: state.clusters.map(c =>
         c.id === id
           ? {
-              ...c,
-              width: Math.max(100, Math.round(width)),
-              height: Math.max(80, Math.round(height)),
-              ...(x !== undefined ? { x: Math.round(x) } : {}),
-              ...(y !== undefined ? { y: Math.round(y) } : {}),
-            }
+            ...c,
+            width: Math.max(100, Math.round(width)),
+            height: Math.max(80, Math.round(height)),
+            ...(x !== undefined ? { x: Math.round(x) } : {}),
+            ...(y !== undefined ? { y: Math.round(y) } : {}),
+          }
           : c
       ),
     }));
@@ -1318,7 +1338,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       if (card.clusterId) return card;
       const containing = rawClusters.find(
         cl => card.x >= cl.x - 20 && card.x + card.width <= cl.x + cl.width + 20 &&
-              card.y >= cl.y - 20 && card.y + card.height <= cl.y + cl.height + 20
+          card.y >= cl.y - 20 && card.y + card.height <= cl.y + cl.height + 20
       );
       return containing ? { ...card, clusterId: containing.id } : card;
     });
@@ -1327,7 +1347,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       if (shape.clusterId) return shape;
       const containing = rawClusters.find(
         cl => shape.x >= cl.x - 20 && shape.x + shape.width <= cl.x + cl.width + 20 &&
-              shape.y >= cl.y - 20 && shape.y + shape.height <= cl.y + cl.height + 20
+          shape.y >= cl.y - 20 && shape.y + shape.height <= cl.y + cl.height + 20
       );
       return containing ? { ...shape, clusterId: containing.id } : shape;
     });
@@ -1368,7 +1388,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       if (card.clusterId) return card;
       const containing = rawClusters.find(
         cl => card.x >= cl.x - 20 && card.x + card.width <= cl.x + cl.width + 20 &&
-              card.y >= cl.y - 20 && card.y + card.height <= cl.y + cl.height + 20
+          card.y >= cl.y - 20 && card.y + card.height <= cl.y + cl.height + 20
       );
       return containing ? { ...card, clusterId: containing.id } : card;
     });
@@ -1377,7 +1397,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       if (shape.clusterId) return shape;
       const containing = rawClusters.find(
         cl => shape.x >= cl.x - 20 && shape.x + shape.width <= cl.x + cl.width + 20 &&
-              shape.y >= cl.y - 20 && shape.y + shape.height <= cl.y + cl.height + 20
+          shape.y >= cl.y - 20 && shape.y + shape.height <= cl.y + cl.height + 20
       );
       return containing ? { ...shape, clusterId: containing.id } : shape;
     });
@@ -1518,6 +1538,73 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       editingShapeId: null,
       editingClusterId: null,
       confirmDeleteCluster: null,
+    });
+  },
+
+  applyRemoteBoardUpdate: (remoteState) => {
+    const safeState = normalizeBoardState(remoteState);
+    const {
+      editingCardId,
+      editingShapeId,
+      editingTextId,
+      editingClusterId,
+      editingConnectorId,
+      cards: localCards,
+      shapes: localShapes,
+      textItems: localTextItems,
+      clusters: localClusters,
+      connectors: localConnectors,
+    } = get();
+
+    // Preserve local elements currently being edited so remote sync doesn't stomp active editing
+    const updatedCards = safeState.cards.map((c) => {
+      if (editingCardId === c.id) {
+        const local = localCards.find((lc) => lc.id === c.id);
+        return local || c;
+      }
+      return c;
+    });
+
+    const updatedShapes = safeState.shapes.map((s) => {
+      if (editingShapeId === s.id) {
+        const local = localShapes.find((ls) => ls.id === s.id);
+        return local || s;
+      }
+      return s;
+    });
+
+    const updatedTextItems = (safeState.textItems || []).map((t) => {
+      if (editingTextId === t.id) {
+        const local = localTextItems.find((lt) => lt.id === t.id);
+        return local || t;
+      }
+      return t;
+    });
+
+    const updatedClusters = (safeState.clusters || []).map((cl) => {
+      if (editingClusterId === cl.id) {
+        const local = localClusters.find((lcl) => lcl.id === cl.id);
+        return local || cl;
+      }
+      return cl;
+    });
+
+    const updatedConnectors = (safeState.connectors || []).map((conn) => {
+      if (editingConnectorId === conn.id) {
+        const local = localConnectors.find((lc) => lc.id === conn.id);
+        return local || conn;
+      }
+      return conn;
+    });
+
+    set({
+      cards: updatedCards,
+      shapes: updatedShapes,
+      textItems: updatedTextItems,
+      clusters: updatedClusters,
+      connectors: updatedConnectors,
+      voteDots: safeState.voteDots || [],
+      images: safeState.images || [],
     });
   },
 

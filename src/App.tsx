@@ -23,9 +23,34 @@ import { useAuth } from './auth/AuthContext';
 import { useBoardStore } from './store/boardStore';
 import { boardService } from './services/boardService';
 import { SettingsModal } from './components/Settings/SettingsModal';
-import { IconSettings } from './components/Icons/Icons';
-import type { Tool } from './types/board';
+import { IconSettings, IconShare, IconBell, IconHistory, IconActivity, IconSearch } from './components/Icons/Icons';
+import { realtimeService } from './services/realtimeService';
+import { PresenceHeaderBar } from './components/Canvas/PresenceHeaderBar';
+import { FollowBanner } from './components/Canvas/FollowBanner';
+import { ShareModal } from './components/ShareModal/ShareModal';
+import { sharingService } from './services/sharingService';
+import { CommentPinsOverlay } from './components/Comments/CommentPinsOverlay';
+import { CommentThreadPopover } from './components/Comments/CommentThreadPopover';
+import { NotificationDrawer } from './components/Notifications/NotificationDrawer';
+import { CanvasSearchBar } from './components/Canvas/CanvasSearchBar';
+import { VersionHistoryDrawer } from './components/VersionHistory/VersionHistoryDrawer';
+import { ActivityDrawer } from './components/ActivityLog/ActivityDrawer';
+import { notificationService } from './services/notificationService';
+import { commentService } from './services/commentService';
+import type { Tool, InAppNotification, CommentItem, SearchMatch, BoardState } from './types/board';
 import './App.css';
+
+function getHashParams() {
+  if (typeof window === 'undefined') return { token: null, role: null };
+  const hash = window.location.hash;
+  const qIdx = hash.indexOf('?');
+  if (qIdx === -1) return { token: null, role: null };
+  const params = new URLSearchParams(hash.slice(qIdx));
+  return {
+    token: params.get('token'),
+    role: params.get('role'),
+  };
+}
 
 // ─── Keyboard shortcut map ──────────────────────────────────────────
 const TOOL_SHORTCUTS: Record<string, Tool> = {
@@ -37,6 +62,7 @@ const TOOL_SHORTCUTS: Record<string, Tool> = {
   h: 'hand',
   t: 'text',
   d: 'vote',
+  m: 'comment',
 };
 
 interface AppProps {
@@ -71,6 +97,12 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
     textItems,
     voteDots,
     images,
+    viewport,
+    followingUserId,
+    setFollowingUserId,
+    currentRole,
+    setCurrentRole,
+    canEdit,
   } = useBoardStore();
 
   const [exportOpen, setExportOpen] = useState(false);
@@ -78,10 +110,48 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
   const [importOpen, setImportOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [notificationDrawerOpen, setNotificationDrawerOpen] = useState(false);
+  const [unreadNotifsCount, setUnreadNotifsCount] = useState(0);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [activityOpen, setActivityOpen] = useState(false);
+  const [comments, setComments] = useState<CommentItem[]>([]);
+  const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
+  const [draftComment, setDraftComment] = useState<{ x: number; y: number; cardId?: string | null } | null>(null);
   const [boardTitle, setBoardTitle] = useState('Untitled Board');
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'local'>('saved');
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const isInitialLoad = useRef(true);
+
+  const [guestId] = useState<string>(() => {
+    if (typeof window === 'undefined') return '';
+    let gid = sessionStorage.getItem('visiospace_guest_id');
+    if (!gid) {
+      gid = `guest_${Math.random().toString(36).slice(2, 8)}`;
+      sessionStorage.setItem('visiospace_guest_id', gid);
+    }
+    return gid;
+  });
+
+  const effectiveUserId = user?.id || guestId;
+  const currentUserName = profile?.username || (user?.email ? user.email.split('@')[0] : `Guest_${guestId.slice(-4)}`);
+  const currentUserAvatar = profile?.avatar_url || null;
+
+  // Poll / refresh unread notification count
+  useEffect(() => {
+    if (!effectiveUserId) return;
+    notificationService.getUnreadCount(effectiveUserId).then(setUnreadNotifsCount);
+  }, [effectiveUserId, notificationDrawerOpen]);
+
+  // Resolve user role for the current board
+  useEffect(() => {
+    if (!boardId) return;
+    const { token, role: queryRole } = getHashParams();
+    sharingService.resolveUserRole(boardId, user?.id, token, queryRole).then(role => {
+      setCurrentRole(role);
+    });
+  }, [boardId, user?.id, setCurrentRole]);
 
   // Load board if boardId is passed
   useEffect(() => {
@@ -99,25 +169,52 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
     };
   }, [boardId, user]);
 
-  // Debounced auto-save
+  // Load comments for pins and search indexing
   useEffect(() => {
     if (!boardId) return;
+    let active = true;
+    commentService.getBoardComments(boardId).then(items => {
+      if (!active) return;
+      setComments(items);
+    });
+
+    const unsubscribe = realtimeService.onCommentUpdate(() => {
+      commentService.getBoardComments(boardId).then(items => {
+        if (!active) return;
+        setComments(items);
+      });
+    });
+
+    return () => {
+      active = false;
+      unsubscribe();
+    };
+  }, [boardId]);
+
+  // Debounced auto-save and realtime broadcast
+  useEffect(() => {
+    if (!boardId) return;
+    if (!canEdit()) return;
     if (isInitialLoad.current) {
       isInitialLoad.current = false;
       return;
     }
 
+    const currentState = {
+      cards,
+      shapes,
+      connectors,
+      clusters,
+      textItems,
+      voteDots,
+      images,
+    };
+
+    // Broadcast immediate live update to active peers
+    realtimeService.broadcastBoardUpdate(currentState);
+
     setSaveStatus('saving');
     const timer = setTimeout(async () => {
-      const currentState = {
-        cards,
-        shapes,
-        connectors,
-        clusters,
-        textItems,
-        voteDots,
-        images,
-      };
       await boardService.saveBoardState(boardId, currentState);
       setSaveStatus(user ? 'saved' : 'local');
     }, 1200);
@@ -125,12 +222,88 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
     return () => clearTimeout(timer);
   }, [cards, shapes, connectors, clusters, textItems, voteDots, images, boardId, user]);
 
+  // Join board realtime presence & multiplayer room
+  useEffect(() => {
+    if (!boardId) return;
+
+    realtimeService.joinBoard(boardId, {
+      userId: effectiveUserId,
+      username: currentUserName,
+      fullName: profile?.full_name || (user?.email ? user.email : 'Guest Explorer'),
+      avatarUrl: currentUserAvatar || '',
+    });
+
+    return () => {
+      realtimeService.leaveBoard();
+    };
+  }, [boardId, effectiveUserId, currentUserName, currentUserAvatar, profile, user]);
+
+  // Listen for remote peer board updates
+  useEffect(() => {
+    if (!boardId) return;
+
+    return realtimeService.onBoardUpdate(({ state }) => {
+      useBoardStore.getState().applyRemoteBoardUpdate(state);
+    });
+  }, [boardId]);
+
   const handleTitleChange = async (newTitle: string) => {
+    if (!canEdit()) return;
     setBoardTitle(newTitle);
     if (boardId) {
       await boardService.renameBoard(boardId, newTitle);
     }
   };
+
+  const handleOpenDraftComment = useCallback((coords: { x: number; y: number; cardId?: string | null }) => {
+    setActiveCommentId(null);
+    setDraftComment(coords);
+  }, []);
+
+  const handleNotificationClick = useCallback((notif: InAppNotification) => {
+    if (typeof notif.x === 'number' && typeof notif.y === 'number') {
+      const scale = useBoardStore.getState().viewport.scale;
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      useBoardStore.getState().setViewport({
+        x: centerX - notif.x * scale,
+        y: centerY - notif.y * scale,
+        scale,
+      });
+    }
+    if (notif.commentId) {
+      setActiveCommentId(notif.commentId);
+      setDraftComment(null);
+    }
+  }, []);
+
+  const handleNavigateToSearchMatch = useCallback((match: SearchMatch) => {
+    const scale = useBoardStore.getState().viewport.scale;
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const targetWidth = match.width || 120;
+    const targetHeight = match.height || 80;
+
+    useBoardStore.getState().setViewport({
+      x: centerX - (match.x + targetWidth / 2) * scale,
+      y: centerY - (match.y + targetHeight / 2) * scale,
+      scale,
+    });
+
+    if (match.category === 'card') {
+      useBoardStore.getState().setSelectedIds([match.id]);
+    } else if (match.category === 'comment' && match.commentId) {
+      setActiveCommentId(match.commentId);
+    }
+  }, []);
+
+  const handleRestoreState = useCallback((restoredState: BoardState) => {
+    useBoardStore.getState().importFromJSON(restoredState);
+    if (boardId) {
+      boardService.saveBoardState(boardId, restoredState);
+      realtimeService.broadcastBoardUpdate(restoredState);
+    }
+  }, [boardId]);
 
   // ─── Keyboard shortcuts ────────────────────────────────────────
   const handleKeyDown = useCallback(
@@ -147,10 +320,26 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
         exportOpen ||
         templatesOpen ||
         importOpen ||
-        authModalOpen
+        authModalOpen ||
+        shareOpen ||
+        notificationDrawerOpen ||
+        activeCommentId ||
+        draftComment ||
+        searchOpen ||
+        historyOpen ||
+        activityOpen
       ) {
-        if (e.key === 'Escape' && authModalOpen) {
-          setAuthModalOpen(false);
+        if (e.key === 'Escape') {
+          if (authModalOpen) setAuthModalOpen(false);
+          if (shareOpen) setShareOpen(false);
+          if (notificationDrawerOpen) setNotificationDrawerOpen(false);
+          if (searchOpen) setSearchOpen(false);
+          if (historyOpen) setHistoryOpen(false);
+          if (activityOpen) setActivityOpen(false);
+          if (activeCommentId || draftComment) {
+            setActiveCommentId(null);
+            setDraftComment(null);
+          }
         }
         return;
       }
@@ -161,10 +350,91 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
 
       const key = e.key.toLowerCase();
 
+      // Navigation & Read-only friendly shortcuts:
+      // Cmd/Ctrl + F → search in canvas
+      if (key === 'f' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setSearchOpen(true);
+        return;
+      }
+
       // Cmd/Ctrl + E → export
       if (key === 'e' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setExportOpen(true);
+        return;
+      }
+
+      // Space → hand tool (while held)
+      if (key === ' ' && !e.repeat) {
+        e.preventDefault();
+        setActiveTool('hand');
+        return;
+      }
+
+      // Escape → cancel connecting / clear selection / cancel follow mode / close comment / close search
+      if (key === 'escape') {
+        if (searchOpen) {
+          setSearchOpen(false);
+          return;
+        }
+        if (historyOpen) {
+          setHistoryOpen(false);
+          return;
+        }
+        if (activityOpen) {
+          setActivityOpen(false);
+          return;
+        }
+        if (notificationDrawerOpen) {
+          setNotificationDrawerOpen(false);
+          return;
+        }
+        if (activeCommentId || draftComment) {
+          setActiveCommentId(null);
+          setDraftComment(null);
+          return;
+        }
+        if (followingUserId) {
+          setFollowingUserId(null);
+        }
+        if (connectingFromId) {
+          setConnectingFromId(null);
+        }
+        setActiveTool('select');
+        return;
+      }
+
+      // F → zoom to fit
+      if (key === 'f' && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        useBoardStore.getState().zoomToFit();
+        return;
+      }
+
+      // + / = → zoom in
+      if ((key === '+' || key === '=') && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        useBoardStore.getState().zoomIn();
+        return;
+      }
+
+      // - → zoom out
+      if (key === '-' && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        useBoardStore.getState().zoomOut();
+        return;
+      }
+
+      // M → toggle comment tool (allowed for both editors and viewers)
+      if (key === 'm' && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        setActiveTool(activeTool === 'comment' ? 'select' : 'comment');
+        return;
+      }
+
+      // If user is in read-only mode, block all remaining editing shortcuts
+      if (!canEdit()) {
         return;
       }
 
@@ -205,13 +475,6 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
         return;
       }
 
-      // Space → hand tool (while held)
-      if (key === ' ' && !e.repeat) {
-        e.preventDefault();
-        setActiveTool('hand');
-        return;
-      }
-
       // Delete / Backspace → delete selected (opens confirmation for groups)
       if ((key === 'delete' || key === 'backspace') && selectedIds.length > 0) {
         e.preventDefault();
@@ -233,36 +496,6 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
       ) {
         e.preventDefault();
         redo();
-        return;
-      }
-
-      // Escape → cancel connecting / clear selection
-      if (key === 'escape') {
-        if (connectingFromId) {
-          setConnectingFromId(null);
-        }
-        setActiveTool('select');
-        return;
-      }
-
-      // F → zoom to fit
-      if (key === 'f' && !e.metaKey && !e.ctrlKey) {
-        e.preventDefault();
-        useBoardStore.getState().zoomToFit();
-        return;
-      }
-
-      // + / = → zoom in
-      if ((key === '+' || key === '=') && !e.metaKey && !e.ctrlKey) {
-        e.preventDefault();
-        useBoardStore.getState().zoomIn();
-        return;
-      }
-
-      // - → zoom out
-      if (key === '-' && !e.metaKey && !e.ctrlKey) {
-        e.preventDefault();
-        useBoardStore.getState().zoomOut();
         return;
       }
     },
@@ -289,6 +522,16 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
       templatesOpen,
       importOpen,
       authModalOpen,
+      shareOpen,
+      canEdit,
+      followingUserId,
+      setFollowingUserId,
+      notificationDrawerOpen,
+      activeCommentId,
+      draftComment,
+      searchOpen,
+      historyOpen,
+      activityOpen,
     ]
   );
 
@@ -356,19 +599,75 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
           )}
           <input
             type="text"
-            className="canvas-title-input"
+            className={`canvas-title-input ${!canEdit() ? 'readonly' : ''}`}
             value={boardTitle}
             onChange={e => handleTitleChange(e.target.value)}
-            title="Click to rename board"
+            readOnly={!canEdit()}
+            title={!canEdit() ? 'Board title (View-only)' : 'Click to rename board'}
           />
         </div>
 
         <div className="canvas-top-right">
-          <span className={`canvas-save-status ${saveStatus}`}>
-            {saveStatus === 'saving' && 'Saving…'}
-            {saveStatus === 'saved' && 'Saved ✓'}
-            {saveStatus === 'local' && 'Local saved ✓'}
-          </span>
+          <PresenceHeaderBar />
+          {currentRole === 'viewer' ? (
+            <span className="canvas-viewer-badge" title="You have read-only access to this board">
+              👁 Viewer
+            </span>
+          ) : (
+            <span className={`canvas-save-status ${saveStatus}`}>
+              {saveStatus === 'saving' && 'Saving…'}
+              {saveStatus === 'saved' && 'Saved ✓'}
+              {saveStatus === 'local' && 'Local saved ✓'}
+            </span>
+          )}
+          <button
+            type="button"
+            className="canvas-notif-btn"
+            onClick={() => setSearchOpen(prev => !prev)}
+            title="Search canvas (⌘F)"
+            aria-label="Search canvas"
+          >
+            <IconSearch size={16} />
+          </button>
+          <button
+            type="button"
+            className="canvas-notif-btn"
+            onClick={() => setActivityOpen(prev => !prev)}
+            title="Board Activity"
+            aria-label="Board Activity"
+          >
+            <IconActivity size={16} />
+          </button>
+          <button
+            type="button"
+            className="canvas-notif-btn"
+            onClick={() => setHistoryOpen(prev => !prev)}
+            title="Version History"
+            aria-label="Version History"
+          >
+            <IconHistory size={16} />
+          </button>
+          <button
+            type="button"
+            className="canvas-notif-btn"
+            onClick={() => setNotificationDrawerOpen(prev => !prev)}
+            title="Notifications"
+            aria-label="Notifications"
+          >
+            <IconBell size={17} />
+            {unreadNotifsCount > 0 && (
+              <span className="notif-badge">{unreadNotifsCount > 9 ? '9+' : unreadNotifsCount}</span>
+            )}
+          </button>
+          <button
+            type="button"
+            className="canvas-share-btn"
+            onClick={() => setShareOpen(true)}
+            title="Share board"
+          >
+            <IconShare size={15} />
+            <span>Share</span>
+          </button>
           {user && (
             <button
               type="button"
@@ -383,40 +682,135 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
         </div>
       </header>
 
+      {/* Follow mode banner */}
+      <FollowBanner />
+
       {/* Hint bar (contextual) */}
       <div className="app-hint-bar">
-        {activeTool === 'select' && !selectedIds.length && (
-          <span><kbd>Double-click</kbd> to add a card · Scroll to zoom · <kbd>N</kbd> new card · <kbd>S</kbd> shape · <kbd>G</kbd> group · <kbd>C</kbd> connect</span>
+        {currentRole === 'viewer' ? (
+          <span>👁 <strong>View-only mode</strong> · Scroll or <kbd>+</kbd>/<kbd>-</kbd> to zoom · Drag canvas or hold <kbd>Space</kbd> to pan · <kbd>⌘F</kbd> search · <kbd>M</kbd> comment · <kbd>⌘E</kbd> export</span>
+        ) : (
+          <>
+            {activeTool === 'select' && !selectedIds.length && (
+              <span><kbd>Double-click</kbd> to add a card · Scroll to zoom · <kbd>⌘F</kbd> search · <kbd>N</kbd> new card · <kbd>S</kbd> shape · <kbd>G</kbd> group · <kbd>C</kbd> connect · <kbd>M</kbd> comment</span>
+            )}
+            {activeTool === 'select' && selectedIds.length > 0 && (
+              <span>
+                {selectedIds.length} selected · <kbd>G</kbd> / <kbd>⌘G</kbd> group · <kbd>Delete</kbd> remove · <kbd>Shift</kbd>+click multi-select · Drag handles to resize · Right-click for options
+              </span>
+            )}
+            {activeTool === 'card' && (
+              <span>Click to place a card · <kbd>Esc</kbd> cancel</span>
+            )}
+            {activeTool === 'shape' && (
+              <span>Click to place or drag to size shape · <kbd>Esc</kbd> cancel</span>
+            )}
+            {activeTool === 'connector' && !connectingFromId && (
+              <span>Click a card or shape to start connection · <kbd>Esc</kbd> cancel</span>
+            )}
+            {activeTool === 'connector' && connectingFromId && (
+              <span>Click another card or shape to connect · <kbd>Esc</kbd> cancel</span>
+            )}
+            {activeTool === 'cluster' && (
+              <span>Click or drag to create a group container · <kbd>Esc</kbd> cancel</span>
+            )}
+            {activeTool === 'hand' && (
+              <span>Drag to pan · Release <kbd>Space</kbd> to return</span>
+            )}
+            {activeTool === 'text' && <span>Click to place text · <kbd>Esc</kbd> cancel</span>}
+            {activeTool === 'vote' && <span>Click to place a voting dot · <kbd>D</kbd> vote tool</span>}
+            {activeTool === 'comment' && <span>Click any card or canvas spot to leave a comment · <kbd>Esc</kbd> cancel</span>}
+          </>
         )}
-        {activeTool === 'select' && selectedIds.length > 0 && (
-          <span>
-            {selectedIds.length} selected · <kbd>G</kbd> / <kbd>⌘G</kbd> group · <kbd>Delete</kbd> remove · <kbd>Shift</kbd>+click multi-select · Drag handles to resize · Right-click for options
-          </span>
-        )}
-        {activeTool === 'card' && (
-          <span>Click to place a card · <kbd>Esc</kbd> cancel</span>
-        )}
-        {activeTool === 'shape' && (
-          <span>Click to place or drag to size shape · <kbd>Esc</kbd> cancel</span>
-        )}
-        {activeTool === 'connector' && !connectingFromId && (
-          <span>Click a card or shape to start connection · <kbd>Esc</kbd> cancel</span>
-        )}
-        {activeTool === 'connector' && connectingFromId && (
-          <span>Click another card or shape to connect · <kbd>Esc</kbd> cancel</span>
-        )}
-        {activeTool === 'cluster' && (
-          <span>Click or drag to create a group container · <kbd>Esc</kbd> cancel</span>
-        )}
-        {activeTool === 'hand' && (
-          <span>Drag to pan · Release <kbd>Space</kbd> to return</span>
-        )}
-        {activeTool === 'text' && <span>Click to place text · <kbd>Esc</kbd> cancel</span>}
-        {activeTool === 'vote' && <span>Click to place a voting dot · <kbd>D</kbd> vote tool</span>}
       </div>
 
       {/* Canvas */}
-      <InfiniteCanvas />
+      <InfiniteCanvas onOpenDraftComment={handleOpenDraftComment} />
+
+      {/* Comment Pins Overlay on Canvas */}
+      {boardId && (
+        <CommentPinsOverlay
+          boardId={boardId}
+          viewport={viewport}
+          cards={cards}
+          activeCommentId={activeCommentId}
+          onSelectComment={(id) => {
+            setActiveCommentId(id);
+            setDraftComment(null);
+          }}
+        />
+      )}
+
+      {/* Active Comment Thread or Draft Popover */}
+      {boardId && (activeCommentId || draftComment) && (
+        <CommentThreadPopover
+          boardId={boardId}
+          commentId={activeCommentId}
+          draftLocation={draftComment}
+          viewport={viewport}
+          cards={cards}
+          onClose={() => {
+            setActiveCommentId(null);
+            setDraftComment(null);
+          }}
+          onCommentCreated={(c) => {
+            setDraftComment(null);
+            setActiveCommentId(c.id);
+          }}
+          currentUserId={effectiveUserId}
+          currentUserName={currentUserName}
+          currentUserAvatar={currentUserAvatar}
+          isOwner={currentRole === 'owner'}
+        />
+      )}
+
+      {/* Notifications Drawer */}
+      <NotificationDrawer
+        isOpen={notificationDrawerOpen}
+        onClose={() => setNotificationDrawerOpen(false)}
+        userId={effectiveUserId}
+        onNotificationClick={handleNotificationClick}
+        onUnreadCountChange={setUnreadNotifsCount}
+      />
+
+      {/* In-Board Canvas Search Overlay */}
+      <CanvasSearchBar
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        cards={cards}
+        shapes={shapes}
+        clusters={clusters}
+        textItems={textItems}
+        comments={comments}
+        viewport={viewport}
+        onNavigateToMatch={handleNavigateToSearchMatch}
+      />
+
+      {/* Version History Drawer */}
+      <VersionHistoryDrawer
+        isOpen={historyOpen}
+        onClose={() => setHistoryOpen(false)}
+        boardId={boardId || ''}
+        currentState={{
+          cards,
+          shapes,
+          connectors,
+          clusters,
+          textItems,
+          voteDots,
+          images,
+        }}
+        currentUserId={effectiveUserId}
+        currentUserName={currentUserName}
+        onRestoreState={handleRestoreState}
+      />
+
+      {/* Activity Log Drawer */}
+      <ActivityDrawer
+        isOpen={activityOpen}
+        onClose={() => setActivityOpen(false)}
+        boardId={boardId || ''}
+      />
 
       {/* Toolbar */}
       <CanvasToolbar
@@ -429,32 +823,32 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
       <CardDetailModal />
 
       {/* Card Editor */}
-      <CardEditor />
-      <TextEditor />
+      {canEdit() && <CardEditor />}
+      {canEdit() && <TextEditor />}
 
       {/* Shape Text Editor */}
-      <ShapeTextEditor />
+      {canEdit() && <ShapeTextEditor />}
 
       {/* Connector Label Editor */}
-      <ConnectorLabelEditor />
+      {canEdit() && <ConnectorLabelEditor />}
 
       {/* Cluster / Group Editor */}
-      <ClusterEditor />
+      {canEdit() && <ClusterEditor />}
 
       {/* Floating Format Bar for selected card */}
-      <FloatingFormatBar />
+      {canEdit() && <FloatingFormatBar />}
 
       {/* Floating Format Bar for selected shape */}
-      <ShapeFormatBar />
+      {canEdit() && <ShapeFormatBar />}
 
       {/* Shape options for selected images */}
-      <ImageFormatBar />
+      {canEdit() && <ImageFormatBar />}
 
       {/* Floating Format Bar for selected cluster/group */}
-      <ClusterFormatBar />
+      {canEdit() && <ClusterFormatBar />}
 
       {/* Confirm Delete Group Modal */}
-      <ConfirmDeleteModal />
+      {canEdit() && <ConfirmDeleteModal />}
 
       {/* Context Menu */}
       <ContextMenu />
@@ -468,6 +862,14 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
       {/* Sensemaking Templates Modal */}
       <TemplateModal isOpen={templatesOpen} onClose={() => setTemplatesOpen(false)} />
       <ImportModal isOpen={importOpen} onClose={() => setImportOpen(false)} />
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={shareOpen}
+        onClose={() => setShareOpen(false)}
+        boardId={boardId || ''}
+        boardTitle={boardTitle}
+      />
 
       {/* In-canvas Auth Modal for Guest sign-in/up */}
       {authModalOpen && (

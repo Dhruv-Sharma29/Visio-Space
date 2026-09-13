@@ -2,9 +2,11 @@ import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { useAuth } from '../../auth/AuthContext';
 import { workspaceService, type Workspace } from '../../services/workspaceService';
 import { boardService, type BoardSummary } from '../../services/boardService';
+import { projectService } from '../../services/projectService';
 import { BOARD_TEMPLATES } from '../../data/templates';
-import { IconImport, IconTrash, IconEdit, IconCopy, IconPushpin, IconSettings } from '../Icons/Icons';
+import { IconImport, IconTrash, IconEdit, IconCopy, IconPushpin, IconSettings, IconFolder } from '../Icons/Icons';
 import { SettingsModal } from '../Settings/SettingsModal';
+import type { BoardProject } from '../../types/board';
 import './Dashboard.css';
 
 interface DashboardProps {
@@ -22,6 +24,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [currentWorkspace, setCurrentWorkspace] = useState<Workspace | null>(null);
   const [boards, setBoards] = useState<BoardSummary[]>([]);
+  const [projects, setProjects] = useState<BoardProject[]>([]);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -30,6 +34,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [newBoardModalOpen, setNewBoardModalOpen] = useState(false);
   const [newWorkspaceModalOpen, setNewWorkspaceModalOpen] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
+  const [newProjectModalOpen, setNewProjectModalOpen] = useState(false);
+  const [newProjectName, setNewProjectName] = useState('');
+  const [newProjectColor, setNewProjectColor] = useState('#d6a85f');
+  const [movingBoard, setMovingBoard] = useState<BoardSummary | null>(null);
   const [renamingBoard, setRenamingBoard] = useState<BoardSummary | null>(null);
   const [renameTitle, setRenameTitle] = useState('');
   const [activeMenuBoardId, setActiveMenuBoardId] = useState<string | null>(null);
@@ -100,17 +108,59 @@ export const Dashboard: React.FC<DashboardProps> = ({
       if (!active) return;
       setBoards(bList);
     });
+    projectService.getProjects(currentWorkspace.id).then(pList => {
+      if (!active) return;
+      setProjects(pList);
+    });
     return () => {
       active = false;
     };
   }, [currentWorkspace, user?.id]);
 
-  // Filtered boards
+  // Filtered boards by project and search query
   const filteredBoards = useMemo(() => {
-    if (!searchQuery.trim()) return boards;
-    const query = searchQuery.toLowerCase();
-    return boards.filter(b => b.title.toLowerCase().includes(query));
-  }, [boards, searchQuery]);
+    let result = boards;
+    if (selectedProjectId) {
+      result = result.filter(b => b.projectId === selectedProjectId);
+    }
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(b => b.title.toLowerCase().includes(query));
+    }
+    return result;
+  }, [boards, selectedProjectId, searchQuery]);
+
+  const handleCreateProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentWorkspace || !newProjectName.trim()) return;
+    const created = await projectService.createProject(
+      currentWorkspace.id,
+      newProjectName.trim(),
+      newProjectColor
+    );
+    setProjects(prev => [...prev, created]);
+    setSelectedProjectId(created.id);
+    setNewProjectName('');
+    setNewProjectModalOpen(false);
+  };
+
+  const handleAssignProject = async (boardId: string, projId: string | null) => {
+    await projectService.assignBoardToProject(boardId, projId);
+    setBoards(prev =>
+      prev.map(b => (b.id === boardId ? { ...b, projectId: projId } : b))
+    );
+    setMovingBoard(null);
+  };
+
+  const handleDeleteProject = async (projId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!currentWorkspace || !window.confirm('Delete this project folder? Boards inside will not be deleted.')) return;
+    await projectService.deleteProject(currentWorkspace.id, projId);
+    setProjects(prev => prev.filter(p => p.id !== projId));
+    if (selectedProjectId === projId) {
+      setSelectedProjectId(null);
+    }
+  };
 
   // Create a new blank board or from a template
   const handleCreateBoard = async (title: string, templateId?: string) => {
@@ -314,6 +364,56 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </div>
 
+        {/* Project Folders Navigation Bar */}
+        <div className="dashboard-projects-bar">
+          <button
+            type="button"
+            className={`dashboard-project-pill ${selectedProjectId === null ? 'active' : ''}`}
+            onClick={() => setSelectedProjectId(null)}
+          >
+            <IconFolder size={14} />
+            <span>All Boards</span>
+            <span style={{ opacity: 0.65 }}>({boards.length})</span>
+          </button>
+
+          {projects.map((proj) => {
+            const count = boards.filter((b) => b.projectId === proj.id).length;
+            return (
+              <button
+                key={proj.id}
+                type="button"
+                className={`dashboard-project-pill ${selectedProjectId === proj.id ? 'active' : ''}`}
+                onClick={() => setSelectedProjectId(proj.id)}
+              >
+                <span
+                  className="dashboard-project-dot"
+                  style={{ backgroundColor: proj.color }}
+                />
+                <span>{proj.name}</span>
+                <span style={{ opacity: 0.65 }}>({count})</span>
+                {selectedProjectId === proj.id && (
+                  <span
+                    style={{ marginLeft: 4, opacity: 0.6, cursor: 'pointer', fontSize: 13 }}
+                    title="Delete project folder"
+                    onClick={(e) => handleDeleteProject(proj.id, e)}
+                  >
+                    ×
+                  </span>
+                )}
+              </button>
+            );
+          })}
+
+          <button
+            type="button"
+            className="dashboard-add-project-btn"
+            onClick={() => setNewProjectModalOpen(true)}
+            title="Create new project folder"
+          >
+            + New Project
+          </button>
+        </div>
+
         {/* Board Cards Grid */}
         {loading ? (
           <div className="dashboard-loading">Loading your boards…</div>
@@ -322,7 +422,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <div className="dashboard-empty-icon">
               <IconPushpin size={36} color="#a3312b" />
             </div>
-            <h2>{searchQuery ? 'No boards matched your search' : 'No boards in this workspace yet'}</h2>
+            <h2>{searchQuery ? 'No boards matched your search' : 'No boards in this project yet'}</h2>
             <p>Start with a blank canvas or jumpstart your sensemaking with a curated template.</p>
             <div className="dashboard-empty-actions">
               <button
@@ -357,16 +457,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </button>
 
             {/* Board Cards */}
-            {filteredBoards.map(board => (
+            {filteredBoards.map(board => {
+              const project = projects.find(p => p.id === board.projectId);
+              return (
               <div
                 key={board.id}
-                className="dashboard-card board-card"
-                onClick={() => {
-                  setActiveMenuBoardId(null);
-                  onOpenBoard(board.id);
-                }}
+                className="dashboard-card board-item-card"
+                onClick={() => onOpenBoard(board.id)}
               >
-                {/* Visual Preview Header */}
+                {/* Visual Preview */}
                 <div className="board-card-preview">
                   <div className="board-card-pin" />
                   <div className="board-card-sketch">
@@ -431,6 +530,16 @@ export const Dashboard: React.FC<DashboardProps> = ({
                           >
                             <IconCopy size={14} /> Duplicate
                           </button>
+                          <button
+                            type="button"
+                            role="menuitem"
+                            onClick={() => {
+                              setActiveMenuBoardId(null);
+                              setMovingBoard(board);
+                            }}
+                          >
+                            <IconFolder size={14} /> Move to Project…
+                          </button>
                           <div className="dropdown-divider" role="separator" />
                           <button
                             type="button"
@@ -448,6 +557,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     </div>
                   </div>
 
+                  {project && (
+                    <div className="board-card-project-tag">
+                      <span className="dashboard-project-dot" style={{ backgroundColor: project.color }} />
+                      <span>{project.name}</span>
+                    </div>
+                  )}
+
                   <div className="board-card-chips">
                     <span className="board-chip">{board.cardCount} cards</span>
                     {board.shapeCount > 0 && <span className="board-chip">{board.shapeCount} shapes</span>}
@@ -460,7 +576,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   </div>
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         )}
       </main>
@@ -605,6 +721,129 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* New Project Modal */}
+      {newProjectModalOpen && (
+        <div className="dashboard-modal-overlay" onClick={() => setNewProjectModalOpen(false)}>
+          <div className="dashboard-modal small" onClick={e => e.stopPropagation()}>
+            <div className="dashboard-modal-header">
+              <h2>New Project Folder</h2>
+              <button
+                type="button"
+                className="dashboard-modal-close"
+                onClick={() => setNewProjectModalOpen(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateProject} className="dashboard-modal-form">
+              <label>
+                Project Name
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Sprint 2026, Architecture Review"
+                  value={newProjectName}
+                  onChange={e => setNewProjectName(e.target.value)}
+                  autoFocus
+                />
+              </label>
+
+              <label>
+                Folder Accent Color
+                <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
+                  {['#d6a85f', '#a3312b', '#3b82f6', '#10b981', '#8b5cf6', '#ec4899'].map(color => (
+                    <button
+                      key={color}
+                      type="button"
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: '50%',
+                        backgroundColor: color,
+                        border: newProjectColor === color ? '2px solid #241c17' : '1px solid rgba(0,0,0,0.2)',
+                        transform: newProjectColor === color ? 'scale(1.15)' : 'none',
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => setNewProjectColor(color)}
+                    />
+                  ))}
+                </div>
+              </label>
+
+              <div className="dashboard-modal-actions">
+                <button
+                  type="button"
+                  className="dashboard-btn-secondary"
+                  onClick={() => setNewProjectModalOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="dashboard-btn-primary">
+                  Create Project
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Move Board to Project Modal */}
+      {movingBoard && (
+        <div className="dashboard-modal-overlay" onClick={() => setMovingBoard(null)}>
+          <div className="dashboard-modal small" onClick={e => e.stopPropagation()}>
+            <div className="dashboard-modal-header">
+              <h2>Move "{movingBoard.title}"</h2>
+              <button
+                type="button"
+                className="dashboard-modal-close"
+                onClick={() => setMovingBoard(null)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <p style={{ margin: '0 0 8px', fontSize: 13, color: '#6a5d4f' }}>
+                Select a project folder for this board:
+              </p>
+
+              <button
+                type="button"
+                className="dashboard-project-pill"
+                style={{ justifyContent: 'flex-start' }}
+                onClick={() => handleAssignProject(movingBoard.id, null)}
+              >
+                <span>No Project (Unfiled)</span>
+              </button>
+
+              {projects.map(proj => (
+                <button
+                  key={proj.id}
+                  type="button"
+                  className={`dashboard-project-pill ${movingBoard.projectId === proj.id ? 'active' : ''}`}
+                  style={{ justifyContent: 'flex-start' }}
+                  onClick={() => handleAssignProject(movingBoard.id, proj.id)}
+                >
+                  <span className="dashboard-project-dot" style={{ backgroundColor: proj.color }} />
+                  <span>{proj.name}</span>
+                </button>
+              ))}
+            </div>
+
+            <div className="dashboard-modal-actions" style={{ padding: '12px 20px' }}>
+              <button
+                type="button"
+                className="dashboard-btn-secondary"
+                onClick={() => setMovingBoard(null)}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
