@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { useAuth } from '../../auth/AuthContext';
 import { workspaceService, type Workspace } from '../../services/workspaceService';
 import { boardService, type BoardSummary } from '../../services/boardService';
 import { BOARD_TEMPLATES } from '../../data/templates';
-import { IconImport, IconTrash, IconEdit, IconCopy } from '../Icons/Icons';
+import { IconImport, IconTrash, IconEdit, IconCopy, IconPushpin } from '../Icons/Icons';
 import './Dashboard.css';
 
 interface DashboardProps {
@@ -31,6 +31,47 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [renamingBoard, setRenamingBoard] = useState<BoardSummary | null>(null);
   const [renameTitle, setRenameTitle] = useState('');
   const [activeMenuBoardId, setActiveMenuBoardId] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  // Close dropdown on outside click, escape key, or scroll
+  useEffect(() => {
+    if (!activeMenuBoardId) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        const target = event.target as HTMLElement | null;
+        if (target?.closest('.board-card-menu-btn')) {
+          return;
+        }
+        setActiveMenuBoardId(null);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setActiveMenuBoardId(null);
+      }
+    };
+
+    const handleScroll = () => {
+      setActiveMenuBoardId(null);
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('scroll', handleScroll, true);
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('scroll', handleScroll, true);
+    };
+  }, [activeMenuBoardId]);
+
+  // Close dropdown when searching, navigating, or switching workspace
+  useEffect(() => {
+    setActiveMenuBoardId(null);
+  }, [searchQuery, currentWorkspace?.id]);
 
   // Load workspaces on mount or user change
   useEffect(() => {
@@ -264,7 +305,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <div className="dashboard-loading">Loading your boards…</div>
         ) : filteredBoards.length === 0 ? (
           <div className="dashboard-empty-state">
-            <div className="dashboard-empty-icon">📌</div>
+            <div className="dashboard-empty-icon">
+              <IconPushpin size={36} color="#a3312b" />
+            </div>
             <h2>{searchQuery ? 'No boards matched your search' : 'No boards in this workspace yet'}</h2>
             <p>Start with a blank canvas or jumpstart your sensemaking with a curated template.</p>
             <div className="dashboard-empty-actions">
@@ -304,7 +347,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <div
                 key={board.id}
                 className="dashboard-card board-card"
-                onClick={() => onOpenBoard(board.id)}
+                onClick={() => {
+                  setActiveMenuBoardId(null);
+                  onOpenBoard(board.id);
+                }}
               >
                 {/* Visual Preview Header */}
                 <div className="board-card-preview">
@@ -326,21 +372,33 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     {/* Context Menu Trigger */}
                     <div
                       className="board-card-menu-wrap"
+                      ref={activeMenuBoardId === board.id ? menuRef : undefined}
                       onClick={e => e.stopPropagation()}
                     >
                       <button
                         type="button"
-                        className="board-card-menu-btn"
-                        onClick={() => setActiveMenuBoardId(activeMenuBoardId === board.id ? null : board.id)}
+                        className={`board-card-menu-btn ${activeMenuBoardId === board.id ? 'active' : ''}`}
+                        onClick={e => {
+                          e.stopPropagation();
+                          setActiveMenuBoardId(prev => (prev === board.id ? null : board.id));
+                        }}
                         aria-label="Board options"
+                        aria-haspopup="true"
+                        aria-expanded={activeMenuBoardId === board.id}
                       >
                         •••
                       </button>
 
                       {activeMenuBoardId === board.id && (
-                        <div className="board-card-dropdown">
+                        <div
+                          className="board-card-dropdown"
+                          role="menu"
+                          aria-orientation="vertical"
+                          onClick={e => e.stopPropagation()}
+                        >
                           <button
                             type="button"
+                            role="menuitem"
                             onClick={() => {
                               setActiveMenuBoardId(null);
                               setRenamingBoard(board);
@@ -351,15 +409,23 @@ export const Dashboard: React.FC<DashboardProps> = ({
                           </button>
                           <button
                             type="button"
-                            onClick={() => handleDuplicate(board.id)}
+                            role="menuitem"
+                            onClick={() => {
+                              setActiveMenuBoardId(null);
+                              handleDuplicate(board.id);
+                            }}
                           >
                             <IconCopy size={14} /> Duplicate
                           </button>
-                          <div className="dropdown-divider" />
+                          <div className="dropdown-divider" role="separator" />
                           <button
                             type="button"
+                            role="menuitem"
                             className="danger"
-                            onClick={() => handleDelete(board.id)}
+                            onClick={() => {
+                              setActiveMenuBoardId(null);
+                              handleDelete(board.id);
+                            }}
                           >
                             <IconTrash size={14} /> Delete
                           </button>

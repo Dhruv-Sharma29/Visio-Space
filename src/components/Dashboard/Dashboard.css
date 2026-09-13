@@ -288,12 +288,13 @@
 }
 
 .dashboard-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   border-radius: 10px;
   border: 1px solid #ded5c5;
   background: #fdfbf7;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: 0 3px 10px rgba(20, 10, 5, 0.05);
   cursor: pointer;
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
@@ -361,6 +362,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  border-radius: 10px 10px 0 0;
 }
 
 .board-card-pin {
@@ -454,7 +456,8 @@
   border-radius: 4px;
 }
 
-.board-card-menu-btn:hover {
+.board-card-menu-btn:hover,
+.board-card-menu-btn.active {
   background: #eee3d1;
   color: #2b2420;
 }
@@ -471,7 +474,7 @@
   display: flex;
   flex-direction: column;
   min-width: 130px;
-  z-index: 20;
+  z-index: 100;
   overflow: hidden;
 }
 
@@ -554,8 +557,15 @@
 }
 
 .dashboard-empty-icon {
-  font-size: 36px;
-  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.dashboard-empty-icon svg {
+  display: block;
+  filter: drop-shadow(0 1px 1.5px rgba(60, 45, 35, 0.12));
 }
 
 .dashboard-empty-state h2 {

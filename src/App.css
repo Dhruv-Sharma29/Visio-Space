@@ -19,15 +19,26 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
   pointer-events: none;
   z-index: 100;
 }
 
-.canvas-top-left, .canvas-top-right {
+.canvas-top-left {
   display: flex;
   align-items: center;
   gap: 12px;
   pointer-events: auto;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.canvas-top-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+  flex-shrink: 0;
 }
 
 .canvas-back-btn {
@@ -46,6 +57,8 @@
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .canvas-back-btn:hover {
@@ -67,7 +80,12 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   outline: none;
   width: 220px;
+  min-width: 120px;
+  max-width: 280px;
   transition: all 0.15s ease;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .canvas-title-input:hover, .canvas-title-input:focus {
@@ -77,15 +95,20 @@
 }
 
 .canvas-save-status {
+  display: inline-flex;
+  align-items: center;
   padding: 4px 10px;
   border-radius: 12px;
   font-size: 11px;
   font-weight: 600;
   background: rgba(36, 28, 23, 0.7);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: rgba(244, 236, 216, 0.7);
   border: 1px solid rgba(244, 236, 216, 0.1);
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .canvas-save-status.saved {
@@ -146,3 +169,41 @@
 /* Keep the contextual hint above a horizontal toolbar instead of underneath it. */
 .app-toolbar-bottom .app-hint-bar { bottom: 72px; }
 .app-toolbar-top .app-hint-bar { top: 72px; bottom: auto; }
+
+/* ─── Responsive Canvas Top Bar ──────────────────────────────────── */
+@media (max-width: 768px) {
+  .canvas-top-bar {
+    left: 12px;
+    right: 12px;
+    top: 10px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .canvas-top-left {
+    gap: 8px;
+  }
+
+  .canvas-title-input {
+    width: 140px;
+    min-width: 90px;
+    font-size: 13px;
+  }
+
+  .canvas-top-right {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .canvas-back-btn {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  .canvas-title-input {
+    width: 110px;
+    min-width: 80px;
+  }
+}

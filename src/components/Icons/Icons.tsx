@@ -241,6 +241,38 @@ export const IconTemplate = ({ size = 20, color = 'currentColor' }: IconProps) =
   </svg>
 );
 
+/** Minimal line-art pushpin / tack icon matching VisioSpace aesthetic */
+export const IconPushpin = ({ size = 36, color = '#a3312b', className }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    aria-hidden="true"
+  >
+    {/* Metal pin needle */}
+    <line
+      x1="12"
+      y1="16"
+      x2="12"
+      y2="22"
+      stroke="#736657"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+    {/* Pushpin head — flat 2D editorial geometry */}
+    <path
+      d="M5 16h14v-1.76a2 2 0 0 0-1.11-1.79l-1.79-.9A2 2 0 0 1 15 9.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v3.76a2 2 0 0 1-1.1 1.79l-1.79.9A2 2 0 0 0 5 14.24Z"
+      fill={color}
+      stroke={color}
+      strokeWidth="1"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 /** Investigative Sensemaking Web — magnifying glass over a web/thread */
 export const IconInvestigate = ({ size = 20, color = 'currentColor' }: IconProps) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

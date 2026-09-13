@@ -1,14 +1,12 @@
 .guest-badge {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 150;
-  display: flex;
+  position: relative;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   user-select: none;
   font-family: 'Inter', -apple-system, sans-serif;
   animation: guestFadeIn 0.3s ease-out;
+  flex-shrink: 0;
 }
 
 @keyframes guestFadeIn {
@@ -93,4 +91,10 @@
 
 .guest-badge-action:active {
   transform: translateY(0);
+}
+
+@media (max-width: 680px) {
+  .guest-badge-sub {
+    display: none;
+  }
 }

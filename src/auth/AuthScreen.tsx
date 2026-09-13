@@ -80,12 +80,12 @@ export function AuthScreen({ onContinueGuest, onClose, isModal = false }: AuthSc
       <p className="auth-kicker">VisioSpace · V2</p>
       <h1>
         {mode === 'sign-in' && 'Welcome back.'}
-        {mode === 'sign-up' && 'Start making sense.'}
+        {mode === 'sign-up' && 'Create your account.'}
         {mode === 'forgot-password' && 'Reset password.'}
       </h1>
       <p className="auth-subtitle">
         {mode === 'sign-in' && 'Pick up where your team left off.'}
-        {mode === 'sign-up' && 'Create a workspace for ideas, evidence, and decisions.'}
+        {mode === 'sign-up' && 'Start making sense with ideas, evidence, and decisions.'}
         {mode === 'forgot-password' && 'Enter your email to receive reset instructions.'}
       </p>
 
@@ -185,7 +185,7 @@ export function AuthScreen({ onContinueGuest, onClose, isModal = false }: AuthSc
       ) : (
         <>
           <p className="auth-footer-copy">
-            {mode === 'sign-in' ? 'New to VisioSpace?' : 'Already have a workspace?'}
+            {mode === 'sign-in' ? 'New to VisioSpace?' : 'Already have an account?'}
           </p>
           <button
             className="auth-switch"
