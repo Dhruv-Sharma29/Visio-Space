@@ -22,6 +22,8 @@ import { AuthScreen } from './auth/AuthScreen';
 import { useAuth } from './auth/AuthContext';
 import { useBoardStore } from './store/boardStore';
 import { boardService } from './services/boardService';
+import { SettingsModal } from './components/Settings/SettingsModal';
+import { IconSettings } from './components/Icons/Icons';
 import type { Tool } from './types/board';
 import './App.css';
 
@@ -75,6 +77,7 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
   const [templatesOpen, setTemplatesOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [boardTitle, setBoardTitle] = useState('Untitled Board');
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'local'>('saved');
   const { user } = useAuth();
@@ -366,6 +369,16 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
             {saveStatus === 'saved' && 'Saved ✓'}
             {saveStatus === 'local' && 'Local saved ✓'}
           </span>
+          {user && (
+            <button
+              type="button"
+              className="canvas-settings-btn"
+              onClick={() => setSettingsOpen(true)}
+              title="Settings"
+            >
+              <IconSettings size={18} />
+            </button>
+          )}
           {!user && <GuestBadge onSignIn={() => setAuthModalOpen(true)} />}
         </div>
       </header>
@@ -460,6 +473,9 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
       {authModalOpen && (
         <AuthScreen isModal onClose={() => setAuthModalOpen(false)} />
       )}
+
+      {/* Settings Modal */}
+      <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   );
 }

@@ -125,6 +125,30 @@
   color: #b8c7d9;
 }
 
+.canvas-settings-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  background: rgba(36, 28, 23, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(244, 236, 216, 0.2);
+  border-radius: 8px;
+  color: #f4ecd8;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.canvas-settings-btn:hover {
+  background: rgba(50, 38, 30, 0.95);
+  border-color: #d6a85f;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
 /* ─── Hint Bar ───────────────────────────────────────────────────── */
 .app-hint-bar {
   position: fixed;

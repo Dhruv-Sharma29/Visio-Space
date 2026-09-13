@@ -88,6 +88,7 @@ interface BoardStore {
 
   // Sound
   toggleSound: () => void;
+  setSoundEnabled: (enabled: boolean) => void;
   setToolbarPosition: (dock: ToolbarDock, offset: number) => void;
 
   // Card actions
@@ -253,6 +254,13 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       localStorage.setItem('visiospace_sound', String(next));
     }
     set({ soundEnabled: next });
+  },
+
+  setSoundEnabled: (enabled: boolean) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('visiospace_sound', String(enabled));
+    }
+    set({ soundEnabled: enabled });
   },
 
   setToolbarPosition: (dock, offset) => {

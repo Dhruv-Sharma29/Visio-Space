@@ -3,7 +3,8 @@ import { useAuth } from '../../auth/AuthContext';
 import { workspaceService, type Workspace } from '../../services/workspaceService';
 import { boardService, type BoardSummary } from '../../services/boardService';
 import { BOARD_TEMPLATES } from '../../data/templates';
-import { IconImport, IconTrash, IconEdit, IconCopy, IconPushpin } from '../Icons/Icons';
+import { IconImport, IconTrash, IconEdit, IconCopy, IconPushpin, IconSettings } from '../Icons/Icons';
+import { SettingsModal } from '../Settings/SettingsModal';
 import './Dashboard.css';
 
 interface DashboardProps {
@@ -17,12 +18,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onOpenAuth,
   onSignOut,
 }) => {
-  const { user, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [currentWorkspace, setCurrentWorkspace] = useState<Workspace | null>(null);
   const [boards, setBoards] = useState<BoardSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   // Modals & Dialogs
   const [newBoardModalOpen, setNewBoardModalOpen] = useState(false);
@@ -237,9 +239,21 @@ export const Dashboard: React.FC<DashboardProps> = ({
           {user ? (
             <div className="dashboard-user-menu">
               <div className="dashboard-avatar">
-                {(user.email?.[0] || 'U').toUpperCase()}
+                {profile?.avatar_url && !profile.avatar_url.startsWith('http')
+                  ? profile.avatar_url
+                  : (user.email?.[0] || 'U').toUpperCase()}
               </div>
-              <span className="dashboard-user-email">{user.email}</span>
+              <span className="dashboard-user-email">
+                {profile?.username ? `@${profile.username}` : user.email}
+              </span>
+              <button
+                type="button"
+                className="dashboard-settings-btn"
+                onClick={() => setSettingsOpen(true)}
+                title="Settings"
+              >
+                <IconSettings size={18} />
+              </button>
               <button
                 type="button"
                 className="dashboard-auth-btn"
@@ -594,6 +608,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </div>
       )}
+
+      {/* Settings Modal */}
+      <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   );
 };

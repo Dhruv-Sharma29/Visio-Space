@@ -1,0 +1,629 @@
+.settings-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 3vh, 32px) 16px;
+  box-sizing: border-box;
+  background: rgba(15, 10, 8, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: settingsFadeIn 0.2s ease-out;
+  overflow-y: auto;
+}
+
+@keyframes settingsFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.settings-modal-card {
+  box-sizing: border-box;
+  width: min(100%, 720px);
+  max-height: min(92dvh, 700px);
+  display: flex;
+  flex-direction: column;
+  background: #211914;
+  border: 1px solid rgba(214, 168, 95, 0.25);
+  border-radius: 12px;
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.55),
+    0 4px 12px rgba(0, 0, 0, 0.3);
+  color: #f4ecd8;
+  font-family: 'Inter', -apple-system, sans-serif;
+  overflow: hidden;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────── */
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 22px;
+  border-bottom: 1px solid rgba(244, 236, 216, 0.1);
+  background: rgba(28, 21, 16, 0.85);
+}
+
+.settings-header-title h2 {
+  font-family: Georgia, serif;
+  font-size: 19px;
+  font-weight: 700;
+  margin: 0;
+  color: #fdfbf7;
+}
+
+.settings-header-user {
+  font-size: 11.5px;
+  color: #d6a85f;
+  font-weight: 500;
+}
+
+.settings-close-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(244, 236, 216, 0.15);
+  border-radius: 50%;
+  background: rgba(244, 236, 216, 0.08);
+  color: #f4ecd8;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.settings-close-btn:hover {
+  background: rgba(244, 236, 216, 0.18);
+  border-color: #d6a85f;
+  transform: scale(1.05);
+}
+
+/* ─── Body Layout: Nav + Panel ───────────────────────────────────── */
+.settings-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.settings-nav {
+  width: 200px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 16px 10px;
+  border-right: 1px solid rgba(244, 236, 216, 0.08);
+  background: rgba(24, 18, 14, 0.6);
+}
+
+.settings-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: rgba(244, 236, 216, 0.75);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.14s ease;
+}
+
+.settings-nav-item:hover {
+  background: rgba(244, 236, 216, 0.07);
+  color: #fdfbf7;
+}
+
+.settings-nav-item.active {
+  background: rgba(214, 168, 95, 0.15);
+  color: #f3cf8a;
+  font-weight: 600;
+  border-left: 3px solid #d6a85f;
+}
+
+.settings-nav-icon {
+  font-size: 14px;
+}
+
+/* ─── Main Content Panel ─────────────────────────────────────────── */
+.settings-panel {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 22px 26px;
+}
+
+.settings-section-head {
+  margin-bottom: 20px;
+}
+
+.settings-section-head h3 {
+  font-family: Georgia, serif;
+  font-size: 17px;
+  margin: 0;
+  color: #fdfbf7;
+}
+
+.settings-section-head p {
+  font-size: 12px;
+  color: rgba(244, 236, 216, 0.65);
+  margin: 4px 0 0;
+  line-height: 1.4;
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-label-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(244, 236, 216, 0.85);
+}
+
+.settings-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-form input[type="text"],
+.settings-form input[type="password"],
+.settings-select {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8.5px 12px;
+  border: 1px solid rgba(244, 236, 216, 0.18);
+  border-radius: 7px;
+  background: #281e18;
+  color: #fff8ea;
+  font: inherit;
+  font-size: 13px;
+  transition: border-color 0.15s ease;
+}
+
+.settings-form input:focus,
+.settings-select:focus {
+  border-color: #d6a85f;
+  outline: none;
+}
+
+/* ─── Avatar Row & Presets ───────────────────────────────────────── */
+.settings-avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(36, 27, 21, 0.6);
+  border: 1px solid rgba(244, 236, 216, 0.08);
+}
+
+.settings-avatar-preview {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #382c23;
+  border: 2px solid #d6a85f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.settings-avatar-initial {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f4ecd8;
+}
+
+.settings-avatar-emoji {
+  font-size: 24px;
+}
+
+.settings-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.settings-avatar-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-avatar-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: rgba(244, 236, 216, 0.7);
+}
+
+.settings-avatar-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.settings-preset-btn {
+  padding: 4px 8px;
+  border: 1px solid rgba(244, 236, 216, 0.15);
+  border-radius: 5px;
+  background: rgba(244, 236, 216, 0.05);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  transition: all 0.12s ease;
+}
+
+.settings-preset-btn:hover {
+  background: rgba(244, 236, 216, 0.15);
+  transform: scale(1.1);
+}
+
+.settings-preset-btn.selected {
+  border-color: #d6a85f;
+  background: rgba(214, 168, 95, 0.25);
+}
+
+.settings-preset-clear {
+  border: 0;
+  background: none;
+  color: rgba(244, 236, 216, 0.5);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.settings-preset-clear:hover {
+  color: #f87171;
+  text-decoration: underline;
+}
+
+/* ─── Username Field in Settings ─────────────────────────────────── */
+.settings-username-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.settings-username-prefix {
+  position: absolute;
+  left: 12px;
+  color: rgba(244, 236, 216, 0.45);
+  font-weight: 600;
+  font-size: 13.5px;
+  pointer-events: none;
+}
+
+.settings-username-input {
+  padding-left: 28px !important;
+}
+
+.settings-username-input.success {
+  border-color: rgba(117, 180, 126, 0.6);
+}
+
+.settings-username-input.error {
+  border-color: rgba(224, 82, 82, 0.6);
+}
+
+.settings-status-tag {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.settings-status-tag.checking {
+  color: rgba(244, 236, 216, 0.5);
+}
+
+.settings-status-tag.available {
+  color: #a9d9ac;
+}
+
+.settings-status-tag.taken,
+.settings-status-tag.invalid {
+  color: #f87171;
+}
+
+.settings-hint {
+  font-size: 11px;
+  color: rgba(244, 236, 216, 0.48);
+  line-height: 1.35;
+}
+
+/* ─── Themes Grid ────────────────────────────────────────────────── */
+.settings-theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+}
+
+.settings-theme-card {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(244, 236, 216, 0.12);
+  background: rgba(36, 27, 21, 0.5);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.settings-theme-card:hover {
+  border-color: rgba(214, 168, 95, 0.4);
+  background: rgba(36, 27, 21, 0.8);
+}
+
+.settings-theme-card.selected {
+  border-color: #d6a85f;
+  background: rgba(214, 168, 95, 0.12);
+  box-shadow: 0 0 12px rgba(214, 168, 95, 0.15);
+}
+
+.settings-theme-swatch {
+  width: 100%;
+  height: 28px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.settings-theme-swatch.dark-paper {
+  background: linear-gradient(135deg, #211914, #3a2b22);
+  border: 1px solid #d6a85f;
+}
+
+.settings-theme-swatch.parchment-light {
+  background: linear-gradient(135deg, #f7f3eb, #ded4c0);
+  border: 1px solid #c2b39e;
+}
+
+.settings-theme-swatch.high-contrast {
+  background: linear-gradient(135deg, #0e0a08, #2a201a);
+  border: 1px solid #ffffff;
+}
+
+.settings-theme-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #fdfbf7;
+}
+
+.settings-theme-desc {
+  font-size: 11px;
+  color: rgba(244, 236, 216, 0.6);
+  line-height: 1.3;
+}
+
+/* ─── Toggles & Dividers ─────────────────────────────────────────── */
+.settings-divider {
+  height: 1px;
+  background: rgba(244, 236, 216, 0.08);
+  margin: 6px 0;
+}
+
+.settings-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 6px 0;
+}
+
+.settings-toggle-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fdfbf7;
+  display: block;
+}
+
+.settings-toggle-sub {
+  font-size: 11.5px;
+  color: rgba(244, 236, 216, 0.55);
+  margin: 2px 0 0;
+  line-height: 1.35;
+}
+
+.settings-toggle-input {
+  width: 18px;
+  height: 18px;
+  accent-color: #d6a85f;
+  cursor: pointer;
+}
+
+/* ─── Color Palette Dots ─────────────────────────────────────────── */
+.settings-color-palette {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.settings-color-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.settings-color-dot:hover {
+  transform: scale(1.15);
+}
+
+.settings-color-dot.active {
+  border-color: #d6a85f;
+  box-shadow: 0 0 8px rgba(214, 168, 95, 0.5);
+  transform: scale(1.1);
+}
+
+/* ─── Account Provider Badge & Danger Zone ───────────────────────── */
+.settings-card-info {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(36, 27, 21, 0.6);
+  border: 1px solid rgba(244, 236, 216, 0.08);
+}
+
+.settings-provider-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.settings-provider-badge .provider-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #382c23;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #d6a85f;
+}
+
+.settings-provider-badge strong {
+  display: block;
+  font-size: 13px;
+  color: #fdfbf7;
+}
+
+.settings-provider-badge p {
+  font-size: 11.5px;
+  color: rgba(244, 236, 216, 0.6);
+  margin: 2px 0 0;
+}
+
+.settings-password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.settings-secondary-btn {
+  align-self: flex-start;
+  padding: 7px 14px;
+  border: 1px solid rgba(244, 236, 216, 0.2);
+  border-radius: 6px;
+  background: rgba(244, 236, 216, 0.08);
+  color: #f4ecd8;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.settings-secondary-btn:hover {
+  background: rgba(244, 236, 216, 0.16);
+  border-color: #d6a85f;
+}
+
+.settings-danger-zone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.settings-danger-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f87171;
+  display: block;
+}
+
+/* ─── Feedback & Action Buttons ──────────────────────────────────── */
+.settings-alert {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  line-height: 1.4;
+}
+
+.settings-alert.error {
+  background: rgba(224, 82, 82, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(224, 82, 82, 0.3);
+}
+
+.settings-alert.success {
+  background: rgba(117, 180, 126, 0.15);
+  color: #a9d9ac;
+  border: 1px solid rgba(117, 180, 126, 0.3);
+}
+
+.settings-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.settings-save-btn {
+  padding: 8px 18px;
+  border: 0;
+  border-radius: 6px;
+  background: #d6a85f;
+  color: #211914;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.settings-save-btn:hover:not(:disabled) {
+  opacity: 0.93;
+  transform: translateY(-1px);
+}
+
+.settings-save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── Responsive Adjustments ─────────────────────────────────────── */
+@media (max-width: 680px) {
+  .settings-body {
+    flex-direction: column;
+  }
+
+  .settings-nav {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid rgba(244, 236, 216, 0.08);
+    padding: 8px 12px;
+  }
+
+  .settings-nav-item {
+    white-space: nowrap;
+    padding: 6px 10px;
+    font-size: 11.5px;
+  }
+
+  .settings-panel {
+    padding: 16px 18px;
+  }
+}
