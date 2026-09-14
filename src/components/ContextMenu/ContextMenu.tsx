@@ -317,15 +317,41 @@ export const ContextMenu: React.FC = () => {
           updateConnector(targetId, { color: nextColor });
           close();
         },
-        dividerAfter: true,
-      },
-      {
-        label: 'Delete Connection',
-        icon: <IconTrash size={15} />,
-        action: () => { deleteConnector(targetId); close(); },
-        danger: true,
+        dividerAfter: !targetConnector.fromCardId && !targetConnector.toCardId,
       },
     );
+
+    if (targetConnector.fromCardId) {
+      menuItems.push({
+        label: 'Detach from Source',
+        icon: <IconUnlink size={15} />,
+        action: () => {
+          const { detachConnectorEndpoint } = useBoardStore.getState();
+          detachConnectorEndpoint(targetId, 'from');
+          close();
+        },
+        dividerAfter: !targetConnector.toCardId,
+      });
+    }
+    if (targetConnector.toCardId) {
+      menuItems.push({
+        label: 'Detach from Target',
+        icon: <IconUnlink size={15} />,
+        action: () => {
+          const { detachConnectorEndpoint } = useBoardStore.getState();
+          detachConnectorEndpoint(targetId, 'to');
+          close();
+        },
+        dividerAfter: true,
+      });
+    }
+
+    menuItems.push({
+      label: 'Delete Connection',
+      icon: <IconTrash size={15} />,
+      action: () => { deleteConnector(targetId); close(); },
+      danger: true,
+    });
   }
 
   // Clamp position to viewport

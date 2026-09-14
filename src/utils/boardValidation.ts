@@ -89,13 +89,28 @@ function normalizeShape(value: unknown): Shape | null {
   };
 }
 
+function normalizePoint(value: unknown): { x: number; y: number } | undefined {
+  if (!isRecord(value) || !isFiniteNumber(value.x) || !isFiniteNumber(value.y)) return undefined;
+  return { x: value.x, y: value.y };
+}
+
 function normalizeConnector(value: unknown): Connector | null {
-  if (!isRecord(value) || typeof value.id !== 'string' || !value.id ||
-      typeof value.fromCardId !== 'string' || typeof value.toCardId !== 'string') return null;
+  if (!isRecord(value) || typeof value.id !== 'string' || !value.id) return null;
+
+  const fromCardId = typeof value.fromCardId === 'string' ? value.fromCardId : null;
+  const toCardId = typeof value.toCardId === 'string' ? value.toCardId : null;
+  const fromPoint = normalizePoint(value.fromPoint);
+  const toPoint = normalizePoint(value.toPoint);
+  // Each end needs either a linked item id or a fixed (detached) point to be renderable.
+  if (!fromCardId && !fromPoint) return null;
+  if (!toCardId && !toPoint) return null;
+
   return {
     id: value.id,
-    fromCardId: value.fromCardId,
-    toCardId: value.toCardId,
+    fromCardId,
+    toCardId,
+    ...(fromPoint ? { fromPoint } : {}),
+    ...(toPoint ? { toPoint } : {}),
     color: oneOf(value.color, CONNECTOR_COLORS, 'red'),
     style: oneOf(value.style, CONNECTOR_STYLES, 'solid'),
     ...(typeof value.label === 'string' ? { label: value.label } : {}),
