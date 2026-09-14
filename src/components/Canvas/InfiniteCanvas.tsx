@@ -60,7 +60,7 @@ export const InfiniteCanvas: React.FC<InfiniteCanvasProps> = ({ onOpenDraftComme
     editingShapeId, setEditingShapeId,
     setEditingClusterId,
     connectingFromId, setConnectingFromId,
-    addConnector,
+    addConnector, updateConnectorEndpointPoint,
     setActiveTool,
     addTextItem, addVoteDot, moveTextItem, moveVoteDot,
     moveImage, bringImageToFront,
@@ -734,188 +734,197 @@ export const InfiniteCanvas: React.FC<InfiniteCanvasProps> = ({ onOpenDraftComme
         onMouseLeave={handleMouseLeave}
         style={{ cursor, touchAction: 'none' }}
       >
-      {/* Background layer */}
-      <Layer>
-        <Rect
-          x={-10000}
-          y={-10000}
-          width={20000}
-          height={20000}
-          fill="transparent"
-          name="background"
-        />
-        {renderDotGrid()}
-      </Layer>
-
-      {/* Clusters layer */}
-      <Layer>
-        {clusters.map(cluster => (
-          <ClusterLabel
-            key={cluster.id}
-            cluster={cluster}
-            isSelected={selectedIds.includes(cluster.id)}
-            onSelect={handleClusterSelect}
-            onDragStart={handleClusterDragStart}
-            onDragEnd={handleClusterDragEnd}
-            onTransformEnd={handleClusterTransformEnd}
-            onDoubleClick={handleClusterDoubleClick}
+        {/* Background layer */}
+        <Layer>
+          <Rect
+            x={-10000}
+            y={-10000}
+            width={20000}
+            height={20000}
+            fill="transparent"
+            name="background"
           />
-        ))}
+          {renderDotGrid()}
+        </Layer>
 
-        {/* Live Drag-to-Draw Cluster Ghost Preview */}
-        {ghostClusterBox && (
-          <Group x={ghostClusterBox.x} y={ghostClusterBox.y}>
+        {/* Clusters layer */}
+        <Layer>
+          {clusters.map(cluster => (
+            <ClusterLabel
+              key={cluster.id}
+              cluster={cluster}
+              isSelected={selectedIds.includes(cluster.id)}
+              onSelect={handleClusterSelect}
+              onDragStart={handleClusterDragStart}
+              onDragEnd={handleClusterDragEnd}
+              onTransformEnd={handleClusterTransformEnd}
+              onDoubleClick={handleClusterDoubleClick}
+            />
+          ))}
+
+          {/* Live Drag-to-Draw Cluster Ghost Preview */}
+          {ghostClusterBox && (
+            <Group x={ghostClusterBox.x} y={ghostClusterBox.y}>
+              <Rect
+                width={ghostClusterBox.width}
+                height={ghostClusterBox.height}
+                stroke="#c0392b"
+                strokeWidth={1.8}
+                dash={[6, 4]}
+                fill="rgba(192, 57, 43, 0.07)"
+                cornerRadius={8}
+                listening={false}
+              />
+              <Group x={12} y={-14}>
+                <Rect
+                  width={84}
+                  height={26}
+                  fill="#241d18"
+                  cornerRadius={4}
+                  listening={false}
+                />
+                <Text
+                  x={12}
+                  y={7}
+                  text="NEW GROUP"
+                  fontFamily="'Inter', sans-serif"
+                  fontSize={10}
+                  fontStyle="bold"
+                  letterSpacing={1.2}
+                  fill="#f4ecd8"
+                  listening={false}
+                />
+              </Group>
+            </Group>
+          )}
+        </Layer>
+
+        {/* Shapes layer */}
+        <Layer>
+          {sortedShapes.map(shape => (
+            <ShapeNode
+              key={shape.id}
+              shape={shape}
+              isSelected={selectedIds.includes(shape.id)}
+              isEditing={editingShapeId === shape.id}
+              isConnecting={activeTool === 'connector'}
+              isConnectingSource={connectingFromId === shape.id}
+              onSelect={handleShapeSelect}
+              onDragStart={handleShapeDragStart}
+              onDragEnd={handleShapeDragEnd}
+              onTransformEnd={handleShapeTransformEnd}
+              onDoubleClick={handleShapeDoubleClick}
+            />
+          ))}
+
+          {/* Live Drag-to-Draw Ghost Preview */}
+          {ghostBox && (
             <Rect
-              width={ghostClusterBox.width}
-              height={ghostClusterBox.height}
+              x={ghostBox.x}
+              y={ghostBox.y}
+              width={ghostBox.width}
+              height={ghostBox.height}
               stroke="#c0392b"
-              strokeWidth={1.8}
-              dash={[6, 4]}
-              fill="rgba(192, 57, 43, 0.07)"
-              cornerRadius={8}
+              strokeWidth={1.5}
+              dash={[6, 3]}
+              fill="rgba(192, 57, 43, 0.08)"
+              cornerRadius={activeShapeType === 'rectangle' ? 4 : undefined}
               listening={false}
             />
-            <Group x={12} y={-14}>
-              <Rect
-                width={84}
-                height={26}
-                fill="#241d18"
-                cornerRadius={4}
-                listening={false}
-              />
-              <Text
-                x={12}
-                y={7}
-                text="NEW GROUP"
-                fontFamily="'Inter', sans-serif"
-                fontSize={10}
-                fontStyle="bold"
-                letterSpacing={1.2}
-                fill="#f4ecd8"
-                listening={false}
-              />
-            </Group>
-          </Group>
-        )}
-      </Layer>
+          )}
+        </Layer>
 
-      {/* Shapes layer */}
-      <Layer>
-        {sortedShapes.map(shape => (
-          <ShapeNode
-            key={shape.id}
-            shape={shape}
-            isSelected={selectedIds.includes(shape.id)}
-            isEditing={editingShapeId === shape.id}
-            isConnecting={activeTool === 'connector'}
-            isConnectingSource={connectingFromId === shape.id}
-            onSelect={handleShapeSelect}
-            onDragStart={handleShapeDragStart}
-            onDragEnd={handleShapeDragEnd}
-            onTransformEnd={handleShapeTransformEnd}
-            onDoubleClick={handleShapeDoubleClick}
-          />
-        ))}
-
-        {/* Live Drag-to-Draw Ghost Preview */}
-        {ghostBox && (
-          <Rect
-            x={ghostBox.x}
-            y={ghostBox.y}
-            width={ghostBox.width}
-            height={ghostBox.height}
-            stroke="#c0392b"
-            strokeWidth={1.5}
-            dash={[6, 3]}
-            fill="rgba(192, 57, 43, 0.08)"
-            cornerRadius={activeShapeType === 'rectangle' ? 4 : undefined}
-            listening={false}
-          />
-        )}
-      </Layer>
-
-      {/* Cards layer */}
-      <Layer>
-        {sortedCards.map(card => (
-          <StickyCard
-            key={card.id}
-            card={card}
-            isSelected={selectedIds.includes(card.id)}
-            isEditing={editingCardId === card.id}
-            isConnecting={activeTool === 'connector'}
-            isConnectingSource={connectingFromId === card.id}
-            onSelect={handleCardSelect}
-            onDragStart={handleCardDragStart}
-            onDragEnd={handleCardDragEnd}
-            onDoubleClick={handleCardDoubleClick}
-          />
-        ))}
-        {textItems.map(item => (
-          <TextNode key={item.id} item={item} isSelected={selectedIds.includes(item.id)} onSelect={handleTextSelect} onEdit={handleTextEdit} onMove={moveTextItem} />
-        ))}
-        {voteDots.map(dot => (
-          <VoteDotNode key={dot.id} dot={dot} count={voteDots.filter(d => d.x === dot.x && d.y === dot.y && d.color === dot.color).length} isSelected={selectedIds.includes(dot.id)} onSelect={handleVoteSelect} onMove={moveVoteDot} />
-        ))}
-
-        {/* Live Marquee Rubber-Band Selection Box */}
-        {marqueeBox && (
-          <Rect
-            x={marqueeBox.x}
-            y={marqueeBox.y}
-            width={marqueeBox.width}
-            height={marqueeBox.height}
-            stroke="#a3312b"
-            strokeWidth={1.5}
-            dash={[6, 3]}
-            fill="rgba(163, 49, 43, 0.08)"
-            cornerRadius={2}
-            listening={false}
-          />
-        )}
-      </Layer>
-
-      {/* Images render above cards/content so selecting one brings it visibly forward. */}
-      <Layer>
-        {sortedImages.map(image => (
-          <ImageNode
-            key={image.id}
-            image={image}
-            isSelected={selectedIds.includes(image.id)}
-            onSelect={handleImageSelect}
-            onDragStart={handleImageDragStart}
-            onDragEnd={moveImage}
-            onTransformEnd={handleImageTransformEnd}
-          />
-        ))}
-      </Layer>
-
-      {/* Connectors layer (Yarn strings & mid-point annotation tags rendered on top) */}
-      <Layer>
-        {connectors.map(conn => {
-          const fromItem = cards.find(c => c.id === conn.fromCardId) || shapes.find(s => s.id === conn.fromCardId);
-          const toItem = cards.find(c => c.id === conn.toCardId) || shapes.find(s => s.id === conn.toCardId);
-          if (!fromItem || !toItem) return null;
-          return (
-            <ConnectorLine
-              key={conn.id}
-              connector={conn}
-              fromItem={fromItem}
-              toItem={toItem}
-              isSelected={selectedIds.includes(conn.id)}
-              onSelect={(id) => setSelectedIds([id])}
+        {/* Cards layer */}
+        <Layer>
+          {sortedCards.map(card => (
+            <StickyCard
+              key={card.id}
+              card={card}
+              isSelected={selectedIds.includes(card.id)}
+              isEditing={editingCardId === card.id}
+              isConnecting={activeTool === 'connector'}
+              isConnectingSource={connectingFromId === card.id}
+              onSelect={handleCardSelect}
+              onDragStart={handleCardDragStart}
+              onDragEnd={handleCardDragEnd}
+              onDoubleClick={handleCardDoubleClick}
             />
-          );
-        })}
-        {connectingSourceItem && (
-          <ConnectorCreator
-            fromItem={connectingSourceItem}
-            stageRef={stageRef}
-            viewport={viewport}
-          />
-        )}
-      </Layer>
-    </Stage>
-    <RemoteCursorsOverlay viewport={viewport} />
-  </div>
+          ))}
+          {textItems.map(item => (
+            <TextNode key={item.id} item={item} isSelected={selectedIds.includes(item.id)} onSelect={handleTextSelect} onEdit={handleTextEdit} onMove={moveTextItem} />
+          ))}
+          {voteDots.map(dot => (
+            <VoteDotNode key={dot.id} dot={dot} count={voteDots.filter(d => d.x === dot.x && d.y === dot.y && d.color === dot.color).length} isSelected={selectedIds.includes(dot.id)} onSelect={handleVoteSelect} onMove={moveVoteDot} />
+          ))}
+
+          {/* Live Marquee Rubber-Band Selection Box */}
+          {marqueeBox && (
+            <Rect
+              x={marqueeBox.x}
+              y={marqueeBox.y}
+              width={marqueeBox.width}
+              height={marqueeBox.height}
+              stroke="#a3312b"
+              strokeWidth={1.5}
+              dash={[6, 3]}
+              fill="rgba(163, 49, 43, 0.08)"
+              cornerRadius={2}
+              listening={false}
+            />
+          )}
+        </Layer>
+
+        {/* Images render above cards/content so selecting one brings it visibly forward. */}
+        <Layer>
+          {sortedImages.map(image => (
+            <ImageNode
+              key={image.id}
+              image={image}
+              isSelected={selectedIds.includes(image.id)}
+              onSelect={handleImageSelect}
+              onDragStart={handleImageDragStart}
+              onDragEnd={moveImage}
+              onTransformEnd={handleImageTransformEnd}
+            />
+          ))}
+        </Layer>
+
+        {/* Connectors layer (Yarn strings & mid-point annotation tags rendered on top) */}
+        <Layer>
+          {connectors.map(conn => {
+            const fromItem = conn.fromCardId
+              ? (cards.find(c => c.id === conn.fromCardId) || shapes.find(s => s.id === conn.fromCardId))
+              : null;
+            const toItem = conn.toCardId
+              ? (cards.find(c => c.id === conn.toCardId) || shapes.find(s => s.id === conn.toCardId))
+              : null;
+            // A still-attached end whose item vanished, or a detached end with no fixed point, is unrenderable.
+            if (conn.fromCardId && !fromItem) return null;
+            if (conn.toCardId && !toItem) return null;
+            if (!fromItem && !conn.fromPoint) return null;
+            if (!toItem && !conn.toPoint) return null;
+            return (
+              <ConnectorLine
+                key={conn.id}
+                connector={conn}
+                fromItem={fromItem}
+                toItem={toItem}
+                isSelected={selectedIds.includes(conn.id)}
+                onSelect={(id) => setSelectedIds([id])}
+                onEndpointDrag={(end, point) => updateConnectorEndpointPoint(conn.id, end, point)}
+              />
+            );
+          })}
+          {connectingSourceItem && (
+            <ConnectorCreator
+              fromItem={connectingSourceItem}
+              stageRef={stageRef}
+              viewport={viewport}
+            />
+          )}
+        </Layer>
+      </Stage>
+      <RemoteCursorsOverlay viewport={viewport} />
+    </div>
   );
 };

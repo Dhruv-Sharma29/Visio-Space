@@ -10,6 +10,7 @@ import { SoundEffects } from '../utils/soundEffects';
 import { normalizeBoardState } from '../utils/boardValidation';
 import { getImportLayout } from '../utils/importLayout';
 import { combineBoardsForImport } from '../utils/multiBoardLayout';
+import { getSmartAnchor, pointBox } from '../utils/connectorGeometry';
 
 // ─── Constants ──────────────────────────────────────────────────────
 const MAX_HISTORY = 50;
@@ -132,6 +133,8 @@ interface BoardStore {
   updateConnector: (id: string, updates: Partial<Connector>) => void;
   deleteConnector: (id: string) => void;
   unlinkCard: (cardId: string) => void;
+  detachConnectorEndpoint: (id: string, end: 'from' | 'to') => void;
+  updateConnectorEndpointPoint: (id: string, end: 'from' | 'to', point: { x: number; y: number }) => void;
   setEditingConnectorId: (id: string | null) => void;
 
   // Cluster actions
@@ -737,6 +740,48 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     }));
   },
 
+  detachConnectorEndpoint: (id, end) => {
+    const { connectors, cards, shapes } = get();
+    const conn = connectors.find(c => c.id === id);
+    if (!conn) return;
+
+    const resolveItem = (itemId: string | null) =>
+      itemId ? (cards.find(c => c.id === itemId) || shapes.find(s => s.id === itemId)) : null;
+
+    const fromItem = resolveItem(conn.fromCardId);
+    const toItem = resolveItem(conn.toCardId);
+    const targetItem = end === 'from' ? fromItem : toItem;
+    if (!targetItem) return; // already detached
+
+    const otherBox = end === 'from'
+      ? (toItem ?? pointBox(conn.toPoint!))
+      : (fromItem ?? pointBox(conn.fromPoint!));
+    const point = getSmartAnchor(targetItem, otherBox);
+
+    get().pushHistory();
+    if (get().soundEnabled) {
+      SoundEffects.stringSnap();
+    }
+    set(state => ({
+      connectors: state.connectors.map(c => {
+        if (c.id !== id) return c;
+        return end === 'from'
+          ? { ...c, fromCardId: null, fromPoint: point }
+          : { ...c, toCardId: null, toPoint: point };
+      }),
+    }));
+  },
+
+  updateConnectorEndpointPoint: (id, end, point) => {
+    get().pushHistory();
+    set(state => ({
+      connectors: state.connectors.map(c => {
+        if (c.id !== id) return c;
+        return end === 'from' ? { ...c, fromPoint: point } : { ...c, toPoint: point };
+      }),
+    }));
+  },
+
   setEditingConnectorId: (id) => set({ editingConnectorId: id }),
 
   // ── Cluster Actions ─────────────────────────────────────────────
@@ -954,7 +999,9 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
 
     const containedItemIds = new Set([...containedCards.map(c => c.id), ...containedShapes.map(s => s.id)]);
     const internalConnectors = connectors.filter(
-      conn => containedItemIds.has(conn.fromCardId) && containedItemIds.has(conn.toCardId)
+      (conn): conn is Connector & { fromCardId: string; toCardId: string } =>
+        conn.fromCardId !== null && conn.toCardId !== null &&
+        containedItemIds.has(conn.fromCardId) && containedItemIds.has(conn.toCardId)
     );
 
     const newConnectors: Connector[] = internalConnectors.map(conn => ({
@@ -1358,7 +1405,10 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     set({
       cards: cardsWithClusterId,
       shapes: shapesWithClusterId,
-      connectors: safeState.connectors.filter(connector => validItemIds.has(connector.fromCardId) && validItemIds.has(connector.toCardId)),
+      connectors: safeState.connectors.filter(connector =>
+        (connector.fromCardId === null || validItemIds.has(connector.fromCardId)) &&
+        (connector.toCardId === null || validItemIds.has(connector.toCardId))
+      ),
       clusters: adjustedClusters,
       textItems: safeState.textItems || [],
       voteDots: safeState.voteDots || [],
@@ -1412,7 +1462,10 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     set({
       cards: cardsWithClusterId,
       shapes: shapesWithClusterId,
-      connectors: combinedState.connectors.filter(connector => validItemIds.has(connector.fromCardId) && validItemIds.has(connector.toCardId)),
+      connectors: combinedState.connectors.filter(connector =>
+        (connector.fromCardId === null || validItemIds.has(connector.fromCardId)) &&
+        (connector.toCardId === null || validItemIds.has(connector.toCardId))
+      ),
       clusters: adjustedClusters,
       textItems: combinedState.textItems || [],
       voteDots: combinedState.voteDots || [],
@@ -1512,8 +1565,8 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       return {
         ...conn,
         id: newId,
-        fromCardId: idMap.get(conn.fromCardId) || conn.fromCardId,
-        toCardId: idMap.get(conn.toCardId) || conn.toCardId,
+        fromCardId: conn.fromCardId ? (idMap.get(conn.fromCardId) || conn.fromCardId) : null,
+        toCardId: conn.toCardId ? (idMap.get(conn.toCardId) || conn.toCardId) : null,
       };
     });
 
