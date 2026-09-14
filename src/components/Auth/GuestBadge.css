@@ -25,10 +25,10 @@
   align-items: center;
   gap: 8px;
   padding: 6px 14px;
-  background: rgba(33, 25, 20, 0.88);
+  background: rgba(var(--chrome-bg-rgb), 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(214, 168, 95, 0.3);
+  border: 1px solid rgba(var(--gold-rgb), 0.3);
   border-radius: 9999px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   cursor: default;
@@ -57,21 +57,21 @@
 .guest-badge-label {
   font-size: 12px;
   font-weight: 700;
-  color: #f4ecd8;
+  color: var(--chrome-fg);
   letter-spacing: 0.02em;
 }
 
 .guest-badge-sub {
   font-size: 11px;
-  color: rgba(244, 236, 216, 0.55);
+  color: rgba(var(--chrome-fg-rgb), 0.55);
 }
 
 .guest-badge-action {
   padding: 6px 14px;
-  border: 1px solid rgba(214, 168, 95, 0.45);
+  border: 1px solid rgba(var(--gold-rgb), 0.45);
   border-radius: 9999px;
-  background: rgba(214, 168, 95, 0.15);
-  color: #f3cf8a;
+  background: rgba(var(--gold-rgb), 0.15);
+  color: var(--gold-strong);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -82,10 +82,10 @@
 }
 
 .guest-badge-action:hover {
-  background: #d6a85f;
-  color: #211914;
-  border-color: #d6a85f;
-  box-shadow: 0 4px 12px rgba(214, 168, 95, 0.35);
+  background: var(--gold);
+  color: var(--on-gold-text);
+  border-color: var(--gold);
+  box-shadow: 0 4px 12px rgba(var(--gold-rgb), 0.35);
   transform: translateY(-1px);
 }
 

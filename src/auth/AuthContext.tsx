@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState, useCallback, t
 import type { Session, User } from '@supabase/supabase-js';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { profileService, type UserProfile, type UserPreferences } from '../services/profileService';
+import { applyTheme, getStoredTheme, isThemeId } from '../utils/theme';
 
 interface AuthContextValue {
   configured: boolean;
@@ -50,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (p && p.username) {
         setProfile(p);
         setNeedsProfileOnboarding(false);
+        applyTheme(isThemeId(p.preferences?.theme) ? p.preferences.theme : getStoredTheme());
       } else {
         setProfile(null);
         setNeedsProfileOnboarding(true);
@@ -64,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!supabase) {
+      applyTheme(getStoredTheme());
       setLoading(false);
       return;
     }
@@ -75,6 +78,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLoading(false);
         if (data.session?.user) {
           fetchProfile(data.session.user.id);
+        } else {
+          applyTheme(getStoredTheme());
         }
       }
     });
@@ -87,6 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setProfile(null);
         setNeedsProfileOnboarding(false);
+        applyTheme(getStoredTheme());
       }
     });
 
@@ -198,6 +204,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const updated = await profileService.updateProfile(currentUserId, updates);
         setProfile(updated);
+        if (isThemeId(updated.preferences?.theme)) {
+          applyTheme(updated.preferences.theme);
+        }
         return { error: null, profile: updated };
       } catch (err) {
         return { error: (err as Error).message || 'Failed to update profile.' };

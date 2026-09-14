@@ -1,7 +1,7 @@
 .cluster-editor-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(28, 20, 16, 0.6);
+  background-color: rgba(var(--chrome-bg-alt-rgb), 0.6);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -52,7 +52,7 @@
 }
 
 .cluster-editor-icon {
-  color: #c0392b;
+  color: var(--accent);
   display: flex;
   align-items: center;
 }
@@ -62,7 +62,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 18px;
   font-weight: 700;
-  color: #241d18;
+  color: var(--ink);
 }
 
 .cluster-editor-close {
@@ -78,7 +78,7 @@
 
 .cluster-editor-close:hover {
   background: rgba(0, 0, 0, 0.05);
-  color: #241d18;
+  color: var(--ink);
 }
 
 .cluster-editor-body {
@@ -109,7 +109,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 600;
-  color: #241d18;
+  color: var(--ink);
   background: #ffffff;
   border: 1.5px solid #d4c8b8;
   border-radius: 8px;
@@ -119,8 +119,8 @@
 }
 
 .cluster-editor-input:focus {
-  border-color: #c0392b;
-  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.12);
 }
 
 .cluster-editor-tags {
@@ -144,7 +144,7 @@
 
 .cluster-editor-tag-btn:hover {
   background: #e5dac7;
-  color: #241d18;
+  color: var(--ink);
   border-color: #b8a690;
 }
 
@@ -170,7 +170,7 @@
 }
 
 .cluster-editor-color-btn.active {
-  border-color: #c0392b;
+  border-color: var(--accent);
   transform: scale(1.12);
 }
 
@@ -214,7 +214,7 @@
 
 .cluster-editor-btn-secondary:hover {
   background: #ede4d4;
-  color: #241d18;
+  color: var(--ink);
 }
 
 .cluster-editor-btn-danger {
@@ -222,7 +222,7 @@
   border-radius: 6px;
   border: 1px solid #e0b4b4;
   background: #fde8e8;
-  color: #c0392b;
+  color: var(--accent);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -237,8 +237,8 @@
 .cluster-editor-btn-save {
   padding: 8px 20px;
   border-radius: 6px;
-  border: 1px solid #c0392b;
-  background: #c0392b;
+  border: 1px solid var(--accent);
+  background: var(--accent);
   color: #ffffff;
   font-family: 'Inter', sans-serif;
   font-size: 13px;

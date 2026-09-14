@@ -1,6 +1,6 @@
 .text-color-control { display: flex; align-items: center; gap: 12px; }
 .text-color-picker { width: 48px; height: 42px; padding: 4px; flex: 0 0 auto; border: 1px solid #d9c9a9; border-radius: 6px; background: #fff; cursor: pointer; }
-.text-color-value { display: flex; align-items: center; gap: 8px; min-width: 0; color: #4a3e32; font-size: 13px; }
+.text-color-value { display: flex; align-items: center; gap: 8px; min-width: 0; color: var(--ink-soft); font-size: 13px; }
 .text-color-value strong { font-weight: 700; }
-.text-color-value code { color: #7a6b5a; font-size: 11px; letter-spacing: .04em; }
+.text-color-value code { color: var(--ink-muted); font-size: 11px; letter-spacing: .04em; }
 .text-color-swatch { width: 14px; height: 14px; flex: 0 0 auto; border: 1px solid rgba(43,36,32,.35); border-radius: 50%; }

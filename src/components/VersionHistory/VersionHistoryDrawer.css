@@ -16,14 +16,14 @@
   bottom: 0;
   width: 400px;
   max-width: 90vw;
-  background: #241c17;
-  border-left: 1px solid rgba(214, 168, 95, 0.35);
+  background: var(--chrome-bg-alt);
+  border-left: 1px solid rgba(var(--gold-rgb), 0.35);
   box-shadow: -10px 0 35px rgba(0, 0, 0, 0.5);
   z-index: 251;
   display: flex;
   flex-direction: column;
   animation: slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  color: #f4ecd8;
+  color: var(--chrome-fg);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -41,8 +41,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  border-bottom: 1px solid rgba(244, 236, 216, 0.12);
-  background: rgba(30, 24, 20, 0.8);
+  border-bottom: 1px solid rgba(var(--chrome-fg-rgb), 0.12);
+  background: rgba(var(--chrome-bg-rgb), 0.8);
 }
 
 .version-drawer-title {
@@ -51,12 +51,12 @@
   gap: 10px;
   font-size: 16px;
   font-weight: 700;
-  color: #fdfbf7;
+  color: var(--chrome-fg-strong);
   font-family: 'Georgia', serif;
 }
 
 .version-drawer-title-icon {
-  color: #d6a85f;
+  color: var(--gold);
   display: flex;
   align-items: center;
 }
@@ -64,7 +64,7 @@
 .version-drawer-close-btn {
   background: transparent;
   border: none;
-  color: rgba(244, 236, 216, 0.6);
+  color: rgba(var(--chrome-fg-rgb), 0.6);
   font-size: 18px;
   cursor: pointer;
   padding: 4px 8px;
@@ -73,7 +73,7 @@
 }
 
 .version-drawer-close-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(var(--overlay-rgb), 0.1);
   color: #fff;
 }
 
@@ -81,7 +81,7 @@
 .version-drawer-save-section {
   padding: 14px 20px;
   background: rgba(0, 0, 0, 0.2);
-  border-bottom: 1px solid rgba(244, 236, 216, 0.1);
+  border-bottom: 1px solid rgba(var(--chrome-fg-rgb), 0.1);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -92,7 +92,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: rgba(214, 168, 95, 0.9);
+  color: rgba(var(--gold-rgb), 0.9);
 }
 
 .version-drawer-save-box {
@@ -102,25 +102,25 @@
 
 .version-drawer-save-input {
   flex: 1;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(244, 236, 216, 0.15);
+  background: rgba(var(--overlay-rgb), 0.05);
+  border: 1px solid rgba(var(--chrome-fg-rgb), 0.15);
   border-radius: 6px;
   padding: 7px 10px;
-  color: #fdfbf7;
+  color: var(--chrome-fg-strong);
   font-size: 13px;
   outline: none;
 }
 
 .version-drawer-save-input:focus {
-  border-color: #d6a85f;
-  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--gold);
+  background: rgba(var(--overlay-rgb), 0.08);
 }
 
 .version-drawer-save-btn {
-  background: #d6a85f;
+  background: var(--gold);
   border: none;
   border-radius: 6px;
-  color: #241c17;
+  color: var(--on-gold-text);
   font-size: 12px;
   font-weight: 700;
   padding: 0 12px;
@@ -152,7 +152,7 @@
 .version-drawer-empty {
   text-align: center;
   padding: 40px 20px;
-  color: rgba(244, 236, 216, 0.5);
+  color: rgba(var(--chrome-fg-rgb), 0.5);
   font-size: 13px;
 }
 
@@ -162,15 +162,15 @@
   flex-direction: column;
   gap: 6px;
   padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(244, 236, 216, 0.1);
+  background: rgba(var(--overlay-rgb), 0.03);
+  border: 1px solid rgba(var(--chrome-fg-rgb), 0.1);
   border-radius: 8px;
   transition: all 0.15s ease;
 }
 
 .version-item-card:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(214, 168, 95, 0.3);
+  background: rgba(var(--overlay-rgb), 0.06);
+  border-color: rgba(var(--gold-rgb), 0.3);
 }
 
 .version-item-header {
@@ -183,7 +183,7 @@
 .version-item-name {
   font-size: 13.5px;
   font-weight: 700;
-  color: #fdfbf7;
+  color: var(--chrome-fg-strong);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -191,7 +191,7 @@
 
 .version-item-date {
   font-size: 11px;
-  color: rgba(244, 236, 216, 0.5);
+  color: rgba(var(--chrome-fg-rgb), 0.5);
   white-space: nowrap;
 }
 
@@ -200,7 +200,7 @@
   align-items: center;
   justify-content: space-between;
   font-size: 11px;
-  color: rgba(244, 236, 216, 0.65);
+  color: rgba(var(--chrome-fg-rgb), 0.65);
 }
 
 .version-item-author {
@@ -211,8 +211,8 @@
   display: inline-flex;
   gap: 6px;
   font-size: 10.5px;
-  color: #d6a85f;
-  background: rgba(214, 168, 95, 0.1);
+  color: var(--gold);
+  background: rgba(var(--gold-rgb), 0.1);
   padding: 1px 6px;
   border-radius: 4px;
 }
@@ -224,18 +224,18 @@
   gap: 8px;
   margin-top: 6px;
   padding-top: 6px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(var(--overlay-rgb), 0.05);
 }
 
 .version-item-restore-btn {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(214, 168, 95, 0.15);
-  border: 1px solid rgba(214, 168, 95, 0.35);
+  background: rgba(var(--gold-rgb), 0.15);
+  border: 1px solid rgba(var(--gold-rgb), 0.35);
   border-radius: 5px;
   padding: 4px 10px;
-  color: #d6a85f;
+  color: var(--gold);
   font-size: 11.5px;
   font-weight: 600;
   cursor: pointer;
@@ -243,14 +243,14 @@
 }
 
 .version-item-restore-btn:hover {
-  background: #d6a85f;
-  color: #241c17;
+  background: var(--gold);
+  color: var(--on-gold-text);
 }
 
 .version-item-delete-btn {
   background: transparent;
   border: none;
-  color: rgba(244, 236, 216, 0.4);
+  color: rgba(var(--chrome-fg-rgb), 0.4);
   font-size: 11px;
   cursor: pointer;
   padding: 4px 6px;
@@ -259,6 +259,6 @@
 }
 
 .version-item-delete-btn:hover {
-  color: #e74c3c;
-  background: rgba(231, 76, 60, 0.1);
+  color: var(--accent-hover);
+  background: rgba(var(--accent-hover-rgb), 0.1);
 }

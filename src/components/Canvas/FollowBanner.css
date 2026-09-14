@@ -8,13 +8,13 @@
   align-items: center;
   gap: 8px;
   padding: 6px 14px;
-  background: rgba(30, 24, 20, 0.9);
+  background: rgba(var(--chrome-bg-rgb), 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(214, 168, 95, 0.4);
+  border: 1px solid rgba(var(--gold-rgb), 0.4);
   border-radius: 20px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 12px rgba(214, 168, 95, 0.2);
-  color: #f4ecd8;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 12px rgba(var(--gold-rgb), 0.2);
+  color: var(--chrome-fg);
   font-size: 12px;
   animation: followBannerSlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
@@ -63,14 +63,14 @@
 }
 
 .follow-banner-hint {
-  color: rgba(244, 236, 216, 0.5);
+  color: rgba(var(--chrome-fg-rgb), 0.5);
   font-size: 11px;
 }
 
 .follow-banner-close-btn {
   background: transparent;
   border: none;
-  color: rgba(244, 236, 216, 0.6);
+  color: rgba(var(--chrome-fg-rgb), 0.6);
   font-size: 16px;
   line-height: 1;
   cursor: pointer;

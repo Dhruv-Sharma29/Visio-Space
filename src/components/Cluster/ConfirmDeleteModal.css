@@ -1,7 +1,7 @@
 .confirm-delete-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(28, 20, 16, 0.65);
+  background-color: rgba(var(--chrome-bg-alt-rgb), 0.65);
   backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
@@ -50,7 +50,7 @@
   height: 44px;
   border-radius: 10px;
   background: #fde8e8;
-  color: #c0392b;
+  color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -62,7 +62,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 18px;
   font-weight: 700;
-  color: #241d18;
+  color: var(--ink);
 }
 
 .confirm-delete-target {
@@ -110,7 +110,7 @@
 
 .confirm-btn-cancel:hover {
   background: #ede4d4;
-  color: #241d18;
+  color: var(--ink);
 }
 
 .confirm-btn-ungroup {
@@ -138,8 +138,8 @@
 .confirm-btn-danger {
   padding: 9px 16px;
   border-radius: 6px;
-  border: 1px solid #c0392b;
-  background: #c0392b;
+  border: 1px solid var(--accent);
+  background: var(--accent);
   color: #ffffff;
   font-family: 'Inter', sans-serif;
   font-size: 13px;

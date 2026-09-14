@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: center;
   padding: 16px;
-  background: rgba(15, 10, 8, 0.72);
+  background: rgba(var(--shadow-rgb), 0.72);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   animation: shareFadeIn 0.2s ease-out;
@@ -24,13 +24,13 @@
   max-height: min(92dvh, 680px);
   display: flex;
   flex-direction: column;
-  background: #211914;
-  border: 1px solid rgba(214, 168, 95, 0.25);
+  background: var(--chrome-bg);
+  border: 1px solid rgba(var(--gold-rgb), 0.25);
   border-radius: 14px;
   box-shadow:
     0 24px 56px rgba(0, 0, 0, 0.65),
     0 6px 16px rgba(0, 0, 0, 0.35);
-  color: #f4ecd8;
+  color: var(--chrome-fg);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   overflow: hidden;
   animation: shareSlideUp 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
@@ -53,8 +53,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 18px 22px;
-  border-bottom: 1px solid rgba(244, 236, 216, 0.08);
-  background: rgba(28, 21, 16, 0.9);
+  border-bottom: 1px solid rgba(var(--chrome-fg-rgb), 0.08);
+  background: rgba(var(--chrome-bg-alt-rgb), 0.9);
 }
 
 .share-header-left {
@@ -70,9 +70,9 @@
   width: 36px;
   height: 36px;
   border-radius: 9px;
-  background: rgba(214, 168, 95, 0.12);
-  color: #d6a85f;
-  border: 1px solid rgba(214, 168, 95, 0.2);
+  background: rgba(var(--gold-rgb), 0.12);
+  color: var(--gold);
+  border: 1px solid rgba(var(--gold-rgb), 0.2);
 }
 
 .share-header-title {
@@ -80,14 +80,14 @@
   font-family: Georgia, serif;
   font-size: 19px;
   font-weight: 700;
-  color: #fdfbf7;
+  color: var(--chrome-fg-strong);
   letter-spacing: 0.01em;
 }
 
 .share-header-subtitle {
   margin: 2px 0 0;
   font-size: 12px;
-  color: rgba(244, 236, 216, 0.6);
+  color: rgba(var(--chrome-fg-rgb), 0.6);
   max-width: 340px;
   white-space: nowrap;
   overflow: hidden;
@@ -97,7 +97,7 @@
 .share-close-btn {
   background: transparent;
   border: none;
-  color: rgba(244, 236, 216, 0.5);
+  color: rgba(var(--chrome-fg-rgb), 0.5);
   font-size: 18px;
   cursor: pointer;
   padding: 6px;
@@ -110,8 +110,8 @@
 }
 
 .share-close-btn:hover {
-  background: rgba(244, 236, 216, 0.1);
-  color: #fdfbf7;
+  background: rgba(var(--chrome-fg-rgb), 0.1);
+  color: var(--chrome-fg-strong);
 }
 
 /* ─── Modal Content ──────────────────────────────────────────────── */
@@ -135,14 +135,14 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: rgba(244, 236, 216, 0.5);
+  color: rgba(var(--chrome-fg-rgb), 0.5);
   margin: 0;
 }
 
 /* ─── General Access Card ────────────────────────────────────────── */
 .share-access-card {
-  background: rgba(36, 28, 23, 0.6);
-  border: 1px solid rgba(244, 236, 216, 0.1);
+  background: rgba(var(--chrome-bg-alt-rgb), 0.6);
+  border: 1px solid rgba(var(--chrome-fg-rgb), 0.1);
   border-radius: 10px;
   padding: 14px;
   display: flex;
@@ -170,8 +170,8 @@
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: rgba(214, 168, 95, 0.1);
-  color: #d6a85f;
+  background: rgba(var(--gold-rgb), 0.1);
+  color: var(--gold);
   flex-shrink: 0;
 }
 
@@ -183,18 +183,18 @@
 .share-access-heading {
   font-size: 13.5px;
   font-weight: 600;
-  color: #fdfbf7;
+  color: var(--chrome-fg-strong);
 }
 
 .share-access-desc {
   font-size: 11.5px;
-  color: rgba(244, 236, 216, 0.6);
+  color: rgba(var(--chrome-fg-rgb), 0.6);
 }
 
 .share-access-select {
-  background: rgba(28, 21, 16, 0.9);
-  color: #f4ecd8;
-  border: 1px solid rgba(214, 168, 95, 0.3);
+  background: rgba(var(--chrome-bg-alt-rgb), 0.9);
+  color: var(--chrome-fg);
+  border: 1px solid rgba(var(--gold-rgb), 0.3);
   border-radius: 7px;
   padding: 6px 10px;
   font-size: 12.5px;
@@ -205,7 +205,7 @@
 }
 
 .share-access-select:hover:not(:disabled) {
-  border-color: #d6a85f;
+  border-color: var(--gold);
 }
 
 .share-access-select:disabled {
@@ -219,7 +219,7 @@
   align-items: center;
   gap: 8px;
   background: rgba(20, 15, 12, 0.7);
-  border: 1px solid rgba(244, 236, 216, 0.08);
+  border: 1px solid rgba(var(--chrome-fg-rgb), 0.08);
   border-radius: 8px;
   padding: 5px 6px 5px 12px;
 }
@@ -228,7 +228,7 @@
   flex: 1;
   background: transparent;
   border: none;
-  color: rgba(244, 236, 216, 0.85);
+  color: rgba(var(--chrome-fg-rgb), 0.85);
   font-size: 12px;
   font-family: monospace;
   outline: none;
@@ -242,8 +242,8 @@
   align-items: center;
   gap: 6px;
   padding: 7px 14px;
-  background: #d6a85f;
-  color: #1a1410;
+  background: var(--gold);
+  color: var(--on-gold-text);
   border: none;
   border-radius: 6px;
   font-size: 12px;
@@ -260,7 +260,7 @@
 
 .share-copy-btn.copied {
   background: #4ade80;
-  color: #0d2812;
+  color: var(--on-gold-text);
 }
 
 /* ─── Invite Collaborator Form ───────────────────────────────────── */
@@ -279,7 +279,7 @@
 .share-input-prefix {
   position: absolute;
   left: 11px;
-  color: rgba(244, 236, 216, 0.45);
+  color: rgba(var(--chrome-fg-rgb), 0.45);
   font-weight: 600;
   font-size: 13px;
   pointer-events: none;
@@ -287,19 +287,19 @@
 
 .share-invite-input {
   width: 100%;
-  background: rgba(36, 28, 23, 0.7);
-  border: 1px solid rgba(244, 236, 216, 0.15);
+  background: rgba(var(--chrome-bg-alt-rgb), 0.7);
+  border: 1px solid rgba(var(--chrome-fg-rgb), 0.15);
   border-radius: 8px;
   padding: 9px 12px 9px 28px;
-  color: #fdfbf7;
+  color: var(--chrome-fg-strong);
   font-size: 13px;
   outline: none;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
 .share-invite-input:focus {
-  border-color: #d6a85f;
-  background: rgba(36, 28, 23, 0.9);
+  border-color: var(--gold);
+  background: rgba(var(--chrome-bg-alt-rgb), 0.9);
 }
 
 .share-invite-input:disabled {
@@ -308,11 +308,11 @@
 }
 
 .share-role-select {
-  background: rgba(36, 28, 23, 0.8);
-  border: 1px solid rgba(244, 236, 216, 0.15);
+  background: rgba(var(--chrome-bg-alt-rgb), 0.8);
+  border: 1px solid rgba(var(--chrome-fg-rgb), 0.15);
   border-radius: 8px;
   padding: 0 10px;
-  color: #f4ecd8;
+  color: var(--chrome-fg);
   font-size: 12.5px;
   font-weight: 500;
   cursor: pointer;
@@ -320,7 +320,7 @@
 }
 
 .share-role-select:focus {
-  border-color: #d6a85f;
+  border-color: var(--gold);
 }
 
 .share-role-select:disabled {
@@ -333,9 +333,9 @@
   align-items: center;
   gap: 6px;
   padding: 9px 16px;
-  background: rgba(214, 168, 95, 0.15);
-  color: #d6a85f;
-  border: 1px solid rgba(214, 168, 95, 0.35);
+  background: rgba(var(--gold-rgb), 0.15);
+  color: var(--gold);
+  border: 1px solid rgba(var(--gold-rgb), 0.35);
   border-radius: 8px;
   font-size: 12.5px;
   font-weight: 600;
@@ -345,8 +345,8 @@
 }
 
 .share-invite-btn:hover:not(:disabled) {
-  background: rgba(214, 168, 95, 0.25);
-  border-color: #d6a85f;
+  background: rgba(var(--gold-rgb), 0.25);
+  border-color: var(--gold);
   color: #fff;
 }
 
@@ -379,7 +379,7 @@
 
 .share-notice {
   font-size: 11.5px;
-  color: rgba(244, 236, 216, 0.55);
+  color: rgba(var(--chrome-fg-rgb), 0.55);
   font-style: italic;
   padding: 4px 0;
 }
@@ -399,14 +399,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  background: rgba(36, 28, 23, 0.45);
-  border: 1px solid rgba(244, 236, 216, 0.06);
+  background: rgba(var(--chrome-bg-alt-rgb), 0.45);
+  border: 1px solid rgba(var(--chrome-fg-rgb), 0.06);
   border-radius: 8px;
   transition: background 0.15s ease;
 }
 
 .share-roster-item:hover {
-  background: rgba(36, 28, 23, 0.7);
+  background: rgba(var(--chrome-bg-alt-rgb), 0.7);
 }
 
 .share-member-info {
@@ -420,9 +420,9 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #3a2c22;
-  color: #d6a85f;
-  border: 1px solid rgba(214, 168, 95, 0.3);
+  background: var(--chrome-bg-alt);
+  color: var(--gold);
+  border: 1px solid rgba(var(--gold-rgb), 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -447,7 +447,7 @@
 .share-member-name {
   font-size: 13px;
   font-weight: 600;
-  color: #fdfbf7;
+  color: var(--chrome-fg-strong);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -455,7 +455,7 @@
 
 .share-member-username {
   font-size: 11.5px;
-  color: rgba(244, 236, 216, 0.5);
+  color: rgba(var(--chrome-fg-rgb), 0.5);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -479,15 +479,15 @@
 }
 
 .share-role-badge.owner {
-  background: rgba(214, 168, 95, 0.18);
-  color: #d6a85f;
-  border: 1px solid rgba(214, 168, 95, 0.35);
+  background: rgba(var(--gold-rgb), 0.18);
+  color: var(--gold);
+  border: 1px solid rgba(var(--gold-rgb), 0.35);
 }
 
 .share-member-role-select {
-  background: rgba(28, 21, 16, 0.85);
-  color: #f4ecd8;
-  border: 1px solid rgba(244, 236, 216, 0.15);
+  background: rgba(var(--chrome-bg-alt-rgb), 0.85);
+  color: var(--chrome-fg);
+  border: 1px solid rgba(var(--chrome-fg-rgb), 0.15);
   border-radius: 6px;
   padding: 4px 8px;
   font-size: 11.5px;
@@ -498,7 +498,7 @@
 }
 
 .share-member-role-select:hover:not(:disabled) {
-  border-color: #d6a85f;
+  border-color: var(--gold);
 }
 
 .share-remove-btn {
@@ -521,8 +521,8 @@
 /* ─── Footer ─────────────────────────────────────────────────────── */
 .share-modal-footer {
   padding: 14px 22px;
-  border-top: 1px solid rgba(244, 236, 216, 0.08);
-  background: rgba(28, 21, 16, 0.85);
+  border-top: 1px solid rgba(var(--chrome-fg-rgb), 0.08);
+  background: rgba(var(--chrome-bg-alt-rgb), 0.85);
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -530,8 +530,8 @@
 
 .share-done-btn {
   padding: 7px 18px;
-  background: #d6a85f;
-  color: #1a1410;
+  background: var(--gold);
+  color: var(--on-gold-text);
   border: none;
   border-radius: 6px;
   font-size: 13px;

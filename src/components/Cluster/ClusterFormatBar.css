@@ -33,7 +33,7 @@
 
 .cluster-format-btn:hover {
   background: #f3ece0;
-  color: #241d18;
+  color: var(--ink);
 }
 
 .cluster-format-btn.primary {
@@ -48,7 +48,7 @@
 }
 
 .cluster-format-btn.danger {
-  color: #c0392b;
+  color: var(--accent);
 }
 
 .cluster-format-btn.danger:hover {
@@ -83,6 +83,6 @@
 }
 
 .cluster-color-btn.active {
-  border-color: #c0392b;
+  border-color: var(--accent);
   transform: scale(1.25);
 }
