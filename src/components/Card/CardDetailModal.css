@@ -2,7 +2,7 @@
 .card-detail-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20, 14, 8, 0.5);
+  background: rgba(var(--shadow-rgb), 0.5);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   z-index: 350;
@@ -28,7 +28,7 @@
   border-radius: 6px;
   overflow: hidden;
   box-shadow:
-    0 8px 40px rgba(20, 14, 8, 0.5),
+    0 8px 40px rgba(var(--shadow-rgb), 0.5),
     0 0 0 1px rgba(0, 0, 0, 0.06);
   animation: cardDetailSlideUp 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -46,7 +46,7 @@
 
 /* ─── Panel Body ─────────────────────────────────────────────────── */
 .card-detail-body {
-  background: #f4ecd8;
+  background: var(--card);
   border-left: 4px solid;
   padding: 28px 28px 24px;
   overflow-y: auto;
@@ -63,12 +63,12 @@
 }
 
 .card-detail-body::-webkit-scrollbar-thumb {
-  background: rgba(90, 79, 66, 0.2);
+  background: rgba(var(--ink-soft-rgb), 0.2);
   border-radius: 10px;
 }
 
 .card-detail-body::-webkit-scrollbar-thumb:hover {
-  background: rgba(90, 79, 66, 0.35);
+  background: rgba(var(--ink-soft-rgb), 0.35);
 }
 
 /* ─── Close Button ───────────────────────────────────────────────── */
@@ -78,23 +78,23 @@
   right: 14px;
   width: 32px;
   height: 32px;
-  border: 1px solid rgba(224, 211, 174, 0.6);
+  border: 1px solid rgba(var(--paper-border-rgb), 0.6);
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(var(--overlay-rgb), 0.5);
   cursor: pointer;
   font-size: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.15s ease;
-  color: #5a4f42;
+  color: var(--ink-soft);
   z-index: 2;
 }
 
 .card-detail-close:hover {
-  background: rgba(255, 255, 255, 0.85);
-  border-color: #c0392b;
-  color: #c0392b;
+  background: rgba(var(--overlay-rgb), 0.85);
+  border-color: var(--accent);
+  color: var(--accent);
   transform: scale(1.05);
 }
 
@@ -115,14 +115,14 @@
   font-size: 22px;
   font-weight: 700;
   line-height: 1.35;
-  color: #241d18;
+  color: var(--ink);
   margin-bottom: 16px;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
 
 .card-detail-title.placeholder {
-  color: #8a7d6f;
+  color: var(--ink-muted);
   font-weight: 400;
   font-style: italic;
 }
@@ -130,7 +130,7 @@
 /* ─── Divider ────────────────────────────────────────────────────── */
 .card-detail-divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(90, 79, 66, 0.15), transparent);
+  background: linear-gradient(90deg, transparent, rgba(var(--ink-soft-rgb), 0.15), transparent);
   margin-bottom: 16px;
 }
 
@@ -139,7 +139,7 @@
   font-family: 'Courier New', monospace;
   font-size: 13px;
   line-height: 1.7;
-  color: #5a4f42;
+  color: var(--ink-soft);
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -149,7 +149,7 @@
 .card-detail-empty {
   font-family: 'Inter', -apple-system, sans-serif;
   font-size: 13px;
-  color: #b0a898;
+  color: var(--paper-border-strong);
   font-style: italic;
   padding: 8px 0;
 }
@@ -161,10 +161,10 @@
   gap: 12px;
   margin-top: 20px;
   padding-top: 14px;
-  border-top: 1px solid rgba(224, 211, 174, 0.5);
+  border-top: 1px solid rgba(var(--paper-border-rgb), 0.5);
   font-family: 'Inter', -apple-system, sans-serif;
   font-size: 10px;
-  color: #8a7d6f;
+  color: var(--ink-muted);
   letter-spacing: 0.03em;
 }
 
@@ -172,14 +172,14 @@
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: #b0a898;
+  background: var(--paper-border-strong);
   flex-shrink: 0;
 }
 
 /* ─── Footer Actions ─────────────────────────────────────────────── */
 .card-detail-footer {
-  background: rgba(244, 236, 216, 0.95);
-  border-top: 1px solid rgba(224, 211, 174, 0.6);
+  background: rgba(var(--chrome-fg-rgb), 0.95);
+  border-top: 1px solid rgba(var(--paper-border-rgb), 0.6);
   padding: 14px 28px;
   display: flex;
   gap: 10px;
@@ -189,10 +189,10 @@
 .card-detail-edit-btn {
   flex: 1;
   padding: 10px 16px;
-  border: 1px solid #a3312b;
+  border: 1px solid var(--brand);
   border-radius: 5px;
-  background: #c0392b;
-  color: #f4ecd8;
+  background: var(--accent);
+  color: var(--chrome-fg);
   font-size: 13px;
   font-weight: 600;
   font-family: 'Inter', -apple-system, sans-serif;
@@ -205,15 +205,15 @@
 }
 
 .card-detail-edit-btn:hover {
-  background: #e74c3c;
-  border-color: #c0392b;
+  background: var(--accent-hover);
+  border-color: var(--accent);
   transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(192, 57, 43, 0.25);
+  box-shadow: 0 3px 10px rgba(var(--accent-rgb), 0.25);
 }
 
 .card-detail-edit-shortcut {
   font-size: 10px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(var(--overlay-rgb), 0.2);
   padding: 2px 7px;
   border-radius: 3px;
   letter-spacing: 0.05em;
@@ -221,10 +221,10 @@
 
 .card-detail-close-btn {
   padding: 10px 20px;
-  border: 1px solid #e0d3ae;
+  border: 1px solid var(--card-edge);
   border-radius: 5px;
-  background: rgba(255, 255, 255, 0.55);
-  color: #5a4f42;
+  background: rgba(var(--overlay-rgb), 0.55);
+  color: var(--ink-soft);
   font-size: 13px;
   font-weight: 500;
   font-family: 'Inter', -apple-system, sans-serif;
@@ -233,6 +233,6 @@
 }
 
 .card-detail-close-btn:hover {
-  background: rgba(255, 255, 255, 0.85);
-  border-color: #b0a898;
+  background: rgba(var(--overlay-rgb), 0.85);
+  border-color: var(--paper-border-strong);
 }

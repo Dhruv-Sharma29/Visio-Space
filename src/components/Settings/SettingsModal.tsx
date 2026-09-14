@@ -4,6 +4,7 @@ import { profileService } from '../../services/profileService';
 import { cleanUsername, validateUsernameFormat, validateFullName } from '../../utils/profileValidation';
 import { workspaceService, type Workspace } from '../../services/workspaceService';
 import { useBoardStore } from '../../store/boardStore';
+import { applyTheme, getStoredTheme, type ThemeId } from '../../utils/theme';
 import './SettingsModal.css';
 
 interface SettingsModalProps {
@@ -36,7 +37,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'invalid'>('idle');
 
   // Appearance State
-  const [theme, setTheme] = useState<'dark-paper' | 'parchment-light' | 'high-contrast'>('dark-paper');
+  const [theme, setTheme] = useState<ThemeId>('dark-paper');
+
+  const selectTheme = (id: ThemeId) => {
+    setTheme(id);
+    applyTheme(id);
+  };
   const { soundEnabled, setSoundEnabled } = useBoardStore();
 
   // Workspace State
@@ -59,11 +65,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   // Sync profile data on open
   useEffect(() => {
-    if (isOpen && profile) {
+    if (!isOpen) return;
+    setTheme(profile?.preferences?.theme || getStoredTheme());
+    if (profile) {
       setFullName(profile.full_name || '');
       setUsername(profile.username || '');
       setAvatarUrl(profile.avatar_url || '');
-      setTheme(profile.preferences?.theme || 'dark-paper');
       setDefaultWorkspaceId(profile.preferences?.defaultWorkspaceId || '');
       setNotifyMentions(profile.preferences?.notifyMentions ?? true);
       setNotifyInvites(profile.preferences?.notifyInvites ?? true);
@@ -393,7 +400,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <div className="settings-theme-grid">
                   <div
                     className={`settings-theme-card ${theme === 'dark-paper' ? 'selected' : ''}`}
-                    onClick={() => setTheme('dark-paper')}
+                    onClick={() => selectTheme('dark-paper')}
                   >
                     <div className="settings-theme-swatch dark-paper" />
                     <span className="settings-theme-name">Dark Paper (Default)</span>
@@ -402,7 +409,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
                   <div
                     className={`settings-theme-card ${theme === 'parchment-light' ? 'selected' : ''}`}
-                    onClick={() => setTheme('parchment-light')}
+                    onClick={() => selectTheme('parchment-light')}
                   >
                     <div className="settings-theme-swatch parchment-light" />
                     <span className="settings-theme-name">Parchment Light</span>
@@ -411,7 +418,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
                   <div
                     className={`settings-theme-card ${theme === 'high-contrast' ? 'selected' : ''}`}
-                    onClick={() => setTheme('high-contrast')}
+                    onClick={() => selectTheme('high-contrast')}
                   >
                     <div className="settings-theme-swatch high-contrast" />
                     <span className="settings-theme-name">High Contrast</span>
@@ -439,6 +446,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     type="button"
                     className="settings-save-btn"
                     onClick={() => {
+                      applyTheme(theme);
                       updateProfile({ preferences: { ...profile?.preferences, theme, sound: soundEnabled } });
                       setProfileSaved(true);
                       setTimeout(() => setProfileSaved(false), 2500);

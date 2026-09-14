@@ -12,15 +12,15 @@
 }
 
 .minimap-toggle-btn {
-  background: #fdfbf7;
-  border: 1px solid #d5c8b5;
+  background: var(--paper-bg);
+  border: 1px solid var(--paper-border-strong);
   border-radius: 6px;
   padding: 6px 10px;
   font-size: 12px;
-  color: #4a3e32;
+  color: var(--ink-soft);
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(20, 10, 5, 0.15);
+  box-shadow: 0 2px 8px rgba(var(--shadow-rgb), 0.15);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -28,19 +28,19 @@
 }
 
 .minimap-toggle-btn:hover {
-  background: #f7efe2;
-  border-color: #a3312b;
+  background: var(--paper-bg-alt);
+  border-color: var(--brand);
 }
 
 .minimap-box {
   width: 200px;
   height: 140px;
   background:
-    radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.08), transparent 70%),
-    linear-gradient(160deg, #b8804f, #9c683b);
-  border: 2px solid #5a3e26;
+    radial-gradient(ellipse at 50% 50%, rgba(var(--overlay-rgb), 0.08), transparent 70%),
+    linear-gradient(160deg, var(--cork-1), var(--cork-dark));
+  border: 2px solid var(--cork-dark);
   border-radius: 6px;
-  box-shadow: 0 8px 24px rgba(20, 10, 5, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+  box-shadow: 0 8px 24px rgba(var(--shadow-rgb), 0.35), 0 0 0 1px rgba(var(--overlay-rgb), 0.15) inset;
   position: relative;
   overflow: hidden;
   cursor: crosshair;
@@ -56,7 +56,7 @@
 .minimap-viewport-rect {
   position: absolute;
   border: 1.5px solid #ffffff;
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(var(--overlay-rgb), 0.18);
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
   cursor: grab;
   pointer-events: auto;
@@ -65,5 +65,5 @@
 
 .minimap-viewport-rect:active {
   cursor: grabbing;
-  background: rgba(255, 255, 255, 0.28);
+  background: rgba(var(--overlay-rgb), 0.28);
 }

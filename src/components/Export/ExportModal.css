@@ -2,7 +2,7 @@
 .export-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20, 14, 8, 0.55);
+  background: rgba(var(--shadow-rgb), 0.55);
   z-index: 400;
   display: flex;
   align-items: center;
@@ -23,8 +23,8 @@
   max-width: 480px;
   max-height: 88vh;
   overflow-y: auto;
-  background: #f4ecd8;
-  border: 1px solid #e0d3ae;
+  background: var(--card);
+  border: 1px solid var(--card-edge);
   box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.45),
     0 4px 16px rgba(0, 0, 0, 0.2);
@@ -45,8 +45,8 @@
   transform: translateX(-50%) rotate(-1.5deg);
   width: 90px;
   height: 22px;
-  background: rgba(255, 255, 255, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(var(--overlay-rgb), 0.35);
+  border: 1px solid rgba(var(--overlay-rgb), 0.5);
 }
 
 /* ─── Header ─────────────────────────────────────────────────────── */
@@ -65,7 +65,7 @@
 
 .export-header-icon {
   font-size: 24px;
-  color: #c0392b;
+  color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,19 +75,19 @@
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 22px;
   font-weight: 700;
-  color: #241d18;
+  color: var(--ink);
   margin: 0;
 }
 
 .export-close {
   width: 32px;
   height: 32px;
-  border: 1px solid #e0d3ae;
+  border: 1px solid var(--card-edge);
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(var(--overlay-rgb), 0.4);
   cursor: pointer;
   font-size: 16px;
-  color: #5a4f42;
+  color: var(--ink-soft);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -95,9 +95,9 @@
 }
 
 .export-close:hover {
-  background: rgba(255, 255, 255, 0.7);
-  color: #c0392b;
-  border-color: #c0392b;
+  background: rgba(var(--overlay-rgb), 0.7);
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 /* ─── Info Bar ───────────────────────────────────────────────────── */
@@ -107,11 +107,11 @@
   gap: 8px;
   margin-bottom: 20px;
   font-size: 12px;
-  color: #8a7d6f;
+  color: var(--ink-muted);
 }
 
 .export-info-dot {
-  color: #c8bda8;
+  color: var(--paper-border-strong);
 }
 
 /* ─── Section ────────────────────────────────────────────────────── */
@@ -125,7 +125,7 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #8a7d6f;
+  color: var(--ink-muted);
   margin-bottom: 8px;
   font-family: 'Inter', sans-serif;
 }
@@ -142,29 +142,29 @@
   flex-direction: column;
   align-items: flex-start;
   padding: 12px 14px;
-  border: 1.5px solid #e0d3ae;
+  border: 1.5px solid var(--card-edge);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(var(--overlay-rgb), 0.4);
   cursor: pointer;
   transition: all 0.15s ease;
   text-align: left;
 }
 
 .export-format-btn:hover {
-  background: rgba(255, 255, 255, 0.7);
-  border-color: #c8bda8;
+  background: rgba(var(--overlay-rgb), 0.7);
+  border-color: var(--paper-border-strong);
 }
 
 .export-format-btn.active {
-  background: rgba(255, 255, 255, 0.8);
-  border-color: #c0392b;
-  box-shadow: 0 0 0 1px #c0392b;
+  background: rgba(var(--overlay-rgb), 0.8);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
 }
 
 .export-format-icon {
   font-size: 24px;
   margin-bottom: 6px;
-  color: #5a4f42;
+  color: var(--ink-soft);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -172,23 +172,23 @@
 }
 
 .export-format-btn:hover .export-format-icon {
-  color: #241d18;
+  color: var(--ink);
 }
 
 .export-format-btn.active .export-format-icon {
-  color: #c0392b;
+  color: var(--accent);
 }
 
 .export-format-label {
   font-size: 14px;
   font-weight: 700;
-  color: #241d18;
+  color: var(--ink);
   font-family: 'Inter', sans-serif;
 }
 
 .export-format-desc {
   font-size: 10px;
-  color: #8a7d6f;
+  color: var(--ink-muted);
   margin-top: 2px;
   font-family: 'Inter', sans-serif;
 }
@@ -197,24 +197,24 @@
 .export-input {
   width: 100%;
   padding: 10px 12px;
-  border: 1.5px solid #e0d3ae;
+  border: 1.5px solid var(--card-edge);
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(var(--overlay-rgb), 0.5);
   font-size: 14px;
   font-family: Georgia, 'Times New Roman', serif;
   font-weight: 700;
-  color: #241d18;
+  color: var(--ink);
   transition: border-color 0.15s ease;
 }
 
 .export-input:focus {
   outline: none;
-  border-color: #c0392b;
-  background: rgba(255, 255, 255, 0.8);
+  border-color: var(--accent);
+  background: rgba(var(--overlay-rgb), 0.8);
 }
 
 .export-input::placeholder {
-  color: #b0a898;
+  color: var(--paper-border-strong);
   font-weight: 400;
 }
 
@@ -227,36 +227,36 @@
 .export-quality-btn {
   flex: 1;
   padding: 10px 8px;
-  border: 1.5px solid #e0d3ae;
+  border: 1.5px solid var(--card-edge);
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(var(--overlay-rgb), 0.4);
   cursor: pointer;
   transition: all 0.15s ease;
   text-align: center;
 }
 
 .export-quality-btn:hover {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(var(--overlay-rgb), 0.7);
 }
 
 .export-quality-btn.active {
-  background: rgba(255, 255, 255, 0.8);
-  border-color: #c0392b;
-  box-shadow: 0 0 0 1px #c0392b;
+  background: rgba(var(--overlay-rgb), 0.8);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
 }
 
 .export-quality-label {
   display: block;
   font-size: 16px;
   font-weight: 700;
-  color: #241d18;
+  color: var(--ink);
   font-family: 'Inter', sans-serif;
 }
 
 .export-quality-desc {
   display: block;
   font-size: 10px;
-  color: #8a7d6f;
+  color: var(--ink-muted);
   margin-top: 2px;
   font-family: 'Inter', sans-serif;
 }
@@ -273,7 +273,7 @@
   align-items: center;
   gap: 4px;
   padding: 8px;
-  border: 1.5px solid #e0d3ae;
+  border: 1.5px solid var(--card-edge);
   border-radius: 6px;
   background: transparent;
   cursor: pointer;
@@ -282,12 +282,12 @@
 }
 
 .export-bg-btn:hover {
-  border-color: #c8bda8;
+  border-color: var(--paper-border-strong);
 }
 
 .export-bg-btn.active {
-  border-color: #c0392b;
-  box-shadow: 0 0 0 1px #c0392b;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
 }
 
 .export-bg-swatch {
@@ -300,7 +300,7 @@
 .export-bg-label {
   font-size: 9px;
   font-weight: 600;
-  color: #8a7d6f;
+  color: var(--ink-muted);
   font-family: 'Inter', sans-serif;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -318,7 +318,7 @@
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: #2b2420;
+  color: var(--ink);
   cursor: pointer;
   font-family: 'Inter', sans-serif;
 }
@@ -326,7 +326,7 @@
 .export-checkbox input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: #c0392b;
+  accent-color: var(--accent);
   cursor: pointer;
 }
 
@@ -337,7 +337,7 @@
   border: 1px solid #f8bbd0;
   border-radius: 6px;
   font-size: 13px;
-  color: #c0392b;
+  color: var(--accent);
   margin-bottom: 16px;
   display: flex;
   align-items: center;
@@ -355,31 +355,31 @@
 .export-cancel-btn {
   flex: 0 0 auto;
   padding: 11px 20px;
-  border: 1.5px solid #e0d3ae;
+  border: 1.5px solid var(--card-edge);
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(var(--overlay-rgb), 0.4);
   font-size: 13px;
   font-weight: 600;
-  color: #5a4f42;
+  color: var(--ink-soft);
   cursor: pointer;
   transition: all 0.15s ease;
   font-family: 'Inter', sans-serif;
 }
 
 .export-cancel-btn:hover {
-  background: rgba(255, 255, 255, 0.7);
-  border-color: #c8bda8;
+  background: rgba(var(--overlay-rgb), 0.7);
+  border-color: var(--paper-border-strong);
 }
 
 .export-submit-btn {
   flex: 1;
   padding: 11px 20px;
-  border: 1.5px solid #a3312b;
+  border: 1.5px solid var(--brand);
   border-radius: 6px;
-  background: #c0392b;
+  background: var(--accent);
   font-size: 13px;
   font-weight: 600;
-  color: #f4ecd8;
+  color: var(--chrome-fg);
   cursor: pointer;
   transition: all 0.15s ease;
   font-family: 'Inter', sans-serif;
@@ -390,7 +390,7 @@
 }
 
 .export-submit-btn:hover {
-  background: #e74c3c;
+  background: var(--accent-hover);
 }
 
 .export-submit-btn:disabled {
@@ -400,7 +400,7 @@
 
 .export-submit-btn kbd {
   font-size: 10px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(var(--overlay-rgb), 0.2);
   padding: 2px 6px;
   border-radius: 3px;
   font-family: 'Inter', monospace;
@@ -411,8 +411,8 @@
   display: inline-block;
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(244, 236, 216, 0.3);
-  border-top-color: #f4ecd8;
+  border: 2px solid rgba(var(--chrome-fg-rgb), 0.3);
+  border-top-color: var(--chrome-fg);
   border-radius: 50%;
   animation: exportSpin 0.6s linear infinite;
 }
