@@ -2,7 +2,7 @@
 .card-editor-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20, 14, 8, 0.35);
+  background: rgba(var(--shadow-rgb), 0.35);
   z-index: 300;
   animation: fadeIn 0.15s ease;
 }
@@ -16,11 +16,11 @@
 .card-editor {
   position: absolute;
   width: 320px;
-  background: #f4ecd8;
-  border: 1px solid #e0d3ae;
-  border-left: 4px solid #c0392b;
+  background: var(--card);
+  border: 1px solid var(--card-edge);
+  border-left: 4px solid var(--accent);
   box-shadow:
-    2px 4px 12px rgba(20, 14, 8, 0.35),
+    2px 4px 12px rgba(var(--shadow-rgb), 0.35),
     0 0 0 1px rgba(0, 0, 0, 0.04);
   padding: 20px 18px 18px;
   animation: slideUp 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -40,8 +40,8 @@
   transform: translateX(-50%) rotate(-2deg);
   width: 70px;
   height: 20px;
-  background: rgba(255, 255, 255, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(var(--overlay-rgb), 0.35);
+  border: 1px solid rgba(var(--overlay-rgb), 0.5);
 }
 
 /* ─── Header ────────────────────────────────────────────────────── */
@@ -56,7 +56,7 @@
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #5a4f42;
+  color: var(--ink-soft);
   font-weight: 600;
 }
 
@@ -68,27 +68,27 @@
 .card-editor-actions button {
   width: 28px;
   height: 28px;
-  border: 1px solid #e0d3ae;
+  border: 1px solid var(--card-edge);
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(var(--overlay-rgb), 0.5);
   cursor: pointer;
   font-size: 13px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.15s ease;
-  color: #5a4f42;
+  color: var(--ink-soft);
 }
 
 .card-editor-delete:hover {
   background: #fce4ec !important;
   border-color: #f8bbd0 !important;
-  color: #c0392b !important;
+  color: var(--accent) !important;
 }
 
 .card-editor-close:hover {
-  background: rgba(255, 255, 255, 0.8) !important;
-  border-color: #c0392b !important;
+  background: rgba(var(--overlay-rgb), 0.8) !important;
+  border-color: var(--accent) !important;
 }
 
 /* ─── Fields ────────────────────────────────────────────────────── */
@@ -101,7 +101,7 @@
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #8a7d6f;
+  color: var(--ink-muted);
   font-weight: 600;
   margin-bottom: 5px;
 }
@@ -109,13 +109,13 @@
 .card-editor-input,
 .card-editor-textarea {
   width: 100%;
-  border: 1px solid #e0d3ae;
+  border: 1px solid var(--card-edge);
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(var(--overlay-rgb), 0.6);
   padding: 8px 10px;
   font-size: 13px;
   font-family: 'Inter', sans-serif;
-  color: #2b2420;
+  color: var(--ink);
   resize: vertical;
   transition: border-color 0.15s ease;
 }
@@ -123,20 +123,20 @@
 .card-editor-input:focus,
 .card-editor-textarea:focus {
   outline: none;
-  border-color: #c0392b;
-  background: rgba(255, 255, 255, 0.8);
+  border-color: var(--accent);
+  background: rgba(var(--overlay-rgb), 0.8);
 }
 
 .card-editor-input::placeholder,
 .card-editor-textarea::placeholder {
-  color: #b0a898;
+  color: var(--paper-border-strong);
 }
 
 .card-editor-title-input {
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 15px;
   font-weight: 700;
-  color: #241d18;
+  color: var(--ink);
 }
 
 /* ─── Color Picker ──────────────────────────────────────────────── */
@@ -162,7 +162,7 @@
 
 .card-editor-color-swatch.active {
   transform: scale(1.1);
-  box-shadow: 0 0 0 2px #c0392b, 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0 2px var(--accent), 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .card-editor-color-check {
@@ -173,17 +173,17 @@
   justify-content: center;
   font-size: 14px;
   font-weight: 700;
-  color: #2b2420;
+  color: var(--ink);
 }
 
 /* ─── Save Button ───────────────────────────────────────────────── */
 .card-editor-save {
   width: 100%;
   padding: 10px;
-  border: 1px solid #a3312b;
+  border: 1px solid var(--brand);
   border-radius: 4px;
-  background: #c0392b;
-  color: #f4ecd8;
+  background: var(--accent);
+  color: var(--chrome-fg);
   font-size: 13px;
   font-weight: 600;
   font-family: 'Inter', sans-serif;
@@ -197,13 +197,13 @@
 }
 
 .card-editor-save:hover {
-  background: #e74c3c;
-  border-color: #c0392b;
+  background: var(--accent-hover);
+  border-color: var(--accent);
 }
 
 .card-editor-shortcut {
   font-size: 10px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(var(--overlay-rgb), 0.2);
   padding: 2px 6px;
   border-radius: 3px;
   letter-spacing: 0.05em;

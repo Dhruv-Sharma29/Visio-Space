@@ -9,10 +9,10 @@
 .shape-editor {
   position: absolute;
   width: 290px;
-  background: #fdfbf7;
+  background: var(--paper-bg);
   border-radius: 8px;
-  box-shadow: 0 12px 36px rgba(20, 10, 5, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.08);
-  border-left: 4px solid var(--accent, #c0392b);
+  box-shadow: 0 12px 36px rgba(var(--shadow-rgb), 0.35), 0 0 0 1px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid var(--accent, var(--accent));
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -43,7 +43,7 @@
   font-family: Georgia, 'Times New Roman', serif;
   font-weight: bold;
   font-size: 14px;
-  color: #241d18;
+  color: var(--ink);
 }
 
 .shape-editor-actions {
@@ -60,18 +60,18 @@
   padding: 4px 6px;
   border-radius: 4px;
   font-size: 13px;
-  color: #8a7d6f;
+  color: var(--ink-muted);
   transition: all 0.15s;
 }
 
 .shape-editor-delete:hover {
-  background: rgba(192, 57, 43, 0.1);
-  color: #c0392b;
+  background: rgba(var(--accent-rgb), 0.1);
+  color: var(--accent);
 }
 
 .shape-editor-close:hover {
   background: rgba(0, 0, 0, 0.06);
-  color: #241d18;
+  color: var(--ink);
 }
 
 .shape-editor-field {
@@ -85,7 +85,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #8a7d6f;
+  color: var(--ink-muted);
 }
 
 .shape-editor-types {
@@ -100,11 +100,11 @@
   justify-content: center;
   gap: 4px;
   padding: 6px 8px;
-  background: #f4ecd8;
-  border: 1px solid #e0d3ae;
+  background: var(--card);
+  border: 1px solid var(--card-edge);
   border-radius: 6px;
   font-size: 11px;
-  color: #5a4f42;
+  color: var(--ink-soft);
   cursor: pointer;
   transition: all 0.15s;
 }
@@ -115,28 +115,28 @@
 }
 
 .shape-type-btn.active {
-  background: #241d18;
-  border-color: #241d18;
-  color: #f4ecd8;
+  background: var(--chrome-bg-alt);
+  border-color: var(--ink);
+  color: var(--chrome-fg);
 }
 
 .shape-editor-textarea {
   width: 100%;
   padding: 8px 10px;
   background: #ffffff;
-  border: 1px solid #e0d3ae;
+  border: 1px solid var(--card-edge);
   border-radius: 6px;
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 13px;
-  color: #241d18;
+  color: var(--ink);
   resize: vertical;
   outline: none;
   box-sizing: border-box;
 }
 
 .shape-editor-textarea:focus {
-  border-color: #c0392b;
-  box-shadow: 0 0 0 2px rgba(192, 57, 43, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.15);
 }
 
 .shape-editor-colors {
@@ -163,13 +163,13 @@
 }
 
 .shape-editor-color-swatch.active {
-  box-shadow: 0 0 0 2px #241d18;
+  box-shadow: 0 0 0 2px var(--chrome-bg-alt);
 }
 
 .shape-editor-color-check {
   font-size: 11px;
   font-weight: bold;
-  color: #241d18;
+  color: var(--ink);
 }
 
 .shape-editor-save {
@@ -178,8 +178,8 @@
   justify-content: center;
   gap: 8px;
   padding: 8px 12px;
-  background: #241d18;
-  color: #f4ecd8;
+  background: var(--chrome-bg-alt);
+  color: var(--chrome-fg);
   border: none;
   border-radius: 6px;
   font-size: 13px;
@@ -195,8 +195,8 @@
 
 .shape-editor-shortcut {
   font-size: 10px;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(var(--overlay-rgb), 0.15);
   padding: 2px 5px;
   border-radius: 3px;
-  color: #e0d3ae;
+  color: var(--card-edge);
 }

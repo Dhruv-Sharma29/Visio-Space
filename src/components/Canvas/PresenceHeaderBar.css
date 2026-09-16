@@ -16,7 +16,7 @@
   height: 30px;
   border-radius: 50%;
   border: 2px solid #3B7FD8;
-  background: #251e18;
+  background: var(--chrome-bg-alt);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -41,10 +41,10 @@
 
 @keyframes presencePulse {
   0%, 100% {
-    box-shadow: 0 0 0 2px #d6a85f, 0 0 10px rgba(214, 168, 95, 0.6);
+    box-shadow: 0 0 0 2px var(--gold), 0 0 10px rgba(var(--gold-rgb), 0.6);
   }
   50% {
-    box-shadow: 0 0 0 3px #d6a85f, 0 0 16px rgba(214, 168, 95, 0.9);
+    box-shadow: 0 0 0 3px var(--gold), 0 0 16px rgba(var(--gold-rgb), 0.9);
   }
 }
 
@@ -73,7 +73,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  border: 1.5px solid #1B1410;
+  border: 1.5px solid var(--chrome-bg-alt);
 }
 
 .presence-overflow-badge {
@@ -81,8 +81,8 @@
   height: 26px;
   border-radius: 50%;
   background: rgba(45, 36, 29, 0.9);
-  border: 1px solid rgba(244, 236, 216, 0.3);
-  color: #f4ecd8;
+  border: 1px solid rgba(var(--chrome-fg-rgb), 0.3);
+  color: var(--chrome-fg);
   font-size: 10px;
   font-weight: 700;
   display: flex;

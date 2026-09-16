@@ -6,10 +6,10 @@
   padding: clamp(16px, 3vh, 32px) 16px;
   box-sizing: border-box;
   background:
-    radial-gradient(circle at 50% 25%, rgba(214, 168, 95, 0.08), transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(163, 49, 43, 0.06), transparent 45%),
-    #17110d;
-  color: #f4ecd8;
+    radial-gradient(circle at 50% 25%, rgba(var(--gold-rgb), 0.08), transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(var(--brand-rgb), 0.06), transparent 45%),
+    var(--chrome-bg-alt);
+  color: var(--chrome-fg);
   font-family: 'Inter', -apple-system, sans-serif;
   overflow-y: auto;
 }
@@ -22,8 +22,8 @@
   display: flex;
   flex-direction: column;
   border-radius: 12px;
-  border: 1px solid rgba(214, 168, 95, 0.22);
-  background: #211914;
+  border: 1px solid rgba(var(--gold-rgb), 0.22);
+  background: var(--chrome-bg);
   box-shadow:
     0 16px 40px rgba(0, 0, 0, 0.5),
     0 2px 8px rgba(0, 0, 0, 0.25);
@@ -53,7 +53,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #d6a85f;
+  color: var(--gold);
   margin: 0;
 }
 
@@ -62,12 +62,12 @@
   font-size: 22px;
   font-weight: 700;
   margin: 4px 0 0;
-  color: #fdfbf7;
+  color: var(--chrome-fg-strong);
   letter-spacing: -0.02em;
 }
 
 .onboarding-subtitle {
-  color: rgba(244, 236, 216, 0.7);
+  color: rgba(var(--chrome-fg-rgb), 0.7);
   line-height: 1.45;
   font-size: 12.5px;
   margin: 6px 0 0;
@@ -85,7 +85,7 @@
   flex-direction: column;
   gap: 5px;
   font-size: 12px;
-  color: rgba(244, 236, 216, 0.85);
+  color: rgba(var(--chrome-fg-rgb), 0.85);
   font-weight: 500;
 }
 
@@ -93,9 +93,9 @@
   box-sizing: border-box;
   width: 100%;
   padding: 9px 12px;
-  border: 1px solid rgba(244, 236, 216, 0.2);
+  border: 1px solid rgba(var(--chrome-fg-rgb), 0.2);
   border-radius: 7px;
-  background: #261d18;
+  background: var(--chrome-bg-alt);
   color: #fff8ea;
   font: inherit;
   font-size: 13px;
@@ -103,7 +103,7 @@
 }
 
 .onboarding-form input:focus {
-  border-color: #d6a85f;
+  border-color: var(--gold);
   outline: none;
 }
 
@@ -119,16 +119,16 @@
 }
 
 .onboarding-status.checking {
-  color: rgba(244, 236, 216, 0.5);
+  color: rgba(var(--chrome-fg-rgb), 0.5);
 }
 
 .onboarding-status.available {
-  color: #a9d9ac;
+  color: var(--success-text);
 }
 
 .onboarding-status.taken,
 .onboarding-status.invalid {
-  color: #f87171;
+  color: var(--danger-text);
 }
 
 .onboarding-username-field {
@@ -140,7 +140,7 @@
 .onboarding-username-at {
   position: absolute;
   left: 12px;
-  color: rgba(244, 236, 216, 0.45);
+  color: rgba(var(--chrome-fg-rgb), 0.45);
   font-weight: 600;
   font-size: 13.5px;
   pointer-events: none;
@@ -151,22 +151,22 @@
 }
 
 .onboarding-username-input.input-success {
-  border-color: rgba(117, 180, 126, 0.6);
+  border-color: rgba(var(--success-rgb), 0.6);
 }
 
 .onboarding-username-input.input-error {
-  border-color: rgba(224, 82, 82, 0.6);
+  border-color: rgba(var(--danger-alt-rgb), 0.6);
 }
 
 .onboarding-field-error {
   font-size: 11px;
-  color: #f87171;
+  color: var(--danger-text);
   margin-top: 2px;
 }
 
 .onboarding-hint {
   font-size: 11px;
-  color: rgba(244, 236, 216, 0.45);
+  color: rgba(var(--chrome-fg-rgb), 0.45);
   line-height: 1.35;
 }
 
@@ -175,9 +175,9 @@
   border-radius: 6px;
   font-size: 11.5px;
   line-height: 1.4;
-  background: rgba(224, 82, 82, 0.14);
-  color: #f87171;
-  border: 1px solid rgba(224, 82, 82, 0.3);
+  background: rgba(var(--danger-alt-rgb), 0.14);
+  color: var(--danger-text);
+  border: 1px solid rgba(var(--danger-alt-rgb), 0.3);
   margin: 2px 0 0;
 }
 
@@ -186,8 +186,8 @@
   padding: 10px 14px;
   border: 0;
   border-radius: 7px;
-  background: #d6a85f;
-  color: #211914;
+  background: var(--gold);
+  color: var(--on-gold-text);
   font-weight: 700;
   font-size: 13.5px;
   cursor: pointer;
@@ -215,13 +215,13 @@
 
 .onboarding-account-info {
   font-size: 11px;
-  color: rgba(244, 236, 216, 0.4);
+  color: rgba(var(--chrome-fg-rgb), 0.4);
 }
 
 .onboarding-switch-btn {
   border: 0;
   background: none;
-  color: #d6a85f;
+  color: var(--gold);
   font-size: 11.5px;
   cursor: pointer;
   padding: 2px 0;

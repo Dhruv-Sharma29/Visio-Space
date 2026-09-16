@@ -8,13 +8,13 @@
   flex-direction: column;
   width: 380px;
   max-width: calc(100vw - 48px);
-  background: rgba(36, 28, 23, 0.94);
+  background: rgba(var(--chrome-bg-alt-rgb), 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(214, 168, 95, 0.35);
+  border: 1px solid rgba(var(--gold-rgb), 0.35);
   border-radius: 12px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.06);
-  color: #f4ecd8;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(var(--overlay-rgb), 0.06);
+  color: var(--chrome-fg);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   animation: searchSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -35,11 +35,11 @@
   align-items: center;
   padding: 8px 12px;
   gap: 8px;
-  border-bottom: 1px solid rgba(244, 236, 216, 0.1);
+  border-bottom: 1px solid rgba(var(--chrome-fg-rgb), 0.1);
 }
 
 .canvas-search-icon {
-  color: #d6a85f;
+  color: var(--gold);
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -49,21 +49,21 @@
   flex: 1;
   background: transparent;
   border: none;
-  color: #fdfbf7;
+  color: var(--chrome-fg-strong);
   font-size: 13.5px;
   outline: none;
   font-family: inherit;
 }
 
 .canvas-search-input::placeholder {
-  color: rgba(244, 236, 216, 0.4);
+  color: rgba(var(--chrome-fg-rgb), 0.4);
 }
 
 .canvas-search-count {
   font-size: 11px;
   font-weight: 600;
-  color: rgba(244, 236, 216, 0.7);
-  background: rgba(255, 255, 255, 0.08);
+  color: rgba(var(--chrome-fg-rgb), 0.7);
+  background: rgba(var(--overlay-rgb), 0.08);
   padding: 2px 7px;
   border-radius: 10px;
   white-space: nowrap;
@@ -73,7 +73,7 @@
 .canvas-search-nav-btn {
   background: transparent;
   border: none;
-  color: rgba(244, 236, 216, 0.7);
+  color: rgba(var(--chrome-fg-rgb), 0.7);
   cursor: pointer;
   padding: 4px;
   border-radius: 4px;
@@ -84,8 +84,8 @@
 }
 
 .canvas-search-nav-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fdfbf7;
+  background: rgba(var(--overlay-rgb), 0.1);
+  color: var(--chrome-fg-strong);
 }
 
 .canvas-search-nav-btn:disabled {
@@ -96,7 +96,7 @@
 .canvas-search-close-btn {
   background: transparent;
   border: none;
-  color: rgba(244, 236, 216, 0.5);
+  color: rgba(var(--chrome-fg-rgb), 0.5);
   cursor: pointer;
   padding: 4px 6px;
   font-size: 14px;
@@ -106,8 +106,8 @@
 }
 
 .canvas-search-close-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fdfbf7;
+  background: rgba(var(--overlay-rgb), 0.1);
+  color: var(--chrome-fg-strong);
 }
 
 /* ─── Filter Pills ─────────────────────────────────────────────────── */
@@ -116,7 +116,7 @@
   gap: 6px;
   padding: 8px 12px;
   background: rgba(0, 0, 0, 0.15);
-  border-bottom: 1px solid rgba(244, 236, 216, 0.08);
+  border-bottom: 1px solid rgba(var(--chrome-fg-rgb), 0.08);
   overflow-x: auto;
 }
 
@@ -125,8 +125,8 @@
   border-radius: 12px;
   font-size: 11px;
   font-weight: 500;
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(244, 236, 216, 0.7);
+  background: rgba(var(--overlay-rgb), 0.06);
+  color: rgba(var(--chrome-fg-rgb), 0.7);
   border: 1px solid transparent;
   cursor: pointer;
   white-space: nowrap;
@@ -134,14 +134,14 @@
 }
 
 .canvas-search-filter-pill:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(var(--overlay-rgb), 0.12);
   color: #fff;
 }
 
 .canvas-search-filter-pill.active {
-  background: rgba(214, 168, 95, 0.22);
-  color: #d6a85f;
-  border-color: rgba(214, 168, 95, 0.4);
+  background: rgba(var(--gold-rgb), 0.22);
+  color: var(--gold);
+  border-color: rgba(var(--gold-rgb), 0.4);
 }
 
 /* ─── Results List Dropdown ────────────────────────────────────────── */
@@ -161,19 +161,19 @@
   padding: 7px 10px;
   border-radius: 8px;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(var(--overlay-rgb), 0.02);
   border: 1px solid transparent;
   transition: all 0.15s ease;
   text-align: left;
 }
 
 .canvas-search-item:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(var(--overlay-rgb), 0.08);
 }
 
 .canvas-search-item.active {
-  background: rgba(214, 168, 95, 0.15);
-  border-color: rgba(214, 168, 95, 0.4);
+  background: rgba(var(--gold-rgb), 0.15);
+  border-color: rgba(var(--gold-rgb), 0.4);
 }
 
 .canvas-search-item-header {
@@ -190,19 +190,19 @@
   letter-spacing: 0.05em;
   padding: 1px 6px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(244, 236, 216, 0.8);
+  background: rgba(var(--overlay-rgb), 0.1);
+  color: rgba(var(--chrome-fg-rgb), 0.8);
 }
 
 .canvas-search-item.active .canvas-search-item-badge {
-  background: #d6a85f;
-  color: #241c17;
+  background: var(--gold);
+  color: var(--on-gold-text);
 }
 
 .canvas-search-item-title {
   font-size: 12.5px;
   font-weight: 600;
-  color: #fdfbf7;
+  color: var(--chrome-fg-strong);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -210,14 +210,14 @@
 
 .canvas-search-item-snippet {
   font-size: 11px;
-  color: rgba(244, 236, 216, 0.6);
+  color: rgba(var(--chrome-fg-rgb), 0.6);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .canvas-search-highlight {
-  background: rgba(214, 168, 95, 0.35);
+  background: rgba(var(--gold-rgb), 0.35);
   color: #fff;
   border-radius: 2px;
   padding: 0 1px;
@@ -228,9 +228,9 @@
 .canvas-search-glow-ring {
   position: absolute;
   pointer-events: none;
-  border: 3px solid #d6a85f;
+  border: 3px solid var(--gold);
   border-radius: 8px;
-  box-shadow: 0 0 24px rgba(214, 168, 95, 0.8), inset 0 0 12px rgba(214, 168, 95, 0.4);
+  box-shadow: 0 0 24px rgba(var(--gold-rgb), 0.8), inset 0 0 12px rgba(var(--gold-rgb), 0.4);
   animation: searchPulse 1.5s infinite ease-in-out;
   z-index: 90;
 }

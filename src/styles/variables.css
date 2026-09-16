@@ -1,6 +1,11 @@
 /* ─── Design Tokens ─────────────────────────────────────────────────── */
-:root {
-  /* Cork board */
+/* Three selectable themes: Dark Paper (default), Parchment Light, High
+   Contrast. The active theme is applied via a `data-theme` attribute on
+   <html> (see src/utils/theme.ts) — :root holds the Dark Paper values so
+   the app renders correctly even before the attribute is set. */
+:root,
+:root[data-theme='dark-paper'] {
+  /* Cork board / canvas */
   --cork-1: #b8804f;
   --cork-2: #a06f42;
   --cork-dark: #8a5e38;
@@ -8,11 +13,14 @@
   /* Card defaults */
   --card: #f4ecd8;
   --card-edge: #e0d3ae;
+  --card-preview-bg: #f4ecdc;
 
-  /* Ink / text */
+  /* Ink / text (on light paper/card surfaces) */
   --ink: #2b2420;
   --ink-soft: #5a4f42;
   --ink-muted: #8a7d6f;
+  --ink-soft-rgb: 90, 79, 66;
+  --ink-faint-rgb: 138, 120, 102;
 
   /* String / connector colors */
   --string-loop: #a3312b;
@@ -23,25 +31,240 @@
   --pin-blue: #2f4a63;
   --pin-green: #27ae60;
 
-  /* Accent */
+  /* Accent (danger / active state on dark chrome) */
   --accent: #c0392b;
   --accent-hover: #e74c3c;
+  --accent-rgb: 192, 57, 43;
+  --accent-hover-rgb: 231, 76, 60;
+
+  /* Brand (primary CTA on light/paper surfaces) */
+  --brand: #a3312b;
+  --brand-hover: #8f2f27;
+  --brand-rgb: 163, 49, 43;
+
+  /* Gold accent (borders / highlights / primary buttons) */
+  --gold: #d6a85f;
+  --gold-strong: #f0c77d;
+  --gold-hover: #e2b770;
+  --gold-border-strong: #b8860b;
+  --gold-rgb: 214, 168, 95;
+
+  /* Status */
+  --danger-text: #f87171;
+  --danger-alt-rgb: 224, 82, 82;
+  --danger-bg-soft: #fdecea;
+  --success-text: #a9d9ac;
+  --success-rgb: 117, 180, 126;
+
+  /* Chrome surfaces (toolbar, modals, navbar, sidebars — the dark "wood") */
+  --chrome-bg: #211914;
+  --chrome-bg-alt: #241c17;
+  --chrome-input-bg: #281e18;
+  --chrome-avatar-bg: #382c23;
+  --chrome-fg: #f4ecd8;
+  --chrome-fg-strong: #fdfbf7;
+  --chrome-bg-rgb: 30, 24, 20;
+  --chrome-bg-alt-rgb: 36, 28, 23;
+  --chrome-fg-rgb: 244, 236, 216;
+  --chrome-fg-muted-rgb: 200, 190, 175;
+  --overlay-rgb: 255, 255, 255;
+  --on-gold-text: #211914;
+
+  /* Paper surfaces (dashboard, cards, dropdowns — the light "paper") */
+  --paper-bg: #fdfbf7;
+  --paper-bg-alt: #fbf7ee;
+  --paper-border: #ded5c5;
+  --paper-border-strong: #d5c4af;
+  --paper-border-hover: #b89b72;
+  --paper-border-rgb: 224, 211, 174;
+  --paper-hover: #eee3d1;
+  --dashboard-bg: #f6efe2;
+  --dashboard-dot: #dcd2be;
 
   /* Shadows */
-  --paper-shadow: rgba(20, 14, 8, 0.35);
-  --shadow-sm: 0 2px 6px rgba(20, 14, 8, 0.18);
-  --shadow-md: 2px 4px 10px rgba(20, 14, 8, 0.35);
-  --shadow-lg: 3px 8px 18px rgba(20, 14, 8, 0.42);
+  --shadow-rgb: 20, 14, 8;
+  --paper-shadow: rgba(var(--shadow-rgb), 0.35);
+  --shadow-sm: 0 2px 6px rgba(var(--shadow-rgb), 0.18);
+  --shadow-md: 2px 4px 10px rgba(var(--shadow-rgb), 0.35);
+  --shadow-lg: 3px 8px 18px rgba(var(--shadow-rgb), 0.42);
   --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.5);
 
-  /* Toolbar */
-  --toolbar-bg: rgba(36, 29, 24, 0.82);
-  --toolbar-border: rgba(255, 255, 255, 0.08);
-  --toolbar-text: #f4ecd8;
-  --toolbar-hover: rgba(255, 255, 255, 0.12);
-  --toolbar-active: rgba(192, 57, 43, 0.7);
+  /* Toolbar (legacy aliases, kept for components still referencing them) */
+  --toolbar-bg: rgba(var(--chrome-bg-alt-rgb), 0.82);
+  --toolbar-border: rgba(var(--overlay-rgb), 0.08);
+  --toolbar-text: var(--chrome-fg);
+  --toolbar-hover: rgba(var(--overlay-rgb), 0.12);
+  --toolbar-active: rgba(var(--accent-rgb), 0.7);
+}
 
-  /* Z-index layers */
+/* ─── Parchment Light ───────────────────────────────────────────────── */
+/* Light chrome throughout: toolbars, modals, and navbars switch from dark
+   espresso to warm parchment, so text/overlay tokens invert accordingly. */
+:root[data-theme='parchment-light'] {
+  --cork-1: #e8dcc4;
+  --cork-2: #ddd0b0;
+  --cork-dark: #c9b98f;
+
+  --card: #f4ecd8;
+  --card-edge: #e0d3ae;
+  --card-preview-bg: #f4ecdc;
+
+  --ink: #2b2420;
+  --ink-soft: #5a4f42;
+  --ink-muted: #8a7d6f;
+  --ink-soft-rgb: 90, 79, 66;
+  --ink-faint-rgb: 138, 120, 102;
+
+  --string-loop: #a3312b;
+  --string-cross: #2f4a63;
+
+  --pin-red: #c0392b;
+  --pin-blue: #2f4a63;
+  --pin-green: #27ae60;
+
+  --accent: #c0392b;
+  --accent-hover: #a83226;
+  --accent-rgb: 192, 57, 43;
+  --accent-hover-rgb: 168, 50, 38;
+
+  --brand: #a3312b;
+  --brand-hover: #8f2f27;
+  --brand-rgb: 163, 49, 43;
+
+  --gold: #b07c2a;
+  --gold-strong: #8a5e1f;
+  --gold-hover: #c2913f;
+  --gold-border-strong: #8a5e1f;
+  --gold-rgb: 176, 124, 42;
+
+  --danger-text: #c0392b;
+  --danger-alt-rgb: 200, 60, 60;
+  --danger-bg-soft: #fdecea;
+  --success-text: #2f8f4e;
+  --success-rgb: 47, 143, 78;
+
+  --chrome-bg: #f7f3eb;
+  --chrome-bg-alt: #efe6d4;
+  --chrome-input-bg: #ffffff;
+  --chrome-avatar-bg: #e9dcc0;
+  --chrome-fg: #2b2420;
+  --chrome-fg-strong: #1a1410;
+  --chrome-bg-rgb: 247, 243, 235;
+  --chrome-bg-alt-rgb: 237, 230, 214;
+  --chrome-fg-rgb: 43, 36, 32;
+  --chrome-fg-muted-rgb: 90, 79, 66;
+  --overlay-rgb: 43, 36, 32;
+  --on-gold-text: #2b2420;
+
+  --paper-bg: #fffdf8;
+  --paper-bg-alt: #f7f1e4;
+  --paper-border: #ded4c0;
+  --paper-border-strong: #c2b39e;
+  --paper-border-hover: #a3312b;
+  --paper-border-rgb: 224, 211, 174;
+  --paper-hover: #ece2cc;
+  --dashboard-bg: #f7f1e4;
+  --dashboard-dot: #e3d7bd;
+
+  --shadow-rgb: 60, 50, 40;
+  --paper-shadow: rgba(var(--shadow-rgb), 0.25);
+  --shadow-sm: 0 2px 6px rgba(var(--shadow-rgb), 0.12);
+  --shadow-md: 2px 4px 10px rgba(var(--shadow-rgb), 0.2);
+  --shadow-lg: 3px 8px 18px rgba(var(--shadow-rgb), 0.28);
+  --shadow-xl: 0 20px 50px rgba(var(--shadow-rgb), 0.35);
+
+  --toolbar-bg: rgba(var(--chrome-bg-alt-rgb), 0.92);
+  --toolbar-border: rgba(var(--overlay-rgb), 0.12);
+  --toolbar-text: var(--chrome-fg);
+  --toolbar-hover: rgba(var(--overlay-rgb), 0.08);
+  --toolbar-active: rgba(var(--accent-rgb), 0.18);
+}
+
+/* ─── High Contrast ─────────────────────────────────────────────────── */
+/* Pure black/white surfaces, vivid accents, solid borders instead of
+   translucency — for maximum legibility. */
+:root[data-theme='high-contrast'] {
+  --cork-1: #000000;
+  --cork-2: #0a0a0a;
+  --cork-dark: #000000;
+
+  --card: #ffffff;
+  --card-edge: #000000;
+  --card-preview-bg: #f2f2f2;
+
+  --ink: #000000;
+  --ink-soft: #1a1a1a;
+  --ink-muted: #333333;
+  --ink-soft-rgb: 26, 26, 26;
+  --ink-faint-rgb: 51, 51, 51;
+
+  --string-loop: #ff3b30;
+  --string-cross: #3b7fd8;
+
+  --pin-red: #ff3b30;
+  --pin-blue: #3b7fd8;
+  --pin-green: #3ddc73;
+
+  --accent: #ff3b30;
+  --accent-hover: #ff6b5e;
+  --accent-rgb: 255, 59, 48;
+  --accent-hover-rgb: 255, 107, 94;
+
+  --brand: #ff3b30;
+  --brand-hover: #e0291f;
+  --brand-rgb: 255, 59, 48;
+
+  --gold: #ffd166;
+  --gold-strong: #ffe28a;
+  --gold-hover: #ffda63;
+  --gold-border-strong: #ffffff;
+  --gold-rgb: 255, 209, 102;
+
+  --danger-text: #ff8a8a;
+  --danger-alt-rgb: 255, 90, 90;
+  --danger-bg-soft: #ffd6d6;
+  --success-text: #7dffa8;
+  --success-rgb: 60, 220, 110;
+
+  --chrome-bg: #000000;
+  --chrome-bg-alt: #0a0a0a;
+  --chrome-input-bg: #050505;
+  --chrome-avatar-bg: #141414;
+  --chrome-fg: #ffffff;
+  --chrome-fg-strong: #ffffff;
+  --chrome-bg-rgb: 0, 0, 0;
+  --chrome-bg-alt-rgb: 10, 10, 10;
+  --chrome-fg-rgb: 255, 255, 255;
+  --chrome-fg-muted-rgb: 220, 220, 220;
+  --overlay-rgb: 255, 255, 255;
+  --on-gold-text: #000000;
+
+  --paper-bg: #ffffff;
+  --paper-bg-alt: #f2f2f2;
+  --paper-border: #000000;
+  --paper-border-strong: #000000;
+  --paper-border-hover: #ff3b30;
+  --paper-border-rgb: 200, 200, 200;
+  --paper-hover: #e6e6e6;
+  --dashboard-bg: #ffffff;
+  --dashboard-dot: #cccccc;
+
+  --shadow-rgb: 0, 0, 0;
+  --paper-shadow: rgba(var(--shadow-rgb), 0.6);
+  --shadow-sm: 0 0 0 1px rgba(var(--shadow-rgb), 1);
+  --shadow-md: 0 0 0 1.5px rgba(var(--shadow-rgb), 1);
+  --shadow-lg: 0 0 0 2px rgba(var(--shadow-rgb), 1);
+  --shadow-xl: 0 0 0 2px rgba(var(--shadow-rgb), 1);
+
+  --toolbar-bg: rgba(var(--chrome-bg-rgb), 1);
+  --toolbar-border: rgba(var(--overlay-rgb), 0.4);
+  --toolbar-text: var(--chrome-fg);
+  --toolbar-hover: rgba(var(--overlay-rgb), 0.25);
+  --toolbar-active: rgba(var(--accent-rgb), 0.9);
+}
+
+/* ─── Shared (theme-invariant) tokens ───────────────────────────────── */
+:root {
   --z-background: 0;
   --z-connectors: 10;
   --z-cards: 20;
@@ -50,12 +273,10 @@
   --z-editor: 300;
   --z-overlay: 400;
 
-  /* Sizing */
   --card-width: 220px;
   --card-min-height: 120px;
   --toolbar-width: 52px;
 
-  /* Timing */
   --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --ease-bounce: cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }

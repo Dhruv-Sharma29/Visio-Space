@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="VisioSpace — A collaborative cork-board canvas for affinity mapping, research synthesis, and visual sensemaking." />
     <meta name="theme-color" content="#b8804f" />
+    <script>
+      (function () {
+        try {
+          var t = window.localStorage.getItem('visiospace_theme');
+          if (t === 'parchment-light' || t === 'high-contrast' || t === 'dark-paper') {
+            document.documentElement.setAttribute('data-theme', t);
+          }
+        } catch (e) {}
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="360x360" href="/apple-touch-icon.png" />
     <link rel="apple-touch-icon" sizes="360x360" href="/apple-touch-icon.png" />

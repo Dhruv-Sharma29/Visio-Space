@@ -1,7 +1,7 @@
 .connector-editor-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20, 14, 8, 0.45);
+  background: rgba(var(--shadow-rgb), 0.45);
   backdrop-filter: blur(2px);
   z-index: 1000;
   display: flex;
@@ -20,7 +20,7 @@
   background: #fcf9f2;
   border: 1px solid #d9ccb8;
   border-radius: 8px;
-  box-shadow: 0 12px 32px rgba(20, 10, 5, 0.35);
+  box-shadow: 0 12px 32px rgba(var(--shadow-rgb), 0.35);
   width: 100%;
   max-width: 420px;
   padding: 20px;
@@ -35,7 +35,7 @@
   margin: 0;
   font-size: 16px;
   font-weight: 700;
-  color: #2b2420;
+  color: var(--ink);
   font-family: Georgia, 'Times New Roman', serif;
   display: flex;
   align-items: center;
@@ -62,15 +62,15 @@
   border-radius: 4px;
   padding: 8px 12px;
   font-size: 14px;
-  color: #2b2420;
+  color: var(--ink);
   font-family: 'Courier New', monospace;
   outline: none;
   transition: border-color 0.15s;
 }
 
 .connector-editor-input:focus {
-  border-color: #a3312b;
-  box-shadow: 0 0 0 2px rgba(163, 49, 43, 0.2);
+  border-color: var(--brand);
+  box-shadow: 0 0 0 2px rgba(var(--brand-rgb), 0.2);
 }
 
 .connector-quick-tags {
@@ -93,7 +93,7 @@
 }
 
 .connector-quick-tag-btn:hover {
-  background: #a3312b;
+  background: var(--brand);
   color: #ffffff;
   border-color: #832520;
 }
@@ -117,7 +117,7 @@
 }
 
 .connector-btn-save {
-  background: #a3312b;
+  background: var(--brand);
   border: 1px solid #842621;
   color: #ffffff;
   padding: 6px 16px;
@@ -125,7 +125,7 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(163, 49, 43, 0.3);
+  box-shadow: 0 2px 6px rgba(var(--brand-rgb), 0.3);
 }
 
 .connector-btn-save:hover {

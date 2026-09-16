@@ -37,12 +37,12 @@
   width: 32px;
   height: 32px;
   border-radius: 50% 50% 50% 4px;
-  background: #2a2018;
-  border: 2px solid #d6a85f;
+  background: var(--chrome-bg-alt);
+  border: 2px solid var(--gold);
   box-shadow:
     0 4px 14px rgba(0, 0, 0, 0.45),
     0 2px 6px rgba(0, 0, 0, 0.3);
-  color: #fdfbf7;
+  color: var(--chrome-fg-strong);
   font-size: 12px;
   font-weight: 700;
   user-select: none;
@@ -52,16 +52,16 @@
 
 .comment-pin:hover .comment-pin-bubble,
 .comment-pin.active .comment-pin-bubble {
-  background: #d6a85f;
-  color: #1a1410;
+  background: var(--gold);
+  color: var(--on-gold-text);
   border-color: #fff;
   box-shadow:
-    0 6px 20px rgba(214, 168, 95, 0.4),
+    0 6px 20px rgba(var(--gold-rgb), 0.4),
     0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .comment-pin.resolved .comment-pin-bubble {
-  background: rgba(36, 28, 23, 0.85);
+  background: rgba(var(--chrome-bg-alt-rgb), 0.85);
   border-color: #4ade80;
   opacity: 0.75;
 }
@@ -89,13 +89,13 @@
   position: absolute;
   top: -5px;
   right: -6px;
-  background: #c0392b;
+  background: var(--accent);
   color: #fff;
   font-size: 10px;
   font-weight: 700;
   padding: 1px 5px;
   border-radius: 10px;
-  border: 1.5px solid #211914;
+  border: 1.5px solid var(--chrome-bg);
   line-height: 1.2;
 }
 
@@ -111,6 +111,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1.5px solid #211914;
+  border: 1.5px solid var(--chrome-bg);
   font-size: 9px;
 }
