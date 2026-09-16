@@ -8,6 +8,13 @@
     <script>
       (function () {
         try {
+          var params = new URLSearchParams(window.location.search);
+          var qTheme = params.get('theme');
+          if (qTheme === 'parchment-light' || qTheme === 'high-contrast' || qTheme === 'dark-paper') {
+            document.documentElement.setAttribute('data-theme', qTheme);
+            window.localStorage.setItem('visiospace_theme', qTheme);
+            return;
+          }
           var t = window.localStorage.getItem('visiospace_theme');
           if (t === 'parchment-light' || t === 'high-contrast' || t === 'dark-paper') {
             document.documentElement.setAttribute('data-theme', t);

@@ -661,9 +661,11 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
           </button>
           <button
             type="button"
-            className="canvas-share-btn"
+            className={`canvas-share-btn ${shareOpen ? 'active' : ''}`}
             onClick={() => setShareOpen(true)}
             title="Share board"
+            aria-label="Share board"
+            aria-expanded={shareOpen}
           >
             <IconShare size={15} />
             <span>Share</span>
