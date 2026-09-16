@@ -265,15 +265,18 @@ export function combineBoardsForImport(
     // 4. Connectors (Threads)
     const validTargetIds = new Set([...boardCards.map(c => c.id), ...boardShapes.map(s => s.id)]);
     const boardConnectors = (board.connectors || []).map(conn => {
-      const newFromId = getMappedId(conn.fromCardId);
-      const newToId = getMappedId(conn.toCardId);
+      const newFromId = conn.fromCardId ? getMappedId(conn.fromCardId) : null;
+      const newToId = conn.toCardId ? getMappedId(conn.toCardId) : null;
       return {
         ...conn,
         id: uuidv4(),
         fromCardId: newFromId,
         toCardId: newToId,
       };
-    }).filter(conn => validTargetIds.has(conn.fromCardId) && validTargetIds.has(conn.toCardId));
+    }).filter(conn =>
+      (conn.fromCardId === null || validTargetIds.has(conn.fromCardId)) &&
+      (conn.toCardId === null || validTargetIds.has(conn.toCardId))
+    );
 
     // 5. TextItems
     const boardTextItems = (board.textItems || []).map(t => ({

@@ -1,46 +1,17 @@
 import React from 'react';
-import { Line, Group, Rect, Text } from 'react-konva';
+import { Line, Group, Rect, Text, Circle } from 'react-konva';
 import type { Connector, Card, Shape } from '../../types/board';
 import { CONNECTOR_COLORS } from '../../types/board';
 import { useBoardStore } from '../../store/boardStore';
+import { getSmartAnchor, pointBox } from '../../utils/connectorGeometry';
 
 interface ConnectorLineProps {
   connector: Connector;
-  fromItem: Card | Shape;
-  toItem: Card | Shape;
+  fromItem: Card | Shape | null;
+  toItem: Card | Shape | null;
   isSelected: boolean;
   onSelect: (id: string) => void;
-}
-
-// Calculate smart anchor point on source edge closest to target
-function getSmartAnchor(source: Card | Shape, target: Card | Shape): { x: number; y: number } {
-  const srcCx = source.x + source.width / 2;
-  const srcCy = source.y + source.height / 2;
-  const tgtCx = target.x + target.width / 2;
-  const tgtCy = target.y + target.height / 2;
-
-  const dx = tgtCx - srcCx;
-  const dy = tgtCy - srcCy;
-
-  // Horizontal dominance
-  if (Math.abs(dx) > Math.abs(dy) * 1.1) {
-    if (dx > 0) {
-      // Connects from right edge
-      return { x: source.x + source.width, y: srcCy };
-    } else {
-      // Connects from left edge
-      return { x: source.x, y: srcCy };
-    }
-  } else {
-    // Vertical dominance
-    if (dy > 0) {
-      // Connects from bottom edge
-      return { x: srcCx, y: source.y + source.height };
-    } else {
-      // Connects from top pin
-      return { x: srcCx, y: source.y - 4 };
-    }
-  }
+  onEndpointDrag?: (end: 'from' | 'to', point: { x: number; y: number }) => void;
 }
 
 // Compute catenary-like droopy curve between two anchor points
@@ -90,9 +61,13 @@ export const ConnectorLine: React.FC<ConnectorLineProps> = ({
   toItem,
   isSelected,
   onSelect,
+  onEndpointDrag,
 }) => {
-  const p1 = getSmartAnchor(fromItem, toItem);
-  const p2 = getSmartAnchor(toItem, fromItem);
+  const fromBox = fromItem ?? pointBox(connector.fromPoint!);
+  const toBox = toItem ?? pointBox(connector.toPoint!);
+
+  const p1 = fromItem ? getSmartAnchor(fromBox, toBox) : connector.fromPoint!;
+  const p2 = toItem ? getSmartAnchor(toBox, fromBox) : connector.toPoint!;
 
   const { points, midX, midY } = computeCurvePoints(p1.x, p1.y, p2.x, p2.y);
   const strokeColor = CONNECTOR_COLORS[connector.color] || '#c0392b';
@@ -241,6 +216,42 @@ export const ConnectorLine: React.FC<ConnectorLineProps> = ({
             listening={false}
           />
         </Group>
+      )}
+
+      {/* Free-floating endpoint handles — draggable to reposition a detached end */}
+      {isSelected && !fromItem && (
+        <Circle
+          x={p1.x}
+          y={p1.y}
+          radius={6}
+          fill="#fffdfa"
+          stroke={strokeColor}
+          strokeWidth={2}
+          draggable
+          onDragEnd={(e) => {
+            e.cancelBubble = true;
+            onEndpointDrag?.('from', { x: e.target.x(), y: e.target.y() });
+          }}
+          onClick={(e) => { e.cancelBubble = true; onSelect(connector.id); }}
+          onTap={(e) => { e.cancelBubble = true; onSelect(connector.id); }}
+        />
+      )}
+      {isSelected && !toItem && (
+        <Circle
+          x={p2.x}
+          y={p2.y}
+          radius={6}
+          fill="#fffdfa"
+          stroke={strokeColor}
+          strokeWidth={2}
+          draggable
+          onDragEnd={(e) => {
+            e.cancelBubble = true;
+            onEndpointDrag?.('to', { x: e.target.x(), y: e.target.y() });
+          }}
+          onClick={(e) => { e.cancelBubble = true; onSelect(connector.id); }}
+          onTap={(e) => { e.cancelBubble = true; onSelect(connector.id); }}
+        />
       )}
     </Group>
   );
