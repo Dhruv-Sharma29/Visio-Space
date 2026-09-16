@@ -42,6 +42,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const selectTheme = (id: ThemeId) => {
     setTheme(id);
     applyTheme(id);
+    if (user) {
+      updateProfile({ preferences: { ...profile?.preferences, theme: id, sound: soundEnabled } });
+    }
   };
   const { soundEnabled, setSoundEnabled } = useBoardStore();
 
@@ -437,23 +440,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     type="checkbox"
                     className="settings-toggle-input"
                     checked={soundEnabled}
-                    onChange={e => setSoundEnabled(e.target.checked)}
-                  />
-                </div>
-
-                <div className="settings-form-actions">
-                  <button
-                    type="button"
-                    className="settings-save-btn"
-                    onClick={() => {
-                      applyTheme(theme);
-                      updateProfile({ preferences: { ...profile?.preferences, theme, sound: soundEnabled } });
-                      setProfileSaved(true);
-                      setTimeout(() => setProfileSaved(false), 2500);
+                    onChange={e => {
+                      const next = e.target.checked;
+                      setSoundEnabled(next);
+                      if (user) {
+                        updateProfile({ preferences: { ...profile?.preferences, theme, sound: next } });
+                      }
                     }}
-                  >
-                    Save Appearance
-                  </button>
+                  />
                 </div>
               </div>
             )}
