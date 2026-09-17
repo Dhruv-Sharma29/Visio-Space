@@ -64,8 +64,19 @@
 .canvas-back-btn:hover {
   background: rgba(var(--chrome-bg-alt-rgb), 0.95);
   border-color: var(--gold);
-  color: #fff;
+  color: var(--chrome-fg-strong);
   transform: translateX(-1px);
+}
+
+.canvas-back-btn:active {
+  background: rgba(var(--chrome-bg-alt-rgb), 1);
+  transform: translateX(0);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.canvas-back-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }
 
 .canvas-title-input {
@@ -146,8 +157,67 @@
 .canvas-settings-btn:hover {
   background: rgba(var(--chrome-bg-alt-rgb), 0.95);
   border-color: var(--gold);
-  color: #fff;
+  color: var(--chrome-fg-strong);
   transform: translateY(-1px);
+}
+
+.canvas-settings-btn:active {
+  background: rgba(var(--chrome-bg-alt-rgb), 1);
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.canvas-settings-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.canvas-share-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(var(--chrome-bg-alt-rgb), 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(var(--chrome-fg-rgb), 0.2);
+  border-radius: 8px;
+  color: var(--chrome-fg);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.canvas-share-btn svg {
+  flex-shrink: 0;
+}
+
+.canvas-share-btn:hover {
+  background: rgba(var(--chrome-bg-alt-rgb), 0.95);
+  border-color: var(--gold);
+  color: var(--chrome-fg-strong);
+  transform: translateY(-1px);
+}
+
+.canvas-share-btn:active,
+.canvas-share-btn.active {
+  background: rgba(var(--chrome-bg-alt-rgb), 1);
+  border-color: var(--gold);
+  color: var(--chrome-fg-strong);
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.canvas-share-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }
 
 .canvas-notif-btn {
@@ -171,8 +241,19 @@
 .canvas-notif-btn:hover {
   background: rgba(var(--chrome-bg-alt-rgb), 0.95);
   border-color: var(--gold);
-  color: #fff;
+  color: var(--chrome-fg-strong);
   transform: translateY(-1px);
+}
+
+.canvas-notif-btn:active {
+  background: rgba(var(--chrome-bg-alt-rgb), 1);
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.canvas-notif-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }
 
 .canvas-notif-btn .notif-badge {
@@ -258,6 +339,22 @@
   bottom: auto;
 }
 
+/* ─── High Contrast Theme Overrides ─────────────────────────────── */
+:root[data-theme='high-contrast'] .canvas-back-btn,
+:root[data-theme='high-contrast'] .canvas-settings-btn,
+:root[data-theme='high-contrast'] .canvas-notif-btn,
+:root[data-theme='high-contrast'] .canvas-share-btn {
+  border-color: rgba(var(--chrome-fg-rgb), 0.45);
+  background: var(--chrome-bg-alt);
+}
+
+:root[data-theme='high-contrast'] .canvas-back-btn:hover,
+:root[data-theme='high-contrast'] .canvas-settings-btn:hover,
+:root[data-theme='high-contrast'] .canvas-notif-btn:hover,
+:root[data-theme='high-contrast'] .canvas-share-btn:hover {
+  border-color: var(--gold);
+}
+
 /* ─── Responsive Canvas Top Bar ──────────────────────────────────── */
 @media (max-width: 768px) {
   .canvas-top-bar {
@@ -285,7 +382,8 @@
 }
 
 @media (max-width: 480px) {
-  .canvas-back-btn {
+  .canvas-back-btn,
+  .canvas-share-btn {
     padding: 5px 10px;
     font-size: 11px;
   }

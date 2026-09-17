@@ -12,6 +12,11 @@ export function isThemeId(value: unknown): value is ThemeId {
 export function getStoredTheme(): ThemeId {
   if (typeof window === 'undefined') return DEFAULT_THEME;
   try {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('theme');
+    if (isThemeId(q)) {
+      return q;
+    }
     const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
     return isThemeId(stored) ? stored : DEFAULT_THEME;
   } catch {
