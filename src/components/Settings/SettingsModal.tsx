@@ -164,8 +164,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     if (res.error) {
       setProfileError(res.error);
     } else {
-      setProfileSaved(true);
-      setTimeout(() => setProfileSaved(false), 3000);
+      onClose();
     }
   };
 
@@ -494,15 +493,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <button
                     type="button"
                     className="settings-save-btn"
-                    onClick={() => {
-                      updateProfile({
+                    disabled={profileSaving}
+                    onClick={async () => {
+                      setProfileSaving(true);
+                      const res = await updateProfile({
                         preferences: { ...profile?.preferences, defaultWorkspaceId },
                       });
-                      setProfileSaved(true);
-                      setTimeout(() => setProfileSaved(false), 2500);
+                      setProfileSaving(false);
+                      if (!res?.error) {
+                        onClose();
+                      }
                     }}
                   >
-                    Save Workspace Defaults
+                    {profileSaving ? 'Saving…' : 'Save Workspace Defaults'}
                   </button>
                 </div>
               </div>
@@ -559,8 +562,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <button
                     type="button"
                     className="settings-save-btn"
-                    onClick={() => {
-                      updateProfile({
+                    disabled={profileSaving}
+                    onClick={async () => {
+                      setProfileSaving(true);
+                      const res = await updateProfile({
                         preferences: {
                           ...profile?.preferences,
                           notifyMentions,
@@ -568,11 +573,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           notifyUpdates,
                         },
                       });
-                      setProfileSaved(true);
-                      setTimeout(() => setProfileSaved(false), 2500);
+                      setProfileSaving(false);
+                      if (!res?.error) {
+                        onClose();
+                      }
                     }}
                   >
-                    Save Notifications
+                    {profileSaving ? 'Saving…' : 'Save Notifications'}
                   </button>
                 </div>
               </div>
