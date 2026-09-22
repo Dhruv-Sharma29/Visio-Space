@@ -5,6 +5,7 @@ import { cleanUsername, validateUsernameFormat, validateFullName } from '../../u
 import { workspaceService, type Workspace } from '../../services/workspaceService';
 import { useBoardStore } from '../../store/boardStore';
 import { applyTheme, getStoredTheme, type ThemeId } from '../../utils/theme';
+import { IconUser, IconPalette, IconFolder, IconBell, IconLock } from '../Icons/Icons';
 import './SettingsModal.css';
 
 interface SettingsModalProps {
@@ -231,7 +232,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               className={`settings-nav-item ${activeTab === 'profile' ? 'active' : ''}`}
               onClick={() => setActiveTab('profile')}
             >
-              <span className="settings-nav-icon">👤</span>
+              <span className="settings-nav-icon" aria-hidden="true">
+                <IconUser size={16} />
+              </span>
               Profile
             </button>
             <button
@@ -239,7 +242,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               className={`settings-nav-item ${activeTab === 'appearance' ? 'active' : ''}`}
               onClick={() => setActiveTab('appearance')}
             >
-              <span className="settings-nav-icon">🎨</span>
+              <span className="settings-nav-icon" aria-hidden="true">
+                <IconPalette size={16} />
+              </span>
               Appearance
             </button>
             <button
@@ -247,7 +252,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               className={`settings-nav-item ${activeTab === 'workspace' ? 'active' : ''}`}
               onClick={() => setActiveTab('workspace')}
             >
-              <span className="settings-nav-icon">📁</span>
+              <span className="settings-nav-icon" aria-hidden="true">
+                <IconFolder size={16} />
+              </span>
               Workspace
             </button>
             <button
@@ -255,7 +262,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               className={`settings-nav-item ${activeTab === 'notifications' ? 'active' : ''}`}
               onClick={() => setActiveTab('notifications')}
             >
-              <span className="settings-nav-icon">🔔</span>
+              <span className="settings-nav-icon" aria-hidden="true">
+                <IconBell size={16} />
+              </span>
               Notifications
             </button>
             <button
@@ -263,7 +272,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               className={`settings-nav-item ${activeTab === 'security' ? 'active' : ''}`}
               onClick={() => setActiveTab('security')}
             >
-              <span className="settings-nav-icon">🔒</span>
+              <span className="settings-nav-icon" aria-hidden="true">
+                <IconLock size={16} />
+              </span>
               Account & Security
             </button>
           </nav>
