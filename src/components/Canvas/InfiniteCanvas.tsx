@@ -907,8 +907,8 @@ export const InfiniteCanvas: React.FC<InfiniteCanvasProps> = ({ onOpenDraftComme
               <ConnectorLine
                 key={conn.id}
                 connector={conn}
-                fromItem={fromItem}
-                toItem={toItem}
+                fromItem={fromItem ?? null}
+                toItem={toItem ?? null}
                 isSelected={selectedIds.includes(conn.id)}
                 onSelect={(id) => setSelectedIds([id])}
                 onEndpointDrag={(end, point) => updateConnectorEndpointPoint(conn.id, end, point)}
