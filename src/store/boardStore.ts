@@ -1067,7 +1067,9 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       cards: state.cards.filter(c => !cardIds.has(c.id)),
       shapes: state.shapes.filter(s => !shapeIds.has(s.id)),
       connectors: state.connectors.filter(
-        c => !removedItemIds.has(c.fromCardId) && !removedItemIds.has(c.toCardId)
+        c =>
+          (c.fromCardId == null || !removedItemIds.has(c.fromCardId)) &&
+          (c.toCardId == null || !removedItemIds.has(c.toCardId))
       ),
       selectedIds: state.selectedIds.filter(id => id !== clusterId && !removedItemIds.has(id)),
       editingClusterId: state.editingClusterId === clusterId ? null : state.editingClusterId,
@@ -1198,7 +1200,10 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
         cards: nextCards,
         shapes: nextShapes,
         connectors: state.connectors.filter(
-          c => !connectorIds.has(c.id) && !removedItemIds.has(c.fromCardId) && !removedItemIds.has(c.toCardId)
+          c =>
+            !connectorIds.has(c.id) &&
+            (c.fromCardId == null || !removedItemIds.has(c.fromCardId)) &&
+            (c.toCardId == null || !removedItemIds.has(c.toCardId))
         ),
         clusters: nextClusters,
         textItems: nextTextItems,
