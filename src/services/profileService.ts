@@ -188,15 +188,21 @@ export const profileService = {
     }
 
     try {
+      // Use upsert so that if the DB trigger already created a row for this user
+      // (without a username), we update it rather than colliding on the PK.
       const { data: inserted, error } = await supabase
         .from('profiles')
-        .insert({
-          id: profile.id,
-          username: profile.username,
-          full_name: profile.full_name,
-          avatar_url: profile.avatar_url,
-          preferences: profile.preferences,
-        })
+        .upsert(
+          {
+            id: profile.id,
+            username: profile.username,
+            full_name: profile.full_name,
+            avatar_url: profile.avatar_url,
+            preferences: profile.preferences,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'id' }
+        )
         .select()
         .single();
 
