@@ -175,15 +175,24 @@ export const Dashboard: React.FC<DashboardProps> = ({
       }
     }
 
-    const created = await boardService.createBoard(
-      currentWorkspace.id,
-      title || 'Untitled Board',
-      initialState,
-      user?.id,
-    );
+    try {
+      const created = await boardService.createBoard(
+        currentWorkspace.id,
+        title || 'Untitled Board',
+        initialState,
+        user?.id,
+      );
 
-    setBoards(prev => [created, ...prev]);
-    onOpenBoard(created.id);
+      setBoards(prev => [created, ...prev]);
+      onOpenBoard(created.id);
+    } catch (err: unknown) {
+      console.error('[Dashboard] handleCreateBoard failed:', err);
+      alert(
+        `Failed to create board: ${
+          (err as Error)?.message || 'Unknown error'
+        }\n\nPlease check your connection and try again.`
+      );
+    }
   };
 
   // Create a new workspace
@@ -338,7 +347,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <h1 className="dashboard-title">My Boards</h1>
             <p className="dashboard-subtitle">
               {currentWorkspace ? `${currentWorkspace.name} · ` : ''}
-              {boards.length} {boards.length === 1 ? 'board' : 'boards'}
+              {selectedProjectId
+                ? `${filteredBoards.length} of ${boards.length} ${boards.length === 1 ? 'board' : 'boards'}`
+                : `${boards.length} ${boards.length === 1 ? 'board' : 'boards'}`
+              }
             </p>
           </div>
 

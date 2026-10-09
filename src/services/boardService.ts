@@ -42,6 +42,10 @@ export const boardService = {
     }
 
     try {
+      // Use OR filter: workspace_id match covers boards the user has access to via RLS
+      // (is_workspace_member OR is_board_member). Adding created_by as a client-side
+      // safety net is not needed since RLS handles visibility, but we keep the filter
+      // explicit for the workspace to avoid cross-workspace leakage.
       const { data, error } = await supabase
         .from('boards')
         .select('id, workspace_id, title, state, thumbnail_url, created_by, created_at, updated_at')
@@ -52,6 +56,7 @@ export const boardService = {
         if (error.code === 'PGRST205' || error.message.includes('relation')) {
           return getLocalBoardsList().filter(b => b.workspace_id === workspaceId);
         }
+        console.error('[boardService] listBoards error:', error.message);
         throw new Error(error.message);
       }
 
@@ -72,7 +77,8 @@ export const boardService = {
           clusterCount: state?.clusters?.length || 0,
         };
       });
-    } catch {
+    } catch (err) {
+      console.error('[boardService] listBoards fallback to local:', err);
       return getLocalBoardsList().filter(b => b.workspace_id === workspaceId);
     }
   },
@@ -131,9 +137,15 @@ export const boardService = {
         .single();
 
       if (error || !data) {
+        // Only fall back to local storage if the table genuinely doesn't exist yet.
+        // For all other errors (RLS, network, etc.) we throw so the UI can show
+        // a meaningful error instead of silently creating a local-only board that
+        // disappears after a page refresh.
         if (error?.code === 'PGRST205' || error?.message?.includes('relation')) {
+          console.warn('[boardService] Boards table not found, using local storage.');
           return this.createBoard(workspaceId, title, initialState, null);
         }
+        console.error('[boardService] createBoard DB error:', error?.message);
         throw new Error(error?.message || 'Failed to create board');
       }
 
@@ -149,8 +161,11 @@ export const boardService = {
         connectorCount: state.connectors.length,
         clusterCount: state.clusters.length,
       };
-    } catch {
-      return this.createBoard(workspaceId, title, initialState, null);
+    } catch (err) {
+      // Re-throw so the Dashboard can surface the error to the user rather than
+      // creating a ghost board that vanishes on next refresh.
+      console.error('[boardService] createBoard failed:', err);
+      throw err;
     }
   },
 
@@ -252,9 +267,13 @@ export const boardService = {
         .eq('id', boardId);
 
       if (error) {
+        console.error('[boardService] saveBoardState DB error:', error.message);
+        // Write to localStorage as a temporary cache, but do NOT silently give up –
+        // the next successful save will sync the DB.
         localStorage.setItem(`${LOCAL_BOARD_DATA_PREFIX}${boardId}`, JSON.stringify(safeState));
       }
-    } catch {
+    } catch (err) {
+      console.error('[boardService] saveBoardState network error:', err);
       localStorage.setItem(`${LOCAL_BOARD_DATA_PREFIX}${boardId}`, JSON.stringify(safeState));
     }
   },

@@ -48,10 +48,19 @@ export const workspaceService = {
         .select('*, workspace_members(role)')
         .order('created_at', { ascending: true });
 
-      if (error || !data || data.length === 0) {
-        if (error && (error.code === 'PGRST205' || error.message.includes('relation'))) {
+      if (error) {
+        if (error.code === 'PGRST205' || error.message.includes('relation')) {
           return getLocalWorkspaces();
         }
+        console.error('[workspaceService] getMyWorkspaces error:', error.message);
+        // On a real DB error, attempt to ensure the user has a default workspace
+        return await workspaceService.ensureDefaultWorkspace(userId);
+      }
+
+      // If the query succeeded but returned nothing, the handle_new_user trigger
+      // may not have run yet. Try to create a default workspace rather than showing
+      // an empty dashboard with no way to create boards.
+      if (!data || data.length === 0) {
         return await workspaceService.ensureDefaultWorkspace(userId);
       }
 
@@ -66,7 +75,8 @@ export const workspaceService = {
           role: (members[0]?.role as 'owner' | 'admin' | 'member') || 'owner',
         };
       });
-    } catch {
+    } catch (err) {
+      console.error('[workspaceService] getMyWorkspaces fallback to local:', err);
       return getLocalWorkspaces();
     }
   },
