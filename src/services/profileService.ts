@@ -1,5 +1,5 @@
-import { supabase } from '../lib/supabase';
-import { cleanUsername, validateUsernameFormat } from '../utils/profileValidation';
+import { supabase } from '../lib/supabase.ts';
+import { cleanUsername, validateUsernameFormat } from '../utils/profileValidation.ts';
 
 export interface UserPreferences {
   theme?: 'dark-paper' | 'parchment-light' | 'high-contrast';
@@ -283,14 +283,15 @@ export const profileService = {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .update({
+        // Existing accounts can have only a cached profile until the database is initialized.
+        .upsert({
+          id: userId,
           username: updatedProfile.username,
           full_name: updatedProfile.full_name,
           avatar_url: updatedProfile.avatar_url,
           preferences: updatedProfile.preferences,
           updated_at: updatedProfile.updated_at,
-        })
-        .eq('id', userId)
+        }, { onConflict: 'id' })
         .select()
         .single();
 
