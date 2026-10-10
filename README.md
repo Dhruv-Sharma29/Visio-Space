@@ -82,6 +82,10 @@ Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
 
 4. Open your browser and visit `http://localhost:5173` to start creating!
 
+For cloud persistence, configure the Supabase project and follow
+[the database setup instructions](supabase/README.md). An empty project needs
+`supabase/bootstrap.sql` before individual RLS updates can run.
+
 ## Scripts
 
 - `npm run dev`: Starts the development server.

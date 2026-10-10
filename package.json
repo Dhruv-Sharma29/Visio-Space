@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "test": "node --experimental-strip-types --test tests/*.test.mts",
+    "test": "node --experimental-strip-types --test tests/*.test.mts supabase/tests/*.test.mjs",
     "release:check": "npm run lint && npm test && npm run build",
     "preview": "vite preview"
   },
@@ -22,6 +22,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.3.16",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
