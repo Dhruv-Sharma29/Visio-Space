@@ -926,3 +926,97 @@
   border: 1px solid rgba(var(--ink-faint-rgb), 0.15);
 }
 
+/* ─── Mobile Responsiveness ─── */
+@media (max-width: 768px) {
+  .dashboard-navbar {
+    height: auto;
+    min-height: 56px;
+    padding: calc(8px + var(--sat, 0px)) 16px 8px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .dashboard-nav-left {
+    gap: 12px;
+  }
+
+  .dashboard-brand-name {
+    font-size: 15px;
+  }
+
+  .dashboard-workspace-name {
+    max-width: 110px;
+  }
+
+  .dashboard-user-email {
+    max-width: 100px;
+  }
+
+  .dashboard-auth-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .dashboard-main {
+    padding: 16px 14px 60px;
+  }
+
+  .dashboard-header-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .dashboard-title {
+    font-size: 24px;
+  }
+
+  .dashboard-actions-group {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .dashboard-search-wrap {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .dashboard-new-board-btn {
+    width: 100%;
+    text-align: center;
+    padding: 11px;
+    font-size: 14px;
+  }
+
+  .dashboard-projects-bar {
+    gap: 6px;
+    margin-bottom: 16px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .create-card {
+    min-height: 110px;
+    padding: 16px;
+  }
+
+  .dashboard-modal {
+    width: calc(100vw - 24px) !important;
+    max-height: calc(100vh - 48px);
+    margin: 12px;
+  }
+
+  .board-card-menu-btn {
+    width: 36px;
+    height: 36px;
+  }
+}
+

@@ -124,3 +124,18 @@
   height: 6px;
   border-radius: 50%;
 }
+
+@media (max-width: 768px) {
+  .floating-format-bar {
+    padding: 6px 8px;
+    gap: 5px;
+  }
+  .floating-bar-btn {
+    width: 36px;
+    height: 36px;
+  }
+  .color-swatch-btn {
+    width: 26px;
+    height: 26px;
+  }
+}

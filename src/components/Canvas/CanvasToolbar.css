@@ -219,53 +219,76 @@
 .canvas-toolbar--top .toolbar-shape-flyout { left: 0; top: calc(100% + 8px); }
 .canvas-toolbar--bottom .toolbar-shape-flyout { left: 0; top: auto; bottom: calc(100% + 8px); }
 
-/* Keep controls compact on small screens without overriding the user's chosen dock. */
-@media (max-height: 700px), (max-width: 720px) {
-  .canvas-toolbar {
-    max-width: calc(100vw - 20px);
-  }
-  .toolbar-btn { width: 30px; height: 30px; }
+.toolbar-desktop-only {
+  display: contents;
 }
 
-/* ─── Touch / Coarse-Pointer Targets ────────────────────────────── */
-/* Ensure all interactive targets meet the 44×44px minimum recommended
-   by Apple HIG and Material Design for comfortable touch use.          */
-@media (pointer: coarse) {
-  .toolbar-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
+/* ─── Mobile Bottom Dock & Touch Optimizations ──────────────────── */
+@media (max-width: 768px) {
+  .toolbar-desktop-only {
+    display: none !important;
   }
 
-  .toolbar-drag-handle {
-    width: 28px;
-    height: 40px;
-    gap: 4px;
+  .canvas-toolbar {
+    left: 50% !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: calc(12px + var(--sab, 0px)) !important;
+    transform: translateX(-50%) !important;
+    flex-direction: row !important;
+    max-width: calc(100vw - 16px) !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: 5px 8px !important;
+    gap: 4px !important;
+    border-radius: 16px !important;
+    box-shadow:
+      0 12px 32px rgba(0, 0, 0, 0.45),
+      0 2px 6px rgba(0, 0, 0, 0.25) !important;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
-  .canvas-toolbar--top .toolbar-drag-handle,
-  .canvas-toolbar--bottom .toolbar-drag-handle {
-    width: 40px;
-    height: 28px;
+
+  .canvas-toolbar .toolbar-section {
+    flex-direction: row !important;
+    gap: 2px !important;
+  }
+
+  .canvas-toolbar .toolbar-drag-handle {
+    display: none !important;
+  }
+
+  .toolbar-btn {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 8px !important;
+    flex-shrink: 0;
+  }
+
+  .toolbar-shape-flyout {
+    position: fixed !important;
+    left: 50% !important;
+    top: auto !important;
+    bottom: calc(64px + var(--sab, 0px)) !important;
+    transform: translateX(-50%) !important;
+    width: calc(100vw - 32px) !important;
+    max-width: 320px !important;
+    border-radius: 14px !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .toolbar-flyout-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
   }
 
   .toolbar-flyout-item {
-    padding: 10px 12px;
-    min-height: 44px;
+    min-height: 40px !important;
+    padding: 8px 10px !important;
   }
 
-  .toolbar-zoom-display {
-    width: 48px;
-  }
-
-  /* Disable hover-only tooltips on touch — they never trigger correctly */
   .toolbar-tooltip {
-    display: none;
-  }
-
-  /* Shape flyout items: larger tap targets in a single column on mobile */
-  .toolbar-flyout-grid {
-    grid-template-columns: 1fr;
-    gap: 6px;
+    display: none !important;
   }
 }
 

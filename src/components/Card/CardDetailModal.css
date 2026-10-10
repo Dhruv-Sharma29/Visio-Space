@@ -236,3 +236,14 @@
   background: rgba(var(--overlay-rgb), 0.85);
   border-color: var(--paper-border-strong);
 }
+
+@media (max-width: 600px) {
+  .card-detail-panel {
+    width: calc(100vw - 20px);
+    max-width: calc(100vw - 20px);
+    margin: 10px;
+  }
+  .card-detail-body {
+    padding: 20px 16px;
+  }
+}

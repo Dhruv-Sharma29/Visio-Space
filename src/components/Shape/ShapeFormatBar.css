@@ -165,3 +165,14 @@
   border-color: rgba(var(--accent-rgb), 0.8);
   color: #ffffff;
 }
+
+@media (max-width: 768px) {
+  .shape-format-bar {
+    padding: 6px 8px;
+    gap: 6px;
+  }
+  .shape-format-btn {
+    width: 36px;
+    height: 36px;
+  }
+}

@@ -242,10 +242,10 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({ onOpenExport, onOp
         })}
       </div>
 
-      <div className="toolbar-divider" />
+      <div className="toolbar-divider toolbar-desktop-only" />
 
       {/* Zoom section */}
-      <div className="toolbar-section">
+      <div className="toolbar-section toolbar-desktop-only">
         <button className="toolbar-btn" onClick={zoomOut} title="Zoom out">
           <IconZoomOut />
         </button>
@@ -292,22 +292,22 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({ onOpenExport, onOp
 
       <div className="toolbar-divider" />
 
-      {/* File & Templates section */}
+      {/* Media & Tools section */}
       <div className="toolbar-section">
-        <button className="toolbar-btn" onClick={onOpenTemplates} title="Sensemaking Templates">
+        <button className="toolbar-btn toolbar-desktop-only" onClick={onOpenTemplates} title="Sensemaking Templates">
           <IconTemplate />
           <span className="toolbar-tooltip">
             Templates
           </span>
         </button>
-        <button className="toolbar-btn" onClick={onOpenExport} title="Export board (⌘E)">
+        <button className="toolbar-btn toolbar-desktop-only" onClick={onOpenExport} title="Export board (⌘E)">
           <IconExport />
           <span className="toolbar-tooltip">
             Export
             <kbd>⌘E</kbd>
           </span>
         </button>
-        <button className="toolbar-btn" onClick={onOpenImport} title="Import JSON, CSV, or Markdown">
+        <button className="toolbar-btn toolbar-desktop-only" onClick={onOpenImport} title="Import JSON, CSV, or Markdown">
           <IconImport />
           <span className="toolbar-tooltip">Import</span>
         </button>
@@ -317,7 +317,7 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({ onOpenExport, onOp
         </button>
         <input ref={imageInputRef} className="toolbar-image-input" type="file" accept="image/*" onChange={handleImageFile} />
         <button
-          className={`toolbar-btn ${!soundEnabled ? 'dimmed' : ''}`}
+          className={`toolbar-btn toolbar-desktop-only ${!soundEnabled ? 'dimmed' : ''}`}
           onClick={toggleSound}
           title={soundEnabled ? 'Mute sound effects' : 'Enable sound effects'}
         >

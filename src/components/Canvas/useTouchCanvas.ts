@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import type React from 'react';
 import type Konva from 'konva';
 import { useBoardStore } from '../../store/boardStore';
@@ -67,6 +67,8 @@ export function useTouchCanvas(
   const suppressNextTap          = useRef(false);
   const lastTouchDist            = useRef<number | null>(null);
   const lastTouchMidClient       = useRef<{ x: number; y: number } | null>(null);
+  const lastTapTime              = useRef<number>(0);
+  const lastTapPos               = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     const stage = stageRef.current;
@@ -212,8 +214,6 @@ export function useTouchCanvas(
         lastTouchDist.current  = null;
         lastTouchMidClient.current = null;
 
-        // Single tap on background → clear selection
-        // (double-tap → card creation is handled by Konva onDblTap on Stage)
         if (
           !wasMulti &&
           !suppressNextTap.current &&
@@ -221,7 +221,32 @@ export function useTouchCanvas(
           touchStartOnBackground.current &&
           e.changedTouches.length === 1
         ) {
-          useBoardStore.getState().clearSelection();
+          const touch = e.changedTouches[0];
+          const now = Date.now();
+          const prevTime = lastTapTime.current;
+          const prevPos = lastTapPos.current;
+
+          const isDoubleTap =
+            now - prevTime < 320 &&
+            prevPos &&
+            Math.hypot(touch.clientX - prevPos.x, touch.clientY - prevPos.y) < 30;
+
+          if (isDoubleTap) {
+            lastTapTime.current = 0;
+            lastTapPos.current = null;
+            const store = useBoardStore.getState();
+            const containerPos = toContainerPos(touch.clientX, touch.clientY);
+            const worldX = (containerPos.x - store.viewport.x) / store.viewport.scale;
+            const worldY = (containerPos.y - store.viewport.y) / store.viewport.scale;
+            const newId = store.addCard(worldX - 110, worldY - 70);
+            store.setSelectedIds([newId]);
+            store.setEditingCardId(newId);
+            store.setActiveTool('select');
+          } else {
+            lastTapTime.current = now;
+            lastTapPos.current = { x: touch.clientX, y: touch.clientY };
+            useBoardStore.getState().clearSelection();
+          }
         }
 
         suppressNextTap.current        = false;

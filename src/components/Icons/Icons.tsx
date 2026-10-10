@@ -22,6 +22,14 @@ export const IconStickyNote = ({ size = 20, color = 'currentColor' }: IconProps)
   </svg>
 );
 
+export const IconMoreVertical = ({ size = 20, color = 'currentColor' }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="1.5" fill={color} />
+    <circle cx="12" cy="5" r="1.5" fill={color} />
+    <circle cx="12" cy="19" r="1.5" fill={color} />
+  </svg>
+);
+
 export const IconLink = ({ size = 20, color = 'currentColor' }: IconProps) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />

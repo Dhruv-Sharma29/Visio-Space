@@ -23,7 +23,7 @@ import { useAuth } from './auth/AuthContext';
 import { useBoardStore } from './store/boardStore';
 import { boardService } from './services/boardService';
 import { SettingsModal } from './components/Settings/SettingsModal';
-import { IconSettings, IconShare, IconBell, IconHistory, IconActivity, IconSearch } from './components/Icons/Icons';
+import { IconSettings, IconShare, IconBell, IconHistory, IconActivity, IconSearch, IconMoreVertical } from './components/Icons/Icons';
 import { realtimeService } from './services/realtimeService';
 import { PresenceHeaderBar } from './components/Canvas/PresenceHeaderBar';
 import { FollowBanner } from './components/Canvas/FollowBanner';
@@ -116,6 +116,7 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [activityOpen, setActivityOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [comments, setComments] = useState<CommentItem[]>([]);
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
   const [draftComment, setDraftComment] = useState<{ x: number; y: number; cardId?: string | null } | null>(null);
@@ -594,7 +595,7 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
               onClick={onBackToDashboard}
               title="Return to My Boards"
             >
-              ← All Boards
+              <span className="back-arrow">←</span> <span className="back-text">All Boards</span>
             </button>
           )}
           <input
@@ -608,7 +609,9 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
         </div>
 
         <div className="canvas-top-right">
-          <PresenceHeaderBar />
+          <div className="canvas-desktop-only">
+            <PresenceHeaderBar />
+          </div>
           {currentRole === 'viewer' ? (
             <span className="canvas-viewer-badge" title="You have read-only access to this board">
               👁 Viewer
@@ -620,45 +623,48 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
               {saveStatus === 'local' && 'Local saved ✓'}
             </span>
           )}
-          <button
-            type="button"
-            className="canvas-notif-btn"
-            onClick={() => setSearchOpen(prev => !prev)}
-            title="Search canvas (⌘F)"
-            aria-label="Search canvas"
-          >
-            <IconSearch size={16} />
-          </button>
-          <button
-            type="button"
-            className="canvas-notif-btn"
-            onClick={() => setActivityOpen(prev => !prev)}
-            title="Board Activity"
-            aria-label="Board Activity"
-          >
-            <IconActivity size={16} />
-          </button>
-          <button
-            type="button"
-            className="canvas-notif-btn"
-            onClick={() => setHistoryOpen(prev => !prev)}
-            title="Version History"
-            aria-label="Version History"
-          >
-            <IconHistory size={16} />
-          </button>
-          <button
-            type="button"
-            className="canvas-notif-btn"
-            onClick={() => setNotificationDrawerOpen(prev => !prev)}
-            title="Notifications"
-            aria-label="Notifications"
-          >
-            <IconBell size={17} />
-            {unreadNotifsCount > 0 && (
-              <span className="notif-badge">{unreadNotifsCount > 9 ? '9+' : unreadNotifsCount}</span>
-            )}
-          </button>
+          <div className="canvas-desktop-only">
+            <button
+              type="button"
+              className="canvas-notif-btn"
+              onClick={() => setSearchOpen(prev => !prev)}
+              title="Search canvas (⌘F)"
+              aria-label="Search canvas"
+            >
+              <IconSearch size={16} />
+            </button>
+            <button
+              type="button"
+              className="canvas-notif-btn"
+              onClick={() => setActivityOpen(prev => !prev)}
+              title="Board Activity"
+              aria-label="Board Activity"
+            >
+              <IconActivity size={16} />
+            </button>
+            <button
+              type="button"
+              className="canvas-notif-btn"
+              onClick={() => setHistoryOpen(prev => !prev)}
+              title="Version History"
+              aria-label="Version History"
+            >
+              <IconHistory size={16} />
+            </button>
+            <button
+              type="button"
+              className="canvas-notif-btn"
+              onClick={() => setNotificationDrawerOpen(prev => !prev)}
+              title="Notifications"
+              aria-label="Notifications"
+            >
+              <IconBell size={17} />
+              {unreadNotifsCount > 0 && (
+                <span className="notif-badge">{unreadNotifsCount > 9 ? '9+' : unreadNotifsCount}</span>
+              )}
+            </button>
+          </div>
+
           <button
             type="button"
             className={`canvas-share-btn ${shareOpen ? 'active' : ''}`}
@@ -668,19 +674,109 @@ function App({ boardId, onBackToDashboard }: AppProps = {}) {
             aria-expanded={shareOpen}
           >
             <IconShare size={15} />
-            <span>Share</span>
+            <span className="canvas-btn-text">Share</span>
           </button>
-          {user && (
+
+          <div className="canvas-desktop-only">
+            {user && (
+              <button
+                type="button"
+                className="canvas-settings-btn"
+                onClick={() => setSettingsOpen(true)}
+                title="Settings"
+              >
+                <IconSettings size={18} />
+              </button>
+            )}
+            {!user && <GuestBadge onSignIn={() => setAuthModalOpen(true)} />}
+          </div>
+
+          {/* Mobile Overflow Menu */}
+          <div className="canvas-mobile-more-container">
             <button
               type="button"
-              className="canvas-settings-btn"
-              onClick={() => setSettingsOpen(true)}
-              title="Settings"
+              className={`canvas-mobile-more-btn ${mobileMenuOpen ? 'active' : ''}`}
+              onClick={() => setMobileMenuOpen(prev => !prev)}
+              title="More actions"
+              aria-label="More actions"
             >
-              <IconSettings size={18} />
+              <IconMoreVertical size={18} />
+              {unreadNotifsCount > 0 && <span className="mobile-notif-dot" />}
             </button>
-          )}
-          {!user && <GuestBadge onSignIn={() => setAuthModalOpen(true)} />}
+
+            {mobileMenuOpen && (
+              <>
+                <div className="canvas-mobile-menu-backdrop" onClick={() => setMobileMenuOpen(false)} />
+                <div className="canvas-mobile-menu-dropdown">
+                  <button
+                    type="button"
+                    className="canvas-mobile-menu-item"
+                    onClick={() => { setSearchOpen(true); setMobileMenuOpen(false); }}
+                  >
+                    <IconSearch size={16} />
+                    <span>Search Canvas</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="canvas-mobile-menu-item"
+                    onClick={() => { setNotificationDrawerOpen(true); setMobileMenuOpen(false); }}
+                  >
+                    <IconBell size={16} />
+                    <span>Notifications {unreadNotifsCount > 0 ? `(${unreadNotifsCount})` : ''}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="canvas-mobile-menu-item"
+                    onClick={() => { setActivityOpen(true); setMobileMenuOpen(false); }}
+                  >
+                    <IconActivity size={16} />
+                    <span>Board Activity</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="canvas-mobile-menu-item"
+                    onClick={() => { setHistoryOpen(true); setMobileMenuOpen(false); }}
+                  >
+                    <IconHistory size={16} />
+                    <span>Version History</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="canvas-mobile-menu-item"
+                    onClick={() => { setExportOpen(true); setMobileMenuOpen(false); }}
+                  >
+                    <span>Export Board…</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="canvas-mobile-menu-item"
+                    onClick={() => { setTemplatesOpen(true); setMobileMenuOpen(false); }}
+                  >
+                    <span>Templates…</span>
+                  </button>
+                  <div className="canvas-mobile-menu-divider" />
+                  {user ? (
+                    <button
+                      type="button"
+                      className="canvas-mobile-menu-item"
+                      onClick={() => { setSettingsOpen(true); setMobileMenuOpen(false); }}
+                    >
+                      <IconSettings size={16} />
+                      <span>Settings</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="canvas-mobile-menu-item"
+                      onClick={() => { setAuthModalOpen(true); setMobileMenuOpen(false); }}
+                    >
+                      <span>Sign In / Sync</span>
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </header>
 
