@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { supabase } from '../lib/supabase.ts';
 import type { InAppNotification } from '../types/board.ts';
 
@@ -68,7 +69,7 @@ export const notificationService = {
     params: Omit<InAppNotification, 'id' | 'createdAt' | 'read'>
   ): Promise<InAppNotification> {
     const now = new Date().toISOString();
-    const id = `notif_${Math.random().toString(36).slice(2, 10)}`;
+    const id = uuidv4();
 
     const newNotif: InAppNotification = {
       id,
@@ -93,9 +94,11 @@ export const notificationService = {
     // Save to Supabase Cloud if available
     if (supabase && !params.userId.startsWith('guest_') && !params.userId.startsWith('local_')) {
       try {
-        const { data, error } = await supabase
+        // No RETURNING: only the recipient may read the row, so asking for it back rolls back the insert.
+        await supabase
           .from('notifications')
           .insert({
+            id,
             user_id: params.userId,
             type: params.type,
             title: params.title,
@@ -105,13 +108,7 @@ export const notificationService = {
             card_id: params.cardId || null,
             x: params.x,
             y: params.y,
-          })
-          .select()
-          .single();
-
-        if (!error && data) {
-          newNotif.id = String(data.id);
-        }
+          });
       } catch {}
     }
 

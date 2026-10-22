@@ -114,7 +114,8 @@ test('notificationService manages notifications, unread count, and mark-as-read'
     y: 400,
   });
 
-  assert.ok(notif1.id.startsWith('notif_'));
+  // The same id is written to the cloud row, whose id column is a uuid.
+  assert.match(notif1.id, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
   assert.equal(notif1.read, false);
 
   // Create notification 2

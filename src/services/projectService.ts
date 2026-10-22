@@ -25,7 +25,7 @@ export const projectService = {
   async getProjects(workspaceId: string): Promise<BoardProject[]> {
     if (!workspaceId) return [];
 
-    if (workspaceId.startsWith('local_') || !supabase) {
+    if (workspaceId.startsWith('local') || !supabase) {
       return getLocalProjects(workspaceId);
     }
 
@@ -78,7 +78,7 @@ export const projectService = {
     saveLocalProjects(workspaceId, local);
 
     // Save to Supabase Cloud if available
-    if (!workspaceId.startsWith('local_') && supabase) {
+    if (!workspaceId.startsWith('local') && supabase) {
       try {
         const { data, error } = await supabase
           .from('board_projects')
@@ -121,7 +121,7 @@ export const projectService = {
       }
     } catch {}
 
-    if (!workspaceId.startsWith('local_') && supabase) {
+    if (!workspaceId.startsWith('local') && supabase) {
       try {
         await supabase
           .from('board_projects')
