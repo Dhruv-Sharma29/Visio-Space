@@ -127,3 +127,56 @@ test('the incremental workspace repair fixes INSERT RETURNING without exposing o
     assert.equal((await db.query('select id from public.workspaces where id = $1', [workspace])).rows.length, 0);
   } finally { await db.close(); }
 });
+
+test('link editors edit content but cannot take over sharing, ownership or membership', async () => {
+  const db = await database();
+  try {
+    await db.exec(await readFile(new URL('../bootstrap.sql', import.meta.url), 'utf8'));
+    const [owner, member, linkUser, teammate] = ['55555555-5555-4555-8555-555555555555', '66666666-6666-4666-8666-666666666666',
+      '77777777-7777-4777-8777-777777777777', '88888888-8888-4888-8888-888888888888'];
+    await db.query(`insert into auth.users (id, email, raw_user_meta_data) values
+      ($1, 'o@example.invalid', '{"username":"owner"}'), ($2, 'm@example.invalid', '{"username":"member"}'),
+      ($3, 'l@example.invalid', '{"username":"linkuser"}'), ($4, 't@example.invalid', '{"username":"teammate"}')`,
+      [owner, member, linkUser, teammate]);
+    const workspace = (await db.query('select id from public.workspaces where created_by = $1', [owner])).rows[0].id;
+    await db.query(`insert into public.workspace_members (workspace_id, user_id, role) values ($1, $2, 'member')`, [workspace, teammate]);
+    const as = async user => {
+      await db.exec('set role authenticated');
+      await db.query("select set_config('request.jwt.claim.sub', $1, false)", [user]);
+    };
+    await as(owner);
+    const board = (await db.query(`insert into public.boards (workspace_id, title, created_by)
+      values ($1, 'Shared', $2) returning id`, [workspace, owner])).rows[0].id;
+    await db.query(`select public.invite_board_collaborator($1, 'member', 'editor')`, [board]);
+    await db.query(`update public.boards set public_access = 'editor' where id = $1`, [board]);
+    // Senders insert without RETURNING because only the recipient can read the row.
+    await db.query(`insert into public.notifications (id, user_id, board_id, type, title, body)
+      values (gen_random_uuid(), $1, $2, 'mention', 'Mention', 'Body')`, [member, board]);
+
+    await as(linkUser);
+    assert.equal((await db.query(`update public.boards set title = 'Link edit' where id = $1 returning id`, [board])).rows.length, 1);
+    await assert.rejects(db.query('update public.boards set created_by = $2 where id = $1', [board, linkUser]), error => error.code === '42501');
+    await assert.rejects(db.query(`update public.boards set public_access = 'private' where id = $1`, [board]), error => error.code === '42501');
+    await assert.rejects(db.query(`update public.boards set share_token = 'x' where id = $1`, [board]), error => error.code === '42501');
+    await assert.rejects(db.query('select public.remove_board_collaborator($1, $2)', [board, member]), /Unauthorized/);
+    await assert.rejects(db.query(`select public.update_board_collaborator_role($1, $2, 'viewer')`, [board, member]), /Unauthorized/);
+    await assert.rejects(db.query(`select public.invite_board_collaborator($1, 'linkuser', 'editor')`, [board]), /Unauthorized/);
+
+    await as(member);
+    assert.equal((await db.query(`update public.boards set public_access = 'viewer' where id = $1 returning id`, [board])).rows.length, 1);
+    await db.query(`insert into public.comments (board_id, author_id, author_name, body, x, y)
+      values ($1, $2, 'Member', 'Comment', 0, 0)`, [board, member]);
+
+    await as(owner);
+    const privateBoard = (await db.query(`insert into public.boards (workspace_id, title, created_by)
+      values ($1, 'Private', $2) returning id`, [workspace, owner])).rows[0].id;
+    await as(member);
+    await assert.rejects(db.query('update public.comments set board_id = $1 where author_id = $2', [privateBoard, member]),
+      error => error.code === '42501');
+
+    await as(teammate);
+    await db.query(`insert into public.board_activity (board_id, user_id, user_name, action, description)
+      values ($1, $2, 'Teammate', 'card_added', 'Workspace member activity')`, [board, teammate]);
+    assert.equal((await db.query('select * from public.board_activity where board_id = $1', [board])).rows.length, 1);
+  } finally { await db.close(); }
+});

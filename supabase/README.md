@@ -28,6 +28,11 @@ Projects initialized before the workspace-creation fix should run
 read a newly inserted workspace before its membership trigger executes, so
 `INSERT ... RETURNING` succeeds instead of falling back to `local-default-ws`.
 
+Projects initialized before 2026-10-22 should run
+`supabase/migrations/20261022_fix_board_sharing_permissions.sql`. Without it, any
+signed-in user can change the owner and sharing settings of a board shared as
+"editor", and can remove its collaborators.
+
 ## Verification
 
 Confirm SQL Editor reports success. In the signed-in app, create a board, add a
